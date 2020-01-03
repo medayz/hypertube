@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  server:
+    container_name: server
+    restart: always
+    build: ./server
+    volumes:
+      - ./server:/app
+    ports:
+      - "8080:80"
+      - "3000:3000"
+      - "4000:4000"
+    depends_on:
+      - database
+  database:
+    container_name: database
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
