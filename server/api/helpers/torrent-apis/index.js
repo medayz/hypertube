@@ -1,4 +1,4 @@
-const { YTS, PopCorn } = require('./providers');
+const { YTS, PopCorn } = require("./providers");
 
 /*
   Data structure:
@@ -28,7 +28,7 @@ const { YTS, PopCorn } = require('./providers');
 */
 
 class Torrents {
-  constructor(options = { providers: ['YTS'] }) {
+  constructor(options = { providers: ["YTS"] }) {
     this.providers = this._setProviders(options.providers);
   }
 
@@ -36,7 +36,7 @@ class Torrents {
     providers = providers.map(provider => {
       const instance = this._getProviderInstance(provider);
 
-      if (!instance) throw { message: 'Unknown Provider' };
+      if (!instance) throw { message: "Unknown Provider" };
 
       return {
         name: provider,
@@ -49,10 +49,10 @@ class Torrents {
 
   _getProviderInstance(name) {
     switch (name) {
-      case 'POPCORN':
+      case "POPCORN":
         return new PopCorn();
 
-      case 'YTS':
+      case "YTS":
         return new YTS();
 
       default:
@@ -68,6 +68,12 @@ class Torrents {
     const mainProvider = this.providers[0];
 
     return mainProvider.obj.getMovies(options);
+  }
+
+  getMovie(id, provider = 0) {
+    const mainProvider = this.providers[provider];
+
+    return mainProvider.obj.getMovie(id);
   }
 
   searchByName(name, options = {}) {
@@ -87,4 +93,4 @@ class Torrents {
   }
 }
 
-module.exports = Torrents;
+exports.Torrents = Torrents;
