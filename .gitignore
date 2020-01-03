@@ -1,0 +1,3 @@
+# rule for ignore mognodb data files
+/data
+/TODO.txt
