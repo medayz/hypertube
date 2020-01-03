@@ -5,8 +5,9 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const indexRouter = require('./api/routes/index');
-const usersRouter = require('./api/routes/user');
-const videosRouter = require('./api/routes/video');
+const usersRouter = require('./api/routes/users');
+const moviesRouter = require('./api/routes/movies');
+const streamRouter = require('./api/routes/stream');
 
 const app = express();
 
@@ -30,7 +31,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/video', videosRouter);
+app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/movies', moviesRouter);
+app.use('/api/v1/stream', streamRouter);
 
 module.exports = app;
