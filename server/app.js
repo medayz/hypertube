@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose');
 const cors = require('cors');
 
 const indexRouter = require('./api/routes/index');
@@ -10,6 +11,11 @@ const moviesRouter = require('./api/routes/movies');
 const streamRouter = require('./api/routes/stream');
 
 const app = express();
+
+mongoose.connect('mongodb://localhost:27017/hypertube', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 // Config socket.io
 const server = require('http').createServer(app);
