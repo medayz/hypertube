@@ -12,7 +12,7 @@ const streamRouter = require('./api/routes/stream');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/hypertube', {
+mongoose.connect(`mongodb://${process.env.DATABASE_URL}/hypertube`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });

@@ -1,5 +1,6 @@
 {
   "env": {
-    "JWT_KEY": "hypertube:1337"
+    "JWT_KEY": "hypertube:1337",
+    "DATABASE_URL": "database"
   }
 }
