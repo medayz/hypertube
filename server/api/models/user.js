@@ -3,8 +3,9 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
   fullName: { type: String, required: true },
-  username: { type: String, required: true },
-  email: { type: String, required: true },
+  username: { type: String, unique: true, required: true },
+  email: { type: String, unique: true, required: true },
+  emailActivated: { type: Boolean, default: false },
   password: { type: String, select: false, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -22,6 +23,18 @@ userSchema.pre('save', function(next) {
     next();
   });
 });
+
+userSchema.statics.usernameExists = async username => {
+  const user = await model('User').findOne({ username });
+
+  return !!user;
+};
+
+userSchema.statics.emailExists = async email => {
+  const user = await model('User').findOne({ email });
+
+  return !!user;
+};
 
 userSchema.methods.isValidPassword = async function(password) {
   const compare = await bcrypt.compare(password, this.password);
