@@ -1,17 +1,20 @@
 const router = require('express').Router();
-const passport = require('../middlewares/auth');
+const { isAuth } = require('../middlewares/auth');
 
 const usersController = require('../controllers/users');
-const { createValidator, loginValidator } = require('../middlewares/user');
+const userValidator = require('../middlewares/user');
 
-router.post('/', createValidator, usersController.create);
+router.post('/', userValidator.createValidator, usersController.create);
 
-router.post('/login', loginValidator, usersController.login);
+router.post('/login', userValidator.loginValidator, usersController.login);
 
-router.get(
-  '/me',
-  passport.authenticate('jwt', { session: false }),
-  usersController.me
+router.get('/me', isAuth, usersController.me);
+
+router.patch(
+  '/',
+  isAuth,
+  userValidator.updateValidator,
+  usersController.update
 );
 
 module.exports = router;

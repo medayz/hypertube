@@ -1,24 +1,12 @@
 const router = require('express').Router();
-const passport = require('../middlewares/auth');
+const { isAuth } = require('../middlewares/auth');
 
 const moviesController = require('../controllers/movies');
 
-router.get(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  moviesController.getMovies
-);
+router.get('/', isAuth, moviesController.getMovies);
 
-router.get(
-  '/search',
-  passport.authenticate('jwt', { session: false }),
-  moviesController.searchByName
-);
+router.get('/search', isAuth, moviesController.searchByName);
 
-router.get(
-  '/:provider/:id',
-  passport.authenticate('jwt', { session: false }),
-  moviesController.getMovie
-);
+router.get('/:provider/:id', isAuth, moviesController.getMovie);
 
 module.exports = router;

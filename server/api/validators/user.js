@@ -22,3 +22,11 @@ exports.loginUserValidator = Joi.object().keys({
     .max(100)
     .required()
 });
+
+exports.updateUserValidator = Joi.object().keys({
+  fullName: Joi.string()
+    .min(3)
+    .max(100),
+  username: Joi.string(),
+  email: Joi.string().email()
+});
