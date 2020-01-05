@@ -1,26 +1,24 @@
-const router = require("express").Router();
-const { Torrents } = require("../helpers/torrent-apis");
+const router = require('express').Router();
+const passport = require('../middlewares/auth');
 
-const PROVIDERS = {
-  POPCORN: 0
-};
+const moviesController = require('../controllers/movies');
 
-const torrent = new Torrents({
-  providers: ["POPCORN"]
-});
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.getMovies
+);
 
-router.get("/", (req, res, next) => {
-  torrent
-    .getMovies()
-    .then(movies => res.json(movies))
-    .catch(err => res.json(err));
-});
+router.get(
+  '/search',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.searchByName
+);
 
-router.get("/:provider/:id", (req, res, next) => {
-  torrent
-    .getMovie(req.params.id, PROVIDERS[req.params.provider])
-    .then(movies => res.json(movies))
-    .catch(err => res.json(err));
-});
+router.get(
+  '/:provider/:id',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.getMovie
+);
 
 module.exports = router;
