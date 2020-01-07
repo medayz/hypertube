@@ -17,4 +17,12 @@ router.patch(
   usersController.update
 );
 
+router.get('/auth/google', usersController.google);
+
+router.get('/auth/google/callback', usersController.googleCallback);
+
+// router.get('/auth/intra42', usersController.intra42);
+
+// router.get('/auth/intra42/callback', usersController.intra42Callback);
+
 module.exports = router;

@@ -1,6 +1,8 @@
 {
   "env": {
     "JWT_KEY": "hypertube:1337",
-    "DATABASE_URL": "database"
+    "DATABASE_URL": "database",
+    "GOOGLE_CLIENT_ID": "71375683315-ammadks7g6ut0h3e6a19mbtn85c8t7eh.apps.googleusercontent.com",
+    "GOOGLE_CLIENT_SECRET": "Pr4p954k_kbQhOOwOy4N7MVj"
   }
 }

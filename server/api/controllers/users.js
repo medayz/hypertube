@@ -96,3 +96,16 @@ exports.update = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.google = (req, res, next) => {
+  passport.authenticate('google', {
+    scope: ['profile']
+  })(req, res, next);
+};
+
+exports.googleCallback = (req, res) => {
+  res.send({
+    code: req.query.code,
+    scope: req.query.scope,
+  });
+}

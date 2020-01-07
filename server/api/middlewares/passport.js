@@ -2,6 +2,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const User = require('../models/user');
 
@@ -59,6 +60,23 @@ passport.use(
     }
   )
 );
+
+// Use the GoogleStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a token, tokenSecret, and Google profile), and
+//   invoke a callback with a user object.
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/api/v1/users/auth/google/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    console.log("google")
+    User.findOne({ googleId: profile.id }, function (err, user) {
+      return done(err, user);
+    });
+  }
+));
 
 passport.serializeUser((user, done) => {
   done(null, user);
