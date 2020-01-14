@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -33,12 +32,18 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/movies', moviesRouter);
 app.use('/api/v1/stream', streamRouter);
+
+app.use((error, req, res, next) => {
+  // console.log(error);
+  res.status(error.status || 500).send({
+    message: error.message
+  });
+});
 
 module.exports = app;
