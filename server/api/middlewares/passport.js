@@ -3,6 +3,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const FortyTwoStrategy = require('passport-42').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 const User = require('../models/user');
 
@@ -15,12 +17,12 @@ passport.use(
       // We expect the user to send the token as a query paramater with the name 'secret_token'
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
     },
-    async (token, done) => {
+    async (payload, done) => {
       try {
         // Pass the user details to the next middleware
-        return done(null, token.user);
-      } catch (error) {
-        done(error);
+        return done(null, payload);
+      } catch (err) {
+        done(err);
       }
     }
   )
@@ -65,18 +67,82 @@ passport.use(
 //   Strategies in passport require a `verify` function, which accept
 //   credentials (in this case, a token, tokenSecret, and Google profile), and
 //   invoke a callback with a user object.
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/api/v1/users/auth/google/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    console.log("google")
-    User.findOne({ googleId: profile.id }, function (err, user) {
-      return done(err, user);
-    });
-  }
-));
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: '/api/v1/users/auth/google/callback'
+    },
+    async function(accessToken, refreshToken, profile, done) {
+      const email = profile.emails[0];
+
+      try {
+        const token = await new User({
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          email: email.value,
+          emailVerified: email.verified,
+          google: { id: profile.id }
+        }).googleAuth();
+        return done(null, token);
+      } catch (err) {
+        done(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FortyTwoStrategy(
+    {
+      clientID: process.env.FORTYTWO_CLIENT_ID,
+      clientSecret: process.env.FORTYTWO_CLIENT_SECRET,
+      callbackURL: '/api/v1/users/auth/42/callback'
+    },
+    async function(accessToken, refreshToken, profile, done) {
+      const email = profile.emails[0];
+
+      try {
+        const token = await new User({
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          email: email.value,
+          '42': { id: profile.id }
+        }).fortyTwoAuth();
+        return done(null, token);
+      } catch (err) {
+        done(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: '/api/v1/users/auth/facebook/callback',
+      profileFields: ['id', 'emails', 'name']
+    },
+    async function(accessToken, refreshToken, profile, done) {
+      const email = profile.emails[0];
+
+      try {
+        const token = await new User({
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          email: email.value,
+          facebook: { id: profile.id }
+        }).facebookAuth();
+        return done(null, token);
+      } catch (err) {
+        done(err);
+      }
+    }
+  )
+);
 
 passport.serializeUser((user, done) => {
   done(null, user);

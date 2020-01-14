@@ -1,12 +1,18 @@
 const { Schema, model } = require('mongoose');
+const utils = require('../utils');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
-  fullName: { type: String, required: true },
-  username: { type: String, unique: true, required: true },
+  username: { type: String },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   email: { type: String, unique: true, required: true },
-  emailActivated: { type: Boolean, default: false },
-  password: { type: String, select: false, required: true },
+  emailVerified: { type: Boolean, default: false },
+  password: { type: String, select: false },
+  google: { id: String },
+  facebook: { id: String },
+  '42': { id: String },
+  avatar: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -40,6 +46,70 @@ userSchema.methods.isValidPassword = async function(password) {
   const compare = await bcrypt.compare(password, this.password);
 
   return compare;
+};
+
+userSchema.methods.googleAuth = async function() {
+  const User = model('User');
+
+  let user = await User.findOne({ 'google.id': this.google.id });
+
+  if (!user) {
+    user = await User.findOne({ email: this.email });
+  }
+
+  if (!user) user = await this.save();
+  else {
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          google: { id: this.google.id },
+          emailVerified: true
+        }
+      }
+    );
+  }
+
+  const payload = { _id: user._id };
+  return { token: utils.generateToken(payload) };
+};
+
+userSchema.methods.fortyTwoAuth = async function() {
+  const User = model('User');
+
+  let user = await User.findOne({ '42.id': this['42'].id });
+
+  if (!user) {
+    const emailExists = await User.emailExists(this.email);
+
+    if (emailExists) {
+      return { error: { email: 'already exists' } };
+    }
+  }
+
+  if (!user) user = await this.save();
+
+  const payload = { _id: user._id };
+  return { token: utils.generateToken(payload) };
+};
+
+userSchema.methods.facebookAuth = async function() {
+  const User = model('User');
+
+  let user = await User.findOne({ 'facebook.id': this.facebook.id });
+
+  if (!user) {
+    const emailExists = await User.emailExists(this.email);
+
+    if (emailExists) {
+      return { error: { email: 'already exists' } };
+    }
+  }
+
+  if (!user) user = await this.save();
+
+  const payload = { _id: user._id };
+  return { token: utils.generateToken(payload) };
 };
 
 module.exports = model('User', userSchema);

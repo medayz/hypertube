@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const utils = require('../utils');
 
 const User = require('../models/user');
 
@@ -11,13 +11,13 @@ exports.create = async (req, res, next) => {
     const usernameExists = await User.usernameExists(req.body.username);
 
     if (usernameExists) {
-      return res.status(403).send({ message: 'username is already exists' });
+      return res.status(403).send({ error: { username: 'already exists' } });
     }
 
     const emailExists = await User.emailExists(req.body.email);
 
     if (emailExists) {
-      return res.status(403).send({ message: 'email is already exists' });
+      return res.status(403).send({ error: { email: 'already exists' } });
     }
 
     const newUser = await user.save();
@@ -41,8 +41,8 @@ exports.login = (req, res, next) => {
 
     if (info) return res.status(401).send(info);
 
-    const body = { _id: user._id };
-    const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+    const payload = { _id: user._id };
+    const token = utils.generateToken(payload);
 
     res.status(200).send({ token });
   })(req, res, next);
@@ -97,15 +97,22 @@ exports.update = async (req, res, next) => {
   }
 };
 
-exports.google = (req, res, next) => {
-  passport.authenticate('google', {
-    scope: ['profile']
-  })(req, res, next);
-};
+exports.google = passport.authenticate('google', {
+  scope: ['profile', 'email']
+});
 
-exports.googleCallback = (req, res) => {
-  res.send({
-    code: req.query.code,
-    scope: req.query.scope,
-  });
-}
+exports.googleCallback = passport.authenticate('google', { session: false });
+
+exports.fortyTwo = passport.authenticate('42');
+
+exports.fortyTwoCallback = passport.authenticate('facebook', {
+  session: false
+});
+
+exports.facebook = passport.authenticate('facebook', {
+  scope: ['email']
+});
+
+exports.facebookCallback = passport.authenticate('facebook', {
+  session: false
+});

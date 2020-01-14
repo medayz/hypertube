@@ -1,11 +1,15 @@
 const Joi = require('@hapi/joi');
 
 exports.createUserValidator = Joi.object().keys({
-  fullName: Joi.string()
+  username: Joi.string().required(),
+  firstName: Joi.string()
     .min(3)
     .max(100)
     .required(),
-  username: Joi.string().required(),
+  lastName: Joi.string()
+    .min(3)
+    .max(100)
+    .required(),
   email: Joi.string()
     .email()
     .required(),

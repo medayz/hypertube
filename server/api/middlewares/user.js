@@ -25,5 +25,11 @@ exports.updateValidator = (req, res, next) => {
 };
 
 function prettyErrors(error) {
-  return error.details.map(detail => detail.message);
+  const errors = {};
+
+  error.details.forEach(item => {
+    errors[item.context.key] = item.message;
+  });
+
+  return errors;
 }

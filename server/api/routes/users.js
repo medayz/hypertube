@@ -19,10 +19,32 @@ router.patch(
 
 router.get('/auth/google', usersController.google);
 
-router.get('/auth/google/callback', usersController.googleCallback);
+router.get(
+  '/auth/google/callback',
+  usersController.googleCallback,
+  (req, res) => {
+    res.json(req.user);
+  }
+);
 
-// router.get('/auth/intra42', usersController.intra42);
+router.get('/auth/42', usersController.fortyTwo);
 
-// router.get('/auth/intra42/callback', usersController.intra42Callback);
+router.get(
+  '/auth/42/callback',
+  usersController.fortyTwoCallback,
+  (req, res) => {
+    res.json(req.user);
+  }
+);
+
+router.get('/auth/facebook', usersController.facebook);
+
+router.get(
+  '/auth/facebook/callback',
+  usersController.facebookCallback,
+  (req, res) => {
+    res.json(req.user);
+  }
+);
 
 module.exports = router;
