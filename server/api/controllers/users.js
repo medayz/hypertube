@@ -122,7 +122,7 @@ exports.googleCallback = passport.authenticate('google', { session: false });
 
 exports.fortyTwo = passport.authenticate('42');
 
-exports.fortyTwoCallback = passport.authenticate('facebook', {
+exports.fortyTwoCallback = passport.authenticate('42', {
   session: false
 });
 
