@@ -3,7 +3,6 @@ version: "3"
 services:
   server:
     container_name: server
-    restart: always
     build: ./server
     volumes:
       - ./server:/app
