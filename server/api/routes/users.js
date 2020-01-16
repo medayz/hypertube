@@ -17,6 +17,12 @@ router.patch(
   usersController.update
 );
 
+router.get(
+  '/:username',
+  userValidator.getUserByUsername,
+  usersController.getUserByUsername
+);
+
 router.get('/auth/google', usersController.google);
 
 router.get(

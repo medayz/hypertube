@@ -57,6 +57,22 @@ exports.me = async (req, res, next) => {
   }
 };
 
+exports.getUserByUsername = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ username: req.params.username })
+      .select('-_id')
+      .select('firstName')
+      .select('lastName');
+
+    if (!user) {
+      return res.status(404).send({ message: 'resource not found' });
+    }
+    res.status(200).send({ exists: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.update = async (req, res, next) => {
   try {
     if (req.body.username) {

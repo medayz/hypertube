@@ -33,3 +33,11 @@ function prettyErrors(error) {
 
   return errors;
 }
+
+exports.getUserByUsername = (req, res, next) => {
+  const { error } = userSchema.getUserByUsername.validate(req.params);
+
+  if (!error) return next();
+
+  res.status(400).send({ error: prettyErrors(error) });
+};
