@@ -6,7 +6,12 @@ const userValidator = require('../middlewares/user');
 
 router.post('/', userValidator.createValidator, usersController.create);
 
-router.post('/login', userValidator.loginValidator, usersController.login);
+router.post(
+  '/login',
+  userValidator.loginValidator,
+  usersController.login,
+  usersController.authToken
+);
 
 router.get('/me', isAuth, usersController.me);
 
@@ -28,9 +33,7 @@ router.get('/auth/google', usersController.google);
 router.get(
   '/auth/google/callback',
   usersController.googleCallback,
-  (req, res) => {
-    res.json(req.user);
-  }
+  usersController.authToken
 );
 
 router.get('/auth/42', usersController.fortyTwo);
@@ -38,9 +41,7 @@ router.get('/auth/42', usersController.fortyTwo);
 router.get(
   '/auth/42/callback',
   usersController.fortyTwoCallback,
-  (req, res) => {
-    res.json(req.user);
-  }
+  usersController.authToken
 );
 
 router.get('/auth/facebook', usersController.facebook);
@@ -48,9 +49,7 @@ router.get('/auth/facebook', usersController.facebook);
 router.get(
   '/auth/facebook/callback',
   usersController.facebookCallback,
-  (req, res) => {
-    res.json(req.user);
-  }
+  usersController.authToken
 );
 
 module.exports = router;

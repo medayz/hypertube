@@ -71,7 +71,7 @@ userSchema.methods.googleAuth = async function() {
   }
 
   const payload = { _id: user._id };
-  return { token: utils.generateToken(payload) };
+  return utils.generateToken(payload);
 };
 
 userSchema.methods.fortyTwoAuth = async function() {
@@ -90,7 +90,7 @@ userSchema.methods.fortyTwoAuth = async function() {
   if (!user) user = await this.save();
 
   const payload = { _id: user._id };
-  return { token: utils.generateToken(payload) };
+  return utils.generateToken(payload);
 };
 
 userSchema.methods.facebookAuth = async function() {
@@ -109,7 +109,7 @@ userSchema.methods.facebookAuth = async function() {
   if (!user) user = await this.save();
 
   const payload = { _id: user._id };
-  return { token: utils.generateToken(payload) };
+  return utils.generateToken(payload);
 };
 
 module.exports = model('User', userSchema);

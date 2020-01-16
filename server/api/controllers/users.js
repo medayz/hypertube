@@ -44,7 +44,8 @@ exports.login = (req, res, next) => {
     const payload = { _id: user._id };
     const token = utils.generateToken(payload);
 
-    res.status(200).send({ token });
+    req.user = token;
+    next();
   })(req, res, next);
 };
 
@@ -132,3 +133,7 @@ exports.facebook = passport.authenticate('facebook', {
 exports.facebookCallback = passport.authenticate('facebook', {
   session: false
 });
+
+exports.authToken = (req, res) => {
+  res.status(200).send({ token: req.user });
+};
