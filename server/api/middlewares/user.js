@@ -38,7 +38,10 @@ exports.verify = async (req, res, next) => {
 
   if (!error) {
     try {
-      const decoded = await utils.verfiyToken(req.params);
+      const decoded = await utils.verfiyToken(req.params.token);
+
+      if (!decoded.is_verification) throw new Error();
+
       req.user = decoded;
       return next();
     } catch (err) {
