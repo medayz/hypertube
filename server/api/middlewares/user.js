@@ -1,4 +1,5 @@
 const userSchema = require('../validators/user');
+const utils = require('../utils');
 
 exports.createValidator = (req, res, next) => {
   const { error } = userSchema.createUserValidator.validate(req.body);
@@ -24,6 +25,30 @@ exports.updateValidator = (req, res, next) => {
   res.status(400).send({ error: prettyErrors(error) });
 };
 
+exports.getUserByUsername = (req, res, next) => {
+  const { error } = userSchema.getUserByUsernameValidator.validate(req.params);
+
+  if (!error) return next();
+
+  res.status(400).send({ error: prettyErrors(error) });
+};
+
+exports.verify = async (req, res, next) => {
+  const { error } = userSchema.verficationValidator.validate(req.params);
+
+  if (!error) {
+    try {
+      const decoded = await utils.verfiyToken(req.params);
+      req.user = decoded;
+      return next();
+    } catch (err) {
+      return res.status(400).send({ message: 'invalid token' });
+    }
+  }
+
+  res.status(400).send({ error: prettyErrors(error) });
+};
+
 function prettyErrors(error) {
   const errors = {};
 
@@ -33,11 +58,3 @@ function prettyErrors(error) {
 
   return errors;
 }
-
-exports.getUserByUsername = (req, res, next) => {
-  const { error } = userSchema.getUserByUsername.validate(req.params);
-
-  if (!error) return next();
-
-  res.status(400).send({ error: prettyErrors(error) });
-};

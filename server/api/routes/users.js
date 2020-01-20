@@ -28,6 +28,12 @@ router.get(
   usersController.getUserByUsername
 );
 
+router.get(
+  '/verification/:token',
+  userValidator.verify,
+  usersController.verify
+);
+
 router.get('/auth/google', usersController.google);
 
 router.get(

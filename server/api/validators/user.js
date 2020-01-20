@@ -35,6 +35,6 @@ exports.updateUserValidator = Joi.object().keys({
   email: Joi.string().email()
 });
 
-exports.getUserByUsername = Joi.object().keys({
+exports.getUserByUsernameValidator = Joi.object().keys({
   username: Joi.string().required()
 });

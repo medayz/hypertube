@@ -114,6 +114,20 @@ exports.update = async (req, res, next) => {
   }
 };
 
+exports.verify = async (req, res, next) => {
+  try {
+    await User.updateOne(
+      { _id: req.user.id },
+      {
+        $set: { verfied: true }
+      }
+    );
+    res.status(200).send({ message: 'user verified' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.google = passport.authenticate('google', {
   scope: ['profile', 'email']
 });
