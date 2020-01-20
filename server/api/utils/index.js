@@ -1,3 +1,6 @@
+const { generateToken, verfiyToken } = require('./jwt');
+
 module.exports = {
-  generateToken: require('./generateToken')
+  generateToken,
+  verfiyToken
 };
