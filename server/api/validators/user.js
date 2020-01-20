@@ -38,3 +38,7 @@ exports.updateUserValidator = Joi.object().keys({
 exports.getUserByUsernameValidator = Joi.object().keys({
   username: Joi.string().required()
 });
+
+exports.verficationValidator = Joi.object().keys({
+  token: Joi.string().required()
+});
