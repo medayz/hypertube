@@ -39,6 +39,12 @@ app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/movies', moviesRouter);
 app.use('/api/v1/stream', streamRouter);
 
+app.use((req, res, next) => {
+  const error = new Error('resource not found');
+  error.status = 404;
+  next(error);
+});
+
 app.use((error, req, res, next) => {
   // console.log(error);
   res.status(error.status || 500).send({
