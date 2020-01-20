@@ -6,7 +6,7 @@ exports.createValidator = (req, res, next) => {
 
   if (!error) return next();
 
-  res.status(400).send({ error: prettyErrors(error) });
+  res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.loginValidator = (req, res, next) => {
@@ -14,7 +14,7 @@ exports.loginValidator = (req, res, next) => {
 
   if (!error) return next();
 
-  res.status(400).send({ error: prettyErrors(error) });
+  res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.updateValidator = (req, res, next) => {
@@ -22,7 +22,7 @@ exports.updateValidator = (req, res, next) => {
 
   if (!error) return next();
 
-  res.status(400).send({ error: prettyErrors(error) });
+  res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.getUserByUsername = (req, res, next) => {
@@ -30,7 +30,7 @@ exports.getUserByUsername = (req, res, next) => {
 
   if (!error) return next();
 
-  res.status(400).send({ error: prettyErrors(error) });
+  res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.verify = async (req, res, next) => {
@@ -49,15 +49,5 @@ exports.verify = async (req, res, next) => {
     }
   }
 
-  res.status(400).send({ error: prettyErrors(error) });
+  res.status(400).send({ error: utils.prettyError(error) });
 };
-
-function prettyErrors(error) {
-  const errors = {};
-
-  error.details.forEach(item => {
-    errors[item.context.key] = item.message;
-  });
-
-  return errors;
-}
