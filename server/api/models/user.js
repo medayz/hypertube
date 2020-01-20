@@ -13,6 +13,7 @@ const userSchema = new Schema({
   facebook: { id: String },
   '42': { id: String },
   avatar: { type: String },
+  watchList: [{ type: Schema.Types.ObjectId, ref: 'Watch' }],
   createdAt: { type: Date, default: Date.now }
 });
 
