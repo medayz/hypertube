@@ -2,6 +2,8 @@
   "env": {
     "JWT_KEY": "hypertube:1337",
     "DATABASE_URL": "database",
+    "EMAIL": "dev.matcha.noreply@gmail.com",
+    "EMAIL_PASSWORD": "eIDPj8a5cXHM",
     "GOOGLE_CLIENT_ID": "71375683315-ammadks7g6ut0h3e6a19mbtn85c8t7eh.apps.googleusercontent.com",
     "GOOGLE_CLIENT_SECRET": "Pr4p954k_kbQhOOwOy4N7MVj",
     "FORTYTWO_CLIENT_ID": "d4c897311c5b691da3d7076672e449dcac1e168787c5a89626de019f7edf2723",
