@@ -49,10 +49,9 @@ exports.login = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.me = async (req, res, next) => {
+exports.me = (req, res, next) => {
   try {
-    const user = await User.findOne({ _id: req.user._id });
-    res.status(200).send(user);
+    res.status(200).send(req.user);
   } catch (err) {
     next(err);
   }
