@@ -31,6 +31,12 @@ userSchema.pre('save', function(next) {
   });
 });
 
+userSchema.statics.idExists = async _id => {
+  const user = await model('User').findOne({ _id });
+
+  return !!user;
+};
+
 userSchema.statics.usernameExists = async username => {
   const user = await model('User').findOne({ username });
 
