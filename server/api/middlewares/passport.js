@@ -17,10 +17,10 @@ passport.use(
       // We expect the user to send the token as a query paramater with the name 'secret_token'
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
     },
-    async (payload, done) => {
+    (payload, done) => {
       try {
         // Pass the user details to the next middleware
-        return done(null, payload);
+        done(null, payload);
       } catch (err) {
         done(err);
       }
