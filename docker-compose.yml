@@ -12,6 +12,13 @@ services:
       - "4000:4000"
     depends_on:
       - database
+  client:
+    container_name: client
+    build: ./client
+    volumes:
+      - ./client:/app
+    ports:
+      - "8000:8000"
   database:
     container_name: database
     image: mongo
