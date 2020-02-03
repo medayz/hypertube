@@ -1,6 +1,7 @@
-const { TV, PopCorn } = require('./providers');
+const { TV, PopCorn, YTS } = require('./providers');
 
 const PROVIDERS = {
+  YTS: 'YTS',
   TV: 'TV',
   POPCORN: 'POPCORN'
 };
@@ -54,6 +55,8 @@ class Movies {
 
   _getProviderInstance(name) {
     switch (name) {
+      case 'YTS':
+        return new YTS();
       case 'POPCORN':
         return new PopCorn();
 

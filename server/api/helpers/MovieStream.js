@@ -108,9 +108,7 @@ class MovieStream {
     const { range } = options;
     const file = this._getFile(engine.files);
 
-    if (!file) {
-      return reject(new Error('Cannot find a supported format'));
-    }
+    if (!file) throw new Error('Cannot find a supported format');
 
     if (this._verbose) {
       console.log('[INFO]', file.name);

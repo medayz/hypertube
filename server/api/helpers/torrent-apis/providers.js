@@ -1,4 +1,87 @@
 const axios = require('axios');
+const cloudScrapper = require('cloudscraper');
+
+class YTS {
+  constructor() {
+    this.baseUrl = 'https://yts.ag';
+  }
+
+  _prepareMovie(movie) {
+    return {
+      source: {
+        id: movie.id,
+        provider: 'YTS'
+      },
+      title: movie.title,
+      description: movie.summary,
+      rating: { imdb: movie.rating },
+      runtime: movie.runtime,
+      year: movie.year,
+      genres: movie.genres,
+      poster: movie.large_cover_image,
+      torrents: movie.torrents.map(torrent => ({
+        torrentLink: `${this.baseUrl}/torrent/download/${torrent.hash}`,
+        quality: torrent.quality,
+        type: torrent.type,
+        seeds: torrent.seeds,
+        peers: torrent.peers
+      }))
+    };
+  }
+
+  _prepareData(data) {
+    return data.map(movie => this._prepareMovie(movie));
+  }
+
+  async _sendRequest(url, qs) {
+    let response = null;
+
+    for (let i = 1; i <= 2; i++) {
+      response = await cloudScrapper.get(`${this.baseUrl}/api/v2/${url}`, {
+        qs
+      });
+
+      response = JSON.parse(response);
+
+      if (response.data.page_number == qs.page) break;
+    }
+
+    const { data } = response;
+
+    const movies = this._prepareData(data.movies || []);
+
+    return {
+      count: data.movie_count,
+      page: data.page_number,
+      limit: movies.length,
+      movies
+    };
+  }
+
+  getMovies(options) {
+    options = {
+      page: options.page,
+      limit: options.limit,
+      query_term: options.q
+    };
+
+    return this._sendRequest('list_movies.json', options);
+  }
+
+  getMovie(movieId) {
+    const options = {
+      movie_id: movieId
+    };
+
+    return this._sendRequest('movie_details.json', options);
+  }
+
+  searchByName(name, options) {
+    options.query_term = name;
+
+    return this._sendRequest(options);
+  }
+}
 
 class TV {
   constructor() {
@@ -38,22 +121,20 @@ class TV {
     return movies.map(movie => this._prepareMovie(movie));
   }
 
-  _sendRequest(url, params = {}) {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`${this.baseUrl}${url}`, { params })
-        .then(({ data }) => {
-          const movies = this._prepareData(data);
+  async _sendRequest(url, params = {}) {
+    const { data } = await axios.get(`${this.baseUrl}${url}`, { params });
 
-          resolve(movies);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
+    const movies = this._prepareData(data);
+
+    return {
+      limit: movies.length,
+      movies
+    };
   }
 
-  getMovies(options) {
+  getMovies(options = {}) {
+    if (!options.page) options.page = 1;
+
     return this._sendRequest(`/movies/${options.page}`, options);
   }
 
@@ -97,24 +178,20 @@ class PopCorn {
   }
 
   _prepareData(data) {
-    data = data.MovieList ? data : { MovieList: [ data ] }
+    data = data.MovieList ? data : { MovieList: [data] };
 
     return data.MovieList.map(movie => this._prepareMovie(movie));
   }
 
-  _sendRequest(route, params) {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`${this.baseUrl}${route}`, { params })
-        .then(({ data }) => {
-          const movies = this._prepareData(data);
+  async _sendRequest(route, params) {
+    const { data } = await axios.get(`${this.baseUrl}${route}`, { params });
 
-          resolve(movies);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
+    const movies = this._prepareData(data);
+
+    return {
+      limit: movies.length,
+      movies
+    };
   }
 
   getMovies(options) {
@@ -142,3 +219,4 @@ class PopCorn {
 
 exports.TV = TV;
 exports.PopCorn = PopCorn;
+exports.YTS = YTS;
