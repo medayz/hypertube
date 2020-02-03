@@ -1,6 +1,17 @@
 version: "3"
 
 services:
+  client:
+    container_name: client
+    build: ./client
+    volumes:
+      - ./client:/app
+      - node_modules_client:/app/node_modules
+    ports:
+      - "8000:8000"
+    depends_on:
+      - server
+
   server:
     container_name: server
     build: ./server
@@ -11,13 +22,7 @@ services:
       - "4000:4000"
     depends_on:
       - database
-  client:
-    container_name: client
-    build: ./client
-    volumes:
-      - ./client:/app
-    ports:
-      - "8000:8000"
+
   database:
     container_name: database
     image: mongo
@@ -28,3 +33,4 @@ services:
 
 volumes:
   data:
+  node_modules_client:
