@@ -1,7 +1,8 @@
 const { Movies, PROVIDERS } = require('../helpers/torrent-apis');
+const Movie = require('../models/movie');
 
 const movies = new Movies({
-  providers: [PROVIDERS.POPCORN]
+  providers: [PROVIDERS.YTS]
 });
 
 exports.searchByName = async (req, res, next) => {

@@ -2,7 +2,11 @@ const { Schema, model } = require('mongoose');
 
 const movieSchema = new Schema({
   imdbId: { type: String, unique: true, required: true },
+  filename: { type: String, required: true, default: 'null' },
+  lastAccess: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now }
 });
 
-module.exports.Movie = model('Movie', movieSchema);
+movieSchema.pre('save', function() {});
+
+module.exports = model('Movie', movieSchema);
