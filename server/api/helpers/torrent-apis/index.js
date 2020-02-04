@@ -78,26 +78,27 @@ class Movies {
     return mainProvider.obj.getMovies(options);
   }
 
-  getMovie(id, provider = 0) {
-    const mainProvider = this.providers[provider];
+  async getMovie(params) {
+    for (const provider of this.providers) {
+      try {
+        const movie = await provider.obj.getMovie(params);
 
-    return mainProvider.obj.getMovie(id);
+        if (movie) return movie;
+      } catch (err) {}
+    }
+    return null;
   }
 
-  searchByName(name, options = {}) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        for (const provider of this.providers) {
-          const movies = await provider.obj.searchByName(name, options);
+  async search(options = {}) {
+    for (const provider of this.providers) {
+      const data = await provider.obj.search(options);
 
-          if (movies.length) return resolve(movies);
-        }
-
-        resolve([]);
-      } catch (err) {
-        reject(err);
-      }
-    });
+      if (data.movies.length) return data;
+    }
+    return {
+      limit: 0,
+      movies: []
+    };
   }
 }
 

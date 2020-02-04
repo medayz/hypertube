@@ -2,22 +2,25 @@ const { Movies, PROVIDERS } = require('../helpers/torrent-apis');
 const Movie = require('../models/movie');
 
 const movies = new Movies({
-  providers: [PROVIDERS.YTS]
+  providers: [PROVIDERS.YTS, PROVIDERS.TV, PROVIDERS.POPCORN]
 });
 
-exports.searchByName = async (req, res, next) => {
+exports.search = async (req, res, next) => {
   try {
-    const movies = await movies.searchByName(req.query.name);
-    res.status(200).send(movies);
+    const data = await movies.search(req.query);
+
+    res.status(200).send(data);
   } catch (err) {
     next(err);
   }
 };
 
 exports.getMovie = async (req, res, next) => {
-  console.log(PROVIDERS[req.params.provider]);
   try {
-    const movie = await movies.getMovie(req.params.id, 0);
+    const movie = await movies.getMovie(req.params);
+
+    if (!movie) return res.status(404).send({ message: 'resource not found' });
+
     res.status(200).send(movie);
   } catch (err) {
     next(err);

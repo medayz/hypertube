@@ -1,15 +1,20 @@
 const axios = require('axios');
 const cloudScrapper = require('cloudscraper');
+const { parse: parseURL } = require('url');
 
 class YTS {
   constructor() {
-    this.baseUrl = 'https://yts.ag';
+    this.baseUrl = 'https://yts.mx';
+    this.imageBaseUrl = 'https://img.yts.mx';
   }
 
   _prepareMovie(movie) {
+    const { path } = parseURL(movie.large_cover_image);
+    const poster = `${this.imageBaseUrl}${path}`;
+
     return {
       source: {
-        id: movie.id,
+        imdbid: movie.imdb_code,
         provider: 'YTS'
       },
       title: movie.title,
@@ -18,7 +23,7 @@ class YTS {
       runtime: movie.runtime,
       year: movie.year,
       genres: movie.genres,
-      poster: movie.large_cover_image,
+      poster: poster,
       torrents: movie.torrents.map(torrent => ({
         torrentLink: `${this.baseUrl}/torrent/download/${torrent.hash}`,
         quality: torrent.quality,
@@ -43,7 +48,11 @@ class YTS {
 
       response = JSON.parse(response);
 
-      if (response.data.page_number == qs.page) break;
+      if (
+        response.data.page_number == qs.page &&
+        response.data.limit == qs.limit
+      )
+        break;
     }
 
     const { data } = response;
@@ -59,27 +68,31 @@ class YTS {
   }
 
   getMovies(options) {
-    options = {
+    return this._sendRequest('list_movies.json', {
       page: options.page,
       limit: options.limit,
       query_term: options.q
-    };
-
-    return this._sendRequest('list_movies.json', options);
+    });
   }
 
-  getMovie(movieId) {
-    const options = {
-      movie_id: movieId
-    };
+  async getMovie(params) {
+    const data = await this._sendRequest('list_movies.json', {
+      query_term: params.imdbid
+    });
 
-    return this._sendRequest('movie_details.json', options);
+    if (!data.movies.length) return null;
+
+    return {
+      movie: data.movies[0]
+    };
   }
 
-  searchByName(name, options) {
-    options.query_term = name;
-
-    return this._sendRequest(options);
+  search(options) {
+    return this._sendRequest('list_movies.json', {
+      page: 1,
+      limit: options.limit,
+      query_term: options.q
+    });
   }
 }
 
@@ -91,7 +104,7 @@ class TV {
   _prepareMovie(movie) {
     return {
       source: {
-        id: movie._id,
+        imdbid: movie._id,
         provider: 'TV'
       },
       title: movie.title,
@@ -116,6 +129,8 @@ class TV {
   }
 
   _prepareData(data) {
+    if (typeof data === 'string') return [];
+
     const movies = Array.isArray(data) ? data : [data];
 
     return movies.map(movie => this._prepareMovie(movie));
@@ -138,14 +153,20 @@ class TV {
     return this._sendRequest(`/movies/${options.page}`, options);
   }
 
-  getMovie(movieId) {
-    return this._sendRequest(`/movie/${movieId}`);
+  async getMovie(params) {
+    const data = await this._sendRequest(`/movie/${params.imdbid}`);
+
+    if (!data.movies.length) return null;
+
+    return {
+      movie: data.movies[0]
+    };
   }
 
-  searchByName(name, options = {}) {
-    options.keywords = name;
-
-    return this._sendRequest(`/movies/${options.page}`, options);
+  search(options) {
+    return this._sendRequest(`/movies/${options.page}`, {
+      keywords: options.q
+    });
   }
 }
 
@@ -157,7 +178,7 @@ class PopCorn {
   _prepareMovie(movie) {
     return {
       source: {
-        id: movie.imdb,
+        imdbid: movie.imdb,
         provider: 'POPCORN'
       },
       title: movie.title,
@@ -200,20 +221,23 @@ class PopCorn {
     return this._sendRequest('/list', options);
   }
 
-  getMovie(imdbId) {
-    const options = {
-      imdb: imdbId
-    };
+  async getMovie(params) {
+    const data = await this._sendRequest('/movie', { imdb: params.imdbid });
 
-    return this._sendRequest('/movie', options);
+    if (!data.movies.length) return null;
+
+    return {
+      movie: data.movies[0]
+    };
   }
 
-  searchByName(name, options) {
-    options.quality = '720p,1080p,3d';
-    options.sort = 'seeds';
-    options.keywords = name;
-
-    return this._sendRequest(options);
+  search(options) {
+    return this._sendRequest(`/list`, {
+      quality: '720p,1080p,3d',
+      sort: 'seeds',
+      page: options.page,
+      keywords: options.q
+    });
   }
 }
 

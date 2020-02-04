@@ -10,7 +10,19 @@ router.get(
   moviesController.getMovies
 );
 
-// router.get('/:id', isAuth, moviesController.getMovie);
+router.get(
+  '/search',
+  isAuth,
+  movieValidator.searchValidator,
+  moviesController.search
+);
+
+router.get(
+  '/:imdbid',
+  isAuth,
+  movieValidator.getMovieValidator,
+  moviesController.getMovie
+);
 
 // router.post('/comments/:movieid', isAuth, moviesController.addComment);
 
