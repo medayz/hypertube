@@ -38,6 +38,12 @@ class Movies {
     this.providers = this._setProviders(options.providers);
   }
 
+  _getProvider(name) {
+    const provider = this.providers.find(item => item.name === name);
+
+    return provider || null;
+  }
+
   _setProviders(providers) {
     providers = providers.map(provider => {
       const instance = this._getProviderInstance(provider);
@@ -78,7 +84,13 @@ class Movies {
     return mainProvider.obj.getMovies(options);
   }
 
-  async getMovie(params) {
+  async getMovie(params, providerName = null) {
+    if (providerName) {
+      const provider = this._getProvider(providerName);
+
+      return provider.obj.getMovie(params);
+    }
+
     for (const provider of this.providers) {
       try {
         const movie = await provider.obj.getMovie(params);
