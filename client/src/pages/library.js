@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Pagination, Typography } from "antd";
+import { Pagination, Typography, Spin, Icon } from "antd";
 import axios from "axios";
 import "./library.css";
 
 import Layout from "../components/layout";
 import Movies from "../components/movies";
+import { Z_BLOCK } from "zlib";
 
 const { Title } = Typography;
 
@@ -20,19 +21,23 @@ const PaginationContainer = ({ children }) => (
     {children}
   </div>
 );
+const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
 export default props => {
   const [movies, updateMovies] = useState([]);
   const [currentPage, updatePage] = useState(1);
-  const [npages, updateNumPages] = useState(200);
+  const [total, updateTotal] = useState(200);
+  const [loading, updateLoading] = useState(true);
 
   const switchPage = async page => {
+    updateLoading(true);
     axios
       .get(`/api/v1/movies?page=${page}`)
       .then(results => {
         const list = results.data.movies;
         updatePage(page);
         updateMovies(list);
+        updateLoading(false);
       })
       .catch(err => console.log(err));
   };
@@ -42,9 +47,10 @@ export default props => {
       .get(`/api/v1/movies?page=${currentPage}`)
       .then(async results => {
         const list = results.data.movies;
-        const npages = Math.ceil(results.data.count / 75);
-        updateNumPages(npages);
+
+        updateTotal(results.data.count);
         updateMovies(list);
+        updateLoading(false);
       })
       .catch(err => console.log(err));
   }, []);
@@ -61,16 +67,23 @@ export default props => {
           current={currentPage}
           defaultPageSize={75}
           onChange={switchPage}
-          total={npages * 75}
+          total={total}
         />
       </PaginationContainer>
-      <Movies list={movies} />
+      {!loading ? (
+        <Movies list={movies} />
+      ) : (
+        <Spin
+          indicator={spinIcon}
+          style={{ margin: "149px auto", display: "block" }}
+        />
+      )}
       <PaginationContainer>
         <Pagination
           current={currentPage}
           defaultPageSize={75}
           onChange={switchPage}
-          total={npages * 75}
+          total={total}
         />
       </PaginationContainer>
     </Layout>

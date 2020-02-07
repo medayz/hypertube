@@ -14,7 +14,7 @@
   transition: none;
   transform-origin: bottom;
   overflow: hidden;
-  border: 3px solid #042a2b;
+  border: 4px solid #042a2b;
   display: flex;
   border-radius: 10px;
 }
@@ -23,7 +23,7 @@
   max-width: 100%;
   filter: drop-shadow(0px 13px 4px #031414);
   display: block;
-  border-radius: 10px 10px 0 0;
+  /* border-radius: 10px 10px 0 0; */
 }
 .thumbnail:hover {
   cursor: pointer;
@@ -80,6 +80,29 @@
   background-color: #48e5c2;
   color: #fafafa;
   border-radius: 2px;
+}
+.ratings {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 42, 43, 0.6);
+  height: 33px;
+  /* height: 100%; */
+  width: 100%;
+  margin: auto;
+}
+.ratings > h2 {
+  font-family: Helvetica, sans-serif;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 33px;
+  margin: 0 4px;
+  height: 100%;
+  text-shadow: 1px 1px 0 #042a2b;
 }
 @media only screen and (max-width: 420px) {
   .movie-container {
