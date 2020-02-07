@@ -99,6 +99,9 @@ class YTS {
 class TV {
   constructor() {
     this.baseUrl = 'https://tv-v2.api-fetch.website';
+    this._total = 0;
+    this._hasTotal = false;
+    this._limit = 50;
   }
 
   _prepareMovie(movie) {
@@ -141,7 +144,15 @@ class TV {
 
     const movies = this._prepareData(data);
 
+    if (!this._hasTotal) {
+      const { data: pages } = await axios.get(`${this.baseUrl}/movies`);
+
+      this._total = pages.length * this._limit;
+      this._hasTotal = true;
+    }
+
     return {
+      count: this._total,
       limit: movies.length,
       movies
     };
