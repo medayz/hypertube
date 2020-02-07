@@ -30,7 +30,7 @@ export default props => {
     axios
       .get(`/api/v1/movies?page=${page}`)
       .then(results => {
-        const list = results.data;
+        const list = results.data.movies;
         updatePage(page);
         updateMovies(list);
       })
@@ -41,11 +41,9 @@ export default props => {
     axios
       .get(`/api/v1/movies?page=${currentPage}`)
       .then(async results => {
-        const list = results.data;
-        const pagesRoutes = await axios.get(
-          "https://tv-v2.api-fetch.website/movies"
-        );
-        updateNumPages(pagesRoutes.data.length);
+        const list = results.data.movies;
+        const npages = Math.ceil(results.data.count / 75);
+        updateNumPages(npages);
         updateMovies(list);
       })
       .catch(err => console.log(err));
