@@ -48,7 +48,8 @@ passport.use(
 
         // Validate password and make sure it matches with the corresponding hash stored in the database
         // If the passwords match, it returns a value of true.
-        const validate = await user.isValidPassword(password);
+        let validate = false;
+        if (password) validate = await user.isValidPassword(password);
 
         if (!validate) {
           return done(null, false, { message: 'Wrong Password' });
