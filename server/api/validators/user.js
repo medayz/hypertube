@@ -42,3 +42,9 @@ exports.getUserByUsernameValidator = Joi.object().keys({
 exports.verficationValidator = Joi.object().keys({
   token: Joi.string().required()
 });
+
+exports.watchValidator = Joi.object().keys({
+  imdbid: Joi.string()
+    .min(1)
+    .required()
+});

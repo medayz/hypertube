@@ -26,3 +26,18 @@ exports.searchValidator = Joi.object().keys({
 exports.getMovieValidator = Joi.object().keys({
   imdbid: Joi.string().required()
 });
+
+exports.getCommentsValidator = Joi.object().keys({
+  imdbid: Joi.string().required()
+});
+
+exports.addCommentValidator = Joi.object().keys({
+  imdbid: Joi.string()
+    .min(1)
+    .max(30)
+    .required(),
+  text: Joi.string()
+    .min(1)
+    .max(500)
+    .required()
+});

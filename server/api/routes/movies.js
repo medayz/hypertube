@@ -24,7 +24,19 @@ router.get(
   moviesController.getMovie
 );
 
-// router.post('/comments/:movieid', isAuth, moviesController.addComment);
+router.get(
+  '/comments/:imdbid',
+  isAuth,
+  movieValidator.getCommentsValidator,
+  moviesController.getComments
+);
+
+router.post(
+  '/comments/:imdbid',
+  isAuth,
+  movieValidator.addCommentValidator,
+  moviesController.addComment
+);
 
 // router.get('/comments/:movieid', isAuth, moviesController.getComments);
 

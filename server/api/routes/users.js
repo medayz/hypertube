@@ -22,6 +22,13 @@ router.patch(
   usersController.update
 );
 
+router.post(
+  '/watch/:imdbid',
+  isAuth,
+  userValidator.watchValidator,
+  usersController.watch
+);
+
 router.get(
   '/:username',
   userValidator.getUserByUsername,

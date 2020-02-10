@@ -51,3 +51,11 @@ exports.verify = async (req, res, next) => {
 
   res.status(400).send({ error: utils.prettyError(error) });
 };
+
+exports.watchValidator = async (req, res, next) => {
+  const { error } = userSchema.watchValidator.validate(req.params);
+
+  if (!error) return next();
+
+  res.status(400).send({ error: utils.prettyError(error) });
+};
