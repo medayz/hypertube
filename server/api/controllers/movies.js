@@ -42,9 +42,9 @@ exports.addComment = async (req, res, next) => {
       }
     );
 
-    if (!result) return next(createError(404));
+    if (result.n == 0) return next(createError(404));
 
-    res.send(result);
+    res.status(200).send({ message: 'Success' });
   } catch (err) {
     next(err);
   }
