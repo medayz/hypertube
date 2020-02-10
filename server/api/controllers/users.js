@@ -1,6 +1,7 @@
 const utils = require('../utils');
 
 const User = require('../models/user');
+const Movie = require('../models/movie');
 
 const passport = require('../middlewares/passport');
 
@@ -122,6 +123,27 @@ exports.verify = async (req, res, next) => {
       }
     );
     res.status(200).send({ message: 'user verified' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.watch = async (req, res, next) => {
+  try {
+    let movie = Movie.find({ imdbid: req.params.imdbid });
+    let providerName = null;
+
+    if (!movie) providerName = movie.provider;
+
+    const movieDetails = await utils.movies.getMovie(req.params, providerName);
+
+    if (!movieDetails)
+      return res.status(404).send({ message: 'resource not found' });
+
+    movie = new Movie(req.params);
+
+    const data = await movie.watch();
+    res.status(200).send(data);
   } catch (err) {
     next(err);
   }
