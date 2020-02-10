@@ -15,7 +15,7 @@ const PROVIDERS = {
       },
       "title": string,
       "description": string,
-      "rating": int,
+      "rating": { imdb | loved },
       "runtime": int,
       "year": int,
       "genres": [string],
