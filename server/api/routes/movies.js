@@ -38,6 +38,13 @@ router.post(
   moviesController.addComment
 );
 
+router.delete(
+  '/comments/:imdbid/:id',
+  isAuth,
+  movieValidator.deleteCommentValidator,
+  moviesController.deleteComment
+);
+
 // router.get('/comments/:movieid', isAuth, moviesController.getComments);
 
 // router.delete('/comments/:id', isAuth, moviesController.deleteComment);

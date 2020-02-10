@@ -64,3 +64,20 @@ exports.getComments = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deleteComment = async (req, res, next) => {
+  try {
+    const result = await Movie.updateOne(
+      { imdbid: req.params.imdbid },
+      {
+        $pull: { comments: { _id: req.params.id } }
+      }
+    );
+
+    if (result.nModified === 0) return next(createError(404));
+
+    res.status(200).send({ message: 'Success' });
+  } catch (err) {
+    next(err);
+  }
+};
