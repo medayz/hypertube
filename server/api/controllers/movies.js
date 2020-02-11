@@ -65,6 +65,23 @@ exports.getComments = async (req, res, next) => {
   }
 };
 
+exports.updateComment = async (req, res, next) => {
+  try {
+    const result = await Movie.updateOne(
+      { imdbid: req.body.imdbid, 'comments._id': req.body.id },
+      {
+        $set: { 'comments.$.text': req.body.text }
+      }
+    );
+
+    if (result.nModified === 0) return next(createError(404));
+
+    res.status(200).send({ message: 'Success' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.deleteComment = async (req, res, next) => {
   try {
     const result = await Movie.updateOne(

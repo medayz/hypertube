@@ -42,6 +42,21 @@ exports.addCommentValidator = Joi.object().keys({
     .required()
 });
 
+exports.updateCommentValidator = Joi.object().keys({
+  imdbid: Joi.string()
+    .min(1)
+    .max(30)
+    .required(),
+  id: Joi.string()
+    .min(1)
+    .max(24)
+    .required(),
+  text: Joi.string()
+    .min(1)
+    .max(500)
+    .required()
+});
+
 exports.deleteCommentValidator = Joi.object().keys({
   imdbid: Joi.string()
     .min(1)

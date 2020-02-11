@@ -38,19 +38,18 @@ router.post(
   moviesController.addComment
 );
 
+router.patch(
+  '/comments/:imdbid/:id',
+  isAuth,
+  movieValidator.updateCommentValidator,
+  moviesController.updateComment
+);
+
 router.delete(
   '/comments/:imdbid/:id',
   isAuth,
   movieValidator.deleteCommentValidator,
   moviesController.deleteComment
 );
-
-// router.get('/comments/:movieid', isAuth, moviesController.getComments);
-
-// router.delete('/comments/:id', isAuth, moviesController.deleteComment);
-
-// router.get('/search', isAuth, moviesController.searchByName);
-
-// router.get('/:provider/:id', isAuth, moviesController.getMovie);
 
 module.exports = router;

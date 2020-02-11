@@ -57,6 +57,20 @@ exports.addCommentValidator = (req, res, next) => {
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
+exports.updateCommentValidator = (req, res, next) => {
+  const { error, value } = movieSchema.updateCommentValidator.validate({
+    ...req.params,
+    ...req.body
+  });
+
+  if (!error) {
+    req.body = value;
+    return next();
+  }
+
+  res.status(400).send({ error: utils.prettyError(error) });
+};
+
 exports.deleteCommentValidator = (req, res, next) => {
   const { error } = movieSchema.deleteCommentValidator.validate(req.params);
 
