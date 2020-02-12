@@ -103,9 +103,12 @@ class Movies {
 
   async search(options = {}) {
     for (const provider of this.providers) {
-      const data = await provider.obj.search(options);
+      try {
+        const data = await provider.obj.search(options);
 
-      if (data.movies.length) return data;
+        if (data.movies.length) return data;
+      } catch (err) {
+      }
     }
     return {
       limit: 0,
