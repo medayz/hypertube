@@ -7,8 +7,8 @@ const ImdbSvg = () => (
     id="home_img"
     class="ipc-logo"
     xmlns="http://www.w3.org/2000/svg"
-    width="42"
-    height="21"
+    width="32"
+    height="16"
     viewBox="0 0 64 32"
     version="1.1"
   >
@@ -31,8 +31,8 @@ const ImdbSvg = () => (
 const PopCornTimeSvg = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="21"
-    height="21"
+    width="16"
+    height="16"
     version="1.1"
     viewBox="0 0 32 32"
   >
@@ -76,11 +76,34 @@ const PopCornTimeSvg = () => (
     />
   </svg>
 );
+const PlaySvg = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    id="Capa_1"
+    x="0px"
+    y="0px"
+    viewBox="0 0 320.001 320.001"
+    style={{ enableBackground: "new 0 0 320.001 320.001" }}
+    width="16px"
+    height="16px"
+  >
+    <g>
+      <path
+        d="M295.84,146.049l-256-144c-4.96-2.784-11.008-2.72-15.904,0.128C19.008,5.057,16,10.305,16,16.001v288  c0,5.696,3.008,10.944,7.936,13.824c2.496,1.44,5.28,2.176,8.064,2.176c2.688,0,5.408-0.672,7.84-2.048l256-144  c5.024-2.848,8.16-8.16,8.16-13.952S300.864,148.897,295.84,146.049z"
+        data-original="#000000"
+        class="active-path"
+        data-old_color="#000000"
+        fill="#DCF763"
+      />
+    </g>{" "}
+  </svg>
+);
 
 const { Text } = Typography;
 const ImdbIcon = props => <Icon component={ImdbSvg} {...props} />;
 const PopCornTimeIcon = props => <Icon component={PopCornTimeSvg} {...props} />;
-// const play = () => <></>
+const PlayIcon = props => <Icon component={PlaySvg} {...props} />;
 
 export default props => {
   const click = e => {
@@ -88,6 +111,9 @@ export default props => {
     const imdb = parent.querySelector(".ratings").style;
     const info = parent.querySelector(".info").style;
     const image = parent.querySelector(".thumbnail").style;
+    const btns = parent.querySelector(".ratings").style;
+    const rate = parent.querySelector(".rate").style;
+    const play = parent.querySelector(".play").style;
     const parentStyle = parent.style;
 
     if (!("ontouchstart" in document.documentElement)) {
@@ -102,6 +128,10 @@ export default props => {
         image.top = "0";
         image.transform = "scale(1)";
         imdb.transform = "scale(1)";
+        rate.background = "rgba(252, 252, 252, 0)";
+        play.background = "rgba(252, 252, 252, 0)";
+        btns.bottom = "0";
+        btns.transition = "bottom none";
       } else {
         parentStyle.zIndex = "1337";
         parentStyle.borderRadius = "10px 10px 0 0";
@@ -114,6 +144,10 @@ export default props => {
         imdb.background = "transparent";
         parentStyle.transition = "transform .4s";
         image.top = "0";
+        rate.background = "rgba(252, 252, 252, .21)";
+        play.background = "rgba(252, 252, 252, .21)";
+        btns.bottom = "33%";
+        btns.transition = "bottom .4s";
       }
     } else {
       if (parentStyle.transform === "scaleY(1.6)") {
@@ -127,6 +161,10 @@ export default props => {
         image.top = "0";
         image.transform = "scale(1)";
         imdb.transform = "scale(1)";
+        rate.background = "rgba(252, 252, 252, 0)";
+        play.background = "rgba(252, 252, 252, 0)";
+        btns.bottom = "0";
+        btns.transition = "none";
       } else {
         parentStyle.zIndex = "1337";
         parentStyle.borderRadius = "10px 10px 0 0";
@@ -139,6 +177,10 @@ export default props => {
         imdb.background = "transparent";
         parentStyle.transition = "transform .1s";
         image.top = "0";
+        rate.background = "rgba(252, 252, 252, .21)";
+        play.background = "rgba(252, 252, 252, .21)";
+        btns.bottom = "33%";
+        btns.transition = "bottom .4";
       }
     }
   };
@@ -146,6 +188,9 @@ export default props => {
     const parent = e.currentTarget;
     const image = parent.querySelector(".thumbnail").style;
     const imdb = parent.querySelector(".ratings").style;
+    const btns = parent.querySelector(".ratings").style;
+    const rate = parent.querySelector(".rate").style;
+    const play = parent.querySelector(".play").style;
     const parentStyle = parent.style;
 
     if (!("ontouchstart" in document.documentElement)) {
@@ -160,6 +205,9 @@ export default props => {
       imdb.transform = "scale(1)";
       imdb.transition = "none";
       imdb.background = "rgba(4, 42, 43, 0.6)";
+      rate.background = "rgba(252, 252, 252, 0)";
+      play.background = "rgba(252, 252, 252, 0)";
+      btns.bottom = "0";
     }
   };
   const mouseEnter = e => {
@@ -207,23 +255,38 @@ export default props => {
             onClick={() => {}}
           />
           <div className="ratings">
-            {movie.rating.imdb ? (
-              <ImdbIcon
-                style={{
-                  display: "inline-block",
-                  boxShadow: "2px 2px 2px #042A2B",
-                }}
-                className="imdb"
-              />
-            ) : (
-              <PopCornTimeIcon
-                style={{
-                  display: "inline-block",
-                }}
-                className="imdb"
-              />
-            )}
-            <h2>{`${movie.rating.loved}%`}</h2>
+            <a className="play">
+              <PlayIcon />
+              <h2>watch</h2>
+            </a>
+            <a
+              className="rate"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://www.imdb.com/title/${movie.source.imdbid}`}
+            >
+              {movie.rating.imdb ? (
+                <ImdbIcon
+                  style={{
+                    display: "inline-block",
+                    boxShadow: "2px 2px 2px #042A2B",
+                  }}
+                  className="imdb"
+                />
+              ) : (
+                <PopCornTimeIcon
+                  style={{
+                    display: "inline-block",
+                  }}
+                  className="imdb"
+                />
+              )}
+              <h2>
+                {movie.rating.imdb
+                  ? `${movie.rating.imdb}`
+                  : `${movie.rating.loved}%`}
+              </h2>
+            </a>
           </div>
         </div>
       ))}

@@ -5,7 +5,6 @@ import "./library.css";
 
 import Layout from "../components/layout";
 import Movies from "../components/movies";
-import { Z_BLOCK } from "zlib";
 
 const { Title } = Typography;
 
@@ -59,13 +58,27 @@ export default props => {
     <Layout>
       <div id="wallp" className="library-wallpaper">
         <div className="over-wallpaper">
-          <Title className=".library-heading">It's Movie Time !</Title>
+          <div
+            style={{
+              height: "6vw",
+              width: "58vw",
+              background: "#FED766",
+              display: "block",
+              position: "absolute",
+              transform: "translateY(15%) rotate(-2deg)",
+              webkitMaskBoxImage:
+                "url(https://www.onlygfx.com/wp-content/uploads/2017/04/grunge-brush-stroke-banner-2-6-1024x250.png)",
+            }}
+          ></div>
+          <Title className=".library-heading" style={{ position: "absolute" }}>
+            It's Movie Time !
+          </Title>
         </div>
       </div>
       <PaginationContainer>
         <Pagination
           current={currentPage}
-          defaultPageSize={75}
+          defaultPageSize={50}
           onChange={switchPage}
           total={total}
         />
@@ -81,7 +94,7 @@ export default props => {
       <PaginationContainer>
         <Pagination
           current={currentPage}
-          defaultPageSize={75}
+          defaultPageSize={50}
           onChange={switchPage}
           total={total}
         />
