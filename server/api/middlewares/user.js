@@ -1,5 +1,8 @@
 const userSchema = require('../validators/user');
 const utils = require('../utils');
+const { loadImage } = require('canvas');
+const createError = require('http-errors');
+const fs = require('fs');
 
 exports.createValidator = (req, res, next) => {
   const { error } = userSchema.createUserValidator.validate(req.body);
@@ -58,4 +61,21 @@ exports.watchValidator = async (req, res, next) => {
   if (!error) return next();
 
   res.status(400).send({ error: utils.prettyError(error) });
+};
+
+exports.addImage = async (req, res, next) => {
+  try {
+    if (!req.file) return next(createError(400, 'Invalid image'));
+
+    await loadImage(req.file.path);
+    next();
+  } catch (err) {
+    if (req.file) {
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+    }
+
+    next(createError(400, 'Invalid image'));
+  }
 };

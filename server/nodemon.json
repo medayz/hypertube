@@ -1,5 +1,7 @@
 {
   "env": {
+    "IMAGES_PATH": "images",
+    "MAX_IMAGE_SIZE": "5242880",
     "JWT_KEY": "hypertube:1337",
     "DATABASE_URL": "database",
     "EMAIL": "dev.matcha.noreply@gmail.com",

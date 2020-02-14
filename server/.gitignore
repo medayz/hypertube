@@ -121,5 +121,6 @@ temp/
 
 ### Custom rules ###
 movies/*
+images/*
 
 # End of https://www.gitignore.io/api/node,visualstudiocode

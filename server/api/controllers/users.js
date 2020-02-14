@@ -1,4 +1,5 @@
 const utils = require('../utils');
+const fs = require('fs');
 
 const User = require('../models/user');
 const Movie = require('../models/movie');
@@ -144,6 +145,25 @@ exports.watch = async (req, res, next) => {
 
     const data = await movie.watch();
     res.status(200).send(data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.addImage = async (req, res, next) => {
+  try {
+    await User.updateOne(
+      { _id: req.user._id },
+      { $set: { avatar: req.file.filename } }
+    );
+
+    if (req.user.avatar !== undefined) {
+      fs.unlinkSync(`${process.env.IMAGES_PATH}/${req.user.avatar}`);
+    }
+
+    res.status(201).send({
+      message: 'Success'
+    });
   } catch (err) {
     next(err);
   }

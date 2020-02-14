@@ -3,6 +3,7 @@ const { isAuth } = require('../middlewares/auth');
 
 const usersController = require('../controllers/users');
 const userValidator = require('../middlewares/user');
+const { upload, multerError } = require('../middlewares/upload');
 
 router.post('/', userValidator.createValidator, usersController.create);
 
@@ -20,6 +21,15 @@ router.patch(
   isAuth,
   userValidator.updateValidator,
   usersController.update
+);
+
+router.post(
+  '/avatar',
+  isAuth,
+  upload,
+  userValidator.addImage,
+  usersController.addImage,
+  multerError
 );
 
 router.post(
