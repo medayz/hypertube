@@ -105,6 +105,13 @@ class TV {
   }
 
   _prepareMovie(movie) {
+    let banner = undefined;
+    let poster = undefined;
+
+    if (movie.images.poster) poster = movie.images.poster.split('/').pop();
+
+    if (movie.images.fanart) banner = movie.images.fanart.split('/').pop();
+
     return {
       source: {
         imdbid: movie._id,
@@ -116,7 +123,8 @@ class TV {
       runtime: movie.runtime,
       year: movie.year,
       genres: movie.genres,
-      poster: movie.images.poster,
+      poster: poster,
+      banner: banner,
       torrents: Object.keys(movie.torrents.en).map(key => {
         const torrent = movie.torrents.en[key];
         torrent.quality = key;
