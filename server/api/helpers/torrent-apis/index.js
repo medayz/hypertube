@@ -52,7 +52,8 @@ class Movies {
 
       return {
         name: provider,
-        obj: instance
+        obj: instance,
+        enabled: true
       };
     });
 
@@ -78,10 +79,24 @@ class Movies {
     return this.providers.map(provider => provider.name);
   }
 
-  getMovies(options = {}) {
-    const mainProvider = this.providers[0];
+  async getMovies(options = {}) {
+    for (let i = 0; i < this.providers.length - 1; i++) {
+      const provider = this.providers[i];
+      try {
+        if (!provider.enabled) continue;
 
-    return mainProvider.obj.getMovies(options);
+        const data = await provider.obj.getMovies(options);
+
+        return data;
+      } catch (err) {
+        if (provider.name == 'YTS') provider.enabled = false;
+      }
+    }
+    return {
+      count: 0,
+      limit: 0,
+      movies: []
+    };
   }
 
   async getMovie(params, providerName = null) {
@@ -107,8 +122,7 @@ class Movies {
         const data = await provider.obj.search(options);
 
         if (data.movies.length) return data;
-      } catch (err) {
-      }
+      } catch (err) {}
     }
     return {
       limit: 0,
