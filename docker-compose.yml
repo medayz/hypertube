@@ -17,6 +17,7 @@ services:
     build: ./server
     volumes:
       - ./server:/app
+      - node_modules_server:/app/node_modules
     ports:
       - "3000:3000"
       - "4000:4000"
@@ -34,3 +35,4 @@ services:
 volumes:
   data:
   node_modules_client:
+  node_modules_server:
