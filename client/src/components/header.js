@@ -8,8 +8,8 @@ import Movies from "./movies";
 import axios from "axios";
 import "./header.css";
 
-const { Search } = Input;
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
+const { Search } = Input;
 const { Title } = Typography;
 
 const Header = ({ siteTitle }) => {
