@@ -6,22 +6,41 @@ class MovieStream {
     this._verbose = options.verbose || false;
     this._clientSupportedFormat = options.clientSupportedFormat;
     this._convert = options.convert || false;
+    /*
+    'imdbid-quality': {
+      magnet: string,
+      engine: torrentStreamEngine
+    }
+    */
     this.data = {};
   }
 
-  fromMagnet(magnet, options) {
+  get(imdbid, quality) {
+    const key = `${imdbid}-${quality}`;
+
+    return this.data[key];
+  }
+
+  fromMagnet(options) {
+    const { imdbid, magnet, quality } = options;
     let isNewEngine = false;
 
-    if (!this.data[magnet]) {
+    const key = `${imdbid}-${quality}`;
+
+    if (!this.data[key]) {
       if (this._verbose) {
         console.info('[INFO] engine creating...');
       }
+
       const engine = torrentStream(magnet);
-      this.data[magnet] = engine;
+      this.data[key] = {
+        magnet: magnet,
+        engine: engine
+      };
       isNewEngine = true;
     }
 
-    const engine = this.data[magnet];
+    const { engine } = this.data[key];
 
     return new Promise((resolve, reject) => {
       if (isNewEngine) {

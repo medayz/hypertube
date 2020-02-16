@@ -1,32 +1,67 @@
-const router = require("express").Router();
-const MovieStream = require("../helpers/MovieStream");
+const router = require('express').Router();
+const MovieStream = require('../helpers/MovieStream');
+const movies = require('../utils/movies');
+const createError = require('http-errors');
+const { isAuth } = require('../middlewares/auth');
 
 const movieStream = new MovieStream({
-  clientSupportedFormat: ["mp4", "mkv"],
+  clientSupportedFormat: ['mp4', 'mkv', 'webm'],
   convert: true, // To webm
   verbose: true
 });
 
-router.get("/", (req, res, next) => {
-  const { magnet } = req.query;
-  const range = req.headers.range;
-  let sent = false;
+router.use((req, res, next) => {
+  const token = req.query.token || '';
+  req.headers.authorization = `Bearer ${token}`;
+  next();
+});
 
-  movieStream
-    .fromMagnet(magnet, { range })
-    .then(({ head, stream }) => {
-      console.log("[STREAM]", "New stream");
-      if (!sent) {
-        res.writeHead(206, head);
-        sent = true;
-      }
-      stream.pipe(res);
-    })
-    .catch(err => {
-      return res.status(400).send({
-        message: err.message
-      });
+router.get('/:imdbid/:quality', isAuth);
+
+router.get('/:imdbid/:quality', async (req, res, next) => {
+  const { imdbid, quality } = req.params;
+
+  let data = movieStream.get(imdbid, quality);
+
+  if (!data) {
+    let movie = await movies.getMovie({ imdbid });
+
+    if (!movie) return next(createError(404));
+
+    movie = movie.movie;
+
+    const torrent = movie.torrents.find(item => item.quality === quality);
+
+    if (!torrent) return next(createError(404));
+
+    req.movieData = {
+      ...req.params,
+      magnet: torrent.torrentMagnet,
+      range: req.headers.range
+    };
+    return next();
+  }
+  req.movieData = {
+    ...req.params,
+    range: req.headers.range
+  };
+  next();
+});
+
+router.get('/:imdbid/:quality', async (req, res, next) => {
+  try {
+    const { head, stream } = await movieStream.fromMagnet(req.movieData);
+
+    console.log('[STREAM]', 'New stream');
+
+    res.writeHead(206, head);
+
+    stream.pipe(res);
+  } catch (err) {
+    res.status(400).send({
+      message: err.message
     });
+  }
 });
 
 module.exports = router;
