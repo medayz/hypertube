@@ -1,5 +1,6 @@
 const movieSchema = require('../validators/movie');
 const utils = require('../utils');
+const redisClient = require('../utils/redis-client');
 
 exports.getMoviesValidator = (req, res, next) => {
   const { error, value } = movieSchema.getMoviesValidator.validate(req.query);
@@ -79,4 +80,46 @@ exports.deleteCommentValidator = (req, res, next) => {
   }
 
   res.status(400).send({ error: utils.prettyError(error) });
+};
+
+exports.cacheMovies = async (req, res, next) => {
+  try {
+    const key = `movies-${req.query.page}`;
+    const results = await redisClient.getAsync(key);
+
+    if (results) return res.status(200).send(JSON.parse(results));
+
+    req.redisKey = key;
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.cacheMovie = async (req, res, next) => {
+  try {
+    const key = `movie-${req.params.imdbid}`;
+    const results = await redisClient.getAsync(key);
+
+    if (results) return res.status(200).send(JSON.parse(results));
+
+    req.redisKey = key;
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.cacheSearch = async (req, res, next) => {
+  try {
+    const key = `search-${req.query.q}`;
+    const results = await redisClient.getAsync(key);
+
+    if (results) return res.status(200).send(JSON.parse(results));
+
+    req.redisKey = key;
+    next();
+  } catch (err) {
+    next(err);
+  }
 };

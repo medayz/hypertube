@@ -23,6 +23,7 @@ services:
       - "4000:4000"
     depends_on:
       - database
+      - cache
 
   database:
     container_name: database
@@ -31,6 +32,10 @@ services:
       - data:/data/db
     ports:
       - "27017:27017"
+  cache:
+    image: redis
+    ports:
+      - 6379:6379
 
 volumes:
   data:

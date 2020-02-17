@@ -6,6 +6,7 @@ const movieValidator = require('../middlewares/movie');
 router.get(
   '/',
   isAuth,
+  movieValidator.cacheMovies,
   movieValidator.getMoviesValidator,
   moviesController.getMovies
 );
@@ -13,6 +14,7 @@ router.get(
 router.get(
   '/search',
   isAuth,
+  movieValidator.cacheSearch,
   movieValidator.searchValidator,
   moviesController.search
 );
@@ -20,6 +22,7 @@ router.get(
 router.get(
   '/:imdbid',
   isAuth,
+  movieValidator.cacheMovie,
   movieValidator.getMovieValidator,
   moviesController.getMovie
 );

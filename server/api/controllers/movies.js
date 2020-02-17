@@ -1,10 +1,13 @@
 const Movie = require('../models/movie');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
+const redisClient = require('../utils/redis-client');
 
 exports.search = async (req, res, next) => {
   try {
     const data = await movies.search(req.query);
+
+    await redisClient.setexAsync(req.redisKey, redisClient.EXPIRE_IN, JSON.stringify(data));
 
     res.status(200).send(data);
   } catch (err) {
@@ -18,6 +21,8 @@ exports.getMovie = async (req, res, next) => {
 
     if (!movie) return res.status(404).send({ message: 'resource not found' });
 
+    await redisClient.setexAsync(req.redisKey, redisClient.EXPIRE_IN ,JSON.stringify(movie));
+
     res.status(200).send(movie);
   } catch (err) {
     next(err);
@@ -27,6 +32,9 @@ exports.getMovie = async (req, res, next) => {
 exports.getMovies = async (req, res, next) => {
   try {
     const result = await movies.getMovies(req.query);
+
+    await redisClient.setexAsync(req.redisKey, redisClient.EXPIRE_IN, JSON.stringify(result));
+
     res.status(200).send(result);
   } catch (err) {
     next(err);
