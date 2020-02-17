@@ -13,13 +13,13 @@ exports.create = async (req, res, next) => {
     const usernameExists = await User.usernameExists(req.body.username);
 
     if (usernameExists) {
-      return res.status(403).send({ error: { username: 'already exists' } });
+      return res.status(400).send({ error: { username: 'already exists' } });
     }
 
     const emailExists = await User.emailExists(req.body.email);
 
     if (emailExists) {
-      return res.status(403).send({ error: { email: 'already exists' } });
+      return res.status(400).send({ error: { email: 'already exists' } });
     }
 
     const newUser = await user.save();
@@ -66,10 +66,7 @@ exports.getUserByUsername = async (req, res, next) => {
       .select('firstName')
       .select('lastName');
 
-    if (!user) {
-      return res.status(404).send({ message: 'resource not found' });
-    }
-    res.status(200).send({ exists: true });
+    res.status(200).send({ exists: user !== null });
   } catch (err) {
     next(err);
   }
@@ -81,7 +78,7 @@ exports.update = async (req, res, next) => {
       const usernameExists = await User.usernameExists(req.body.username);
 
       if (usernameExists) {
-        return res.status(403).send({ message: 'username is already exists' });
+        return res.status(400).send({ message: 'username is already exists' });
       }
     }
 
@@ -89,7 +86,7 @@ exports.update = async (req, res, next) => {
       const emailExists = await User.emailExists(req.body.email);
 
       if (emailExists) {
-        return res.status(403).send({ message: 'email is already exists' });
+        return res.status(400).send({ message: 'email is already exists' });
       }
     }
 
@@ -97,7 +94,7 @@ exports.update = async (req, res, next) => {
 
     // Check email is updated
     if (req.body.email && req.body.email !== user.email) {
-      user.emailActivated = false;
+      // Send email validation
     }
 
     // Update user object with given values

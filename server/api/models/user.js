@@ -3,11 +3,17 @@ const utils = require('../utils');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
-  username: { type: String },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  username: { type: String, trim: true, lowercase: true },
+  firstName: { type: String, trim: true, required: true },
+  lastName: { type: String, trim: true, required: true },
   avatar: { type: String },
-  email: { type: String, unique: true, required: true },
+  email: {
+    type: String,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    required: true
+  },
   emailVerified: { type: Boolean, default: false },
   password: { type: String, select: false },
   google: { id: String },
@@ -18,6 +24,8 @@ const userSchema = new Schema({
 });
 
 userSchema.pre('save', function(next) {
+  if (this.isModified('email')) this.emailVerified = false;
+
   // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
 

@@ -1,17 +1,24 @@
 const Joi = require('@hapi/joi');
 
 exports.createUserValidator = Joi.object().keys({
-  username: Joi.string().required(),
+  username: Joi.string()
+    .trim()
+    .lowercase()
+    .required(),
   firstName: Joi.string()
     .min(3)
     .max(100)
+    .trim()
     .required(),
   lastName: Joi.string()
     .min(3)
     .max(100)
+    .trim()
     .required(),
   email: Joi.string()
     .email()
+    .trim()
+    .lowercase()
     .required(),
   password: Joi.string()
     .min(4)
@@ -20,7 +27,10 @@ exports.createUserValidator = Joi.object().keys({
 });
 
 exports.loginUserValidator = Joi.object().keys({
-  username: Joi.string().required(),
+  username: Joi.string()
+    .trim()
+    .lowercase()
+    .required(),
   password: Joi.string()
     .min(4)
     .max(100)
@@ -28,15 +38,28 @@ exports.loginUserValidator = Joi.object().keys({
 });
 
 exports.updateUserValidator = Joi.object().keys({
-  fullName: Joi.string()
+  username: Joi.string()
+    .trim()
+    .lowercase(),
+  firstName: Joi.string()
     .min(3)
-    .max(100),
-  username: Joi.string(),
-  email: Joi.string().email()
+    .max(100)
+    .trim(),
+  lastName: Joi.string()
+    .min(3)
+    .max(100)
+    .trim(),
+  email: Joi.string()
+    .trim()
+    .email()
+    .lowercase()
 });
 
 exports.getUserByUsernameValidator = Joi.object().keys({
-  username: Joi.string().required()
+  username: Joi.string()
+    .trim()
+    .lowercase()
+    .required()
 });
 
 exports.verficationValidator = Joi.object().keys({

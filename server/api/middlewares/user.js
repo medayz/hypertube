@@ -5,33 +5,45 @@ const createError = require('http-errors');
 const fs = require('fs');
 
 exports.createValidator = (req, res, next) => {
-  const { error } = userSchema.createUserValidator.validate(req.body);
+  const { error, value } = userSchema.createUserValidator.validate(req.body);
 
-  if (!error) return next();
+  if (!error) {
+    req.body = value;
+    return next();
+  }
 
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.loginValidator = (req, res, next) => {
-  const { error } = userSchema.loginUserValidator.validate(req.body);
+  const { error, value } = userSchema.loginUserValidator.validate(req.body);
 
-  if (!error) return next();
+  if (!error) {
+    req.body = value;
+    return next();
+  }
 
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.updateValidator = (req, res, next) => {
-  const { error } = userSchema.updateUserValidator.validate(req.body);
+  const { error, value } = userSchema.updateUserValidator.validate(req.body);
 
-  if (!error) return next();
+  if (!error) {
+    req.body = value;
+    return next();
+  }
 
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
 exports.getUserByUsername = (req, res, next) => {
-  const { error } = userSchema.getUserByUsernameValidator.validate(req.params);
+  const { error, value } = userSchema.getUserByUsernameValidator.validate(req.params);
 
-  if (!error) return next();
+  if (!error) {
+    req.params = value;
+    return next();
+  }
 
   res.status(400).send({ error: utils.prettyError(error) });
 };
