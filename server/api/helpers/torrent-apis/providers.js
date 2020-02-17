@@ -9,8 +9,17 @@ class YTS {
   }
 
   _prepareMovie(movie) {
-    const { path } = parseURL(movie.large_cover_image);
-    const poster = `${this.imageBaseUrl}${path}`;
+    let poster;
+    let banner;
+
+    if (movie.large_cover_image) {
+      const { path: posterPath } = parseURL(movie.large_cover_image);
+      poster = `${this.imageBaseUrl}${posterPath}`;
+    }
+    if (movie.background_image_original) {
+      const { path: bannerPath } = parseURL(movie.background_image_original);
+      banner = `${this.imageBaseUrl}${bannerPath}`;
+    }
 
     return {
       source: {
@@ -24,6 +33,7 @@ class YTS {
       year: movie.year,
       genres: movie.genres,
       poster: poster,
+      banner: banner,
       torrents: movie.torrents.map(torrent => ({
         torrentLink: `${this.baseUrl}/torrent/download/${torrent.hash}`,
         quality: torrent.quality,
@@ -108,9 +118,17 @@ class TV {
     let banner = undefined;
     let poster = undefined;
 
-    if (movie.images.poster) poster = movie.images.poster.split('/').pop();
+    if (movie.images.poster) {
+      poster = `https://image.tmdb.org/t/p/w500/${movie.images.poster
+        .split('/')
+        .pop()}`;
+    }
 
-    if (movie.images.fanart) banner = movie.images.fanart.split('/').pop();
+    if (movie.images.fanart) {
+      banner = `https://image.tmdb.org/t/p/w1280/${movie.images.fanart
+        .split('/')
+        .pop()}`;
+    }
 
     return {
       source: {
@@ -195,6 +213,14 @@ class PopCorn {
   }
 
   _prepareMovie(movie) {
+    let poster;
+
+    if (movie.poster_big) {
+      poster = `https://image.tmdb.org/t/p/w500/${movie.poster_big
+        .split('/')
+        .pop()}`;
+    }
+
     return {
       source: {
         imdbid: movie.imdb,
@@ -206,7 +232,7 @@ class PopCorn {
       runtime: movie.runtime,
       year: movie.year,
       genres: movie.genres,
-      poster: movie.poster_big,
+      poster: poster,
       torrents: movie.items.map(item => ({
         torrentLink: item.torrent_url,
         torrentMagnet: item.torrent_magnet,
