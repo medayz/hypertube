@@ -12,6 +12,7 @@ import ModalVideo from "react-modal-video";
 import "../../node_modules/react-modal-video/scss/modal-video.scss";
 import "./movie.css";
 import Layout from "../components/layout";
+import Player from "../components/video-react-player";
 
 const { Title, Paragraph } = Typography;
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
@@ -144,6 +145,14 @@ export default props => {
           <div className="over-wallpaper"></div>
         </div>
       </div>
+      {movie.source && movie.source.imdbid && (
+        <div>
+          <Player
+            poster={movie.banner || ""}
+            imdbid={movie.source.imdbid || ""}
+          />
+        </div>
+      )}
     </Layout>
   );
 };
