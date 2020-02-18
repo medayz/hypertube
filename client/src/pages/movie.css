@@ -1,6 +1,6 @@
 .info-text .movie-title {
   position: absolute;
-  font-size: 6vw;
+  font-size: 2em;
   text-shadow: 0.3vw 0.3vw 0 #042a2b;
   -webkit-text-stroke: 0.1vw #042a2b;
 }
@@ -17,7 +17,7 @@
 .movie-wallpaper {
   display: block;
   position: relative;
-  height: 56.25vw;
+  min-height: 56.25vw;
   width: 100%;
 }
 .over-wallpaper {
@@ -36,26 +36,36 @@
     rgba(4, 42, 43, 1) 100%
   );
 }
-.movie-info {
+.content {
   position: relative;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: 25% 75%;
+  margin: 0 auto;
+  padding: 4.2% 0;
+}
+.movie-info {
   width: 100%;
-  height: 42vw;
-  display: flex;
+  position: relative;
   background-color: rgba(72, 229, 194, 0.1);
   backdrop-filter: blur(3px);
-  padding: 2vw 6vw;
+  /* padding: 2vw 6vw; */
 }
-.movie-info > img {
-  width: 25%;
-  display: inline-block;
-  border-radius: 4px;
-  margin: auto 2%;
+.poster {
+  /* margin: 0; */
+  padding: 5% 0;
+  max-width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.movie-info > div {
-  display: inline-block;
-  flex-grow: 1;
+.poster > img {
+  border-radius: 1vw;
+  width: 100%;
+}
+.info-text {
+  padding: 2em;
   text-align: left;
-  padding: 2%;
 }
 .info-text .title,
 .info-text .genre,
@@ -65,41 +75,67 @@
 }
 .info-text .title {
   color: #dcf763;
-  font-size: 3vw;
+  font-size: 2em;
   font-weight: bold;
-  letter-spacing: 0.1ex;
-  line-height: 3ex;
 }
-.info-text .release {
-  font-size: 2.2vw;
-  margin: 0 13px;
-  color: #fafafa;
+.info-text .trailer {
+  margin-bottom: 0.69em;
 }
 .info-text .info-span {
-  margin: 0.6vw;
+  margin-left: 8px;
   color: #fcfcfc;
-  font-size: 1.4vw;
+  font-size: 1em;
   display: inline-block;
 }
 .info-text .description {
-  font-family: "Cairo", sans-serif;
-  font-size: 1.5vw;
-  line-height: 2.6ex;
-  letter-spacing: normal;
+  /* font-family: "Cairo", sans-serif; */
+  font-size: 1em;
+  line-height: 1.4em;
+  margin: 0.69em 0;
+  /* letter-spacing: 0.02em; */
   color: #fcfcfc;
-  padding: 0.6vw;
+  padding: 0.6vw 0;
 }
 .info-text .genre {
-  margin: 0.6vw;
-  padding: 0.5vw 0.8vw;
-  font-size: 1.1vw;
+  margin: 0 10px 0 0;
+  padding: 4px 8px;
+  font-size: 1em;
   background-color: #48e5c2;
-  color: #fafafa;
-  border-radius: 0.2vw;
+  color: #fcfcfc;
+  border-radius: 4px;
 }
 .info-text > div {
   display: flex;
   align-items: center;
   justify-content: left;
-  margin: 1vw 0;
+  margin: 0 0 13px 0;
+}
+
+@media only screen and (max-width: 1000px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+  .info-text .info-span {
+    margin-left: 10px;
+  }
+  .info-text {
+    padding: 0 42px;
+  }
+  .poster {
+    margin-left: 42px;
+  }
+}
+@media only screen and (max-device-width: 1000px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+  .info-text .info-span {
+    margin-left: 10px;
+  }
+  .info-text {
+    padding: 0 42px;
+  }
+  .poster {
+    margin-left: 42px;
+  }
 }

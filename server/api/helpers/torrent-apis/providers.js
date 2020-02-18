@@ -1,11 +1,11 @@
-const axios = require('axios');
-const cloudScrapper = require('cloudscraper');
-const { parse: parseURL } = require('url');
+const axios = require("axios");
+const cloudScrapper = require("cloudscraper");
+const { parse: parseURL } = require("url");
 
 class YTS {
   constructor() {
-    this.baseUrl = 'https://yts.mx';
-    this.imageBaseUrl = 'https://img.yts.mx';
+    this.baseUrl = "https://yts.mx";
+    this.imageBaseUrl = "https://img.yts.mx";
   }
 
   _prepareMovie(movie) {
@@ -24,7 +24,7 @@ class YTS {
     return {
       source: {
         imdbid: movie.imdb_code,
-        provider: 'YTS'
+        provider: "YTS"
       },
       title: movie.title,
       description: movie.summary,
@@ -34,6 +34,7 @@ class YTS {
       genres: movie.genres,
       poster: poster,
       banner: banner,
+      trailer: movie.yt_trailer_code,
       torrents: movie.torrents.map(torrent => ({
         torrentLink: `${this.baseUrl}/torrent/download/${torrent.hash}`,
         quality: torrent.quality,
@@ -78,7 +79,7 @@ class YTS {
   }
 
   getMovies(options) {
-    return this._sendRequest('list_movies.json', {
+    return this._sendRequest("list_movies.json", {
       page: options.page,
       limit: options.limit,
       query_term: options.q
@@ -86,7 +87,7 @@ class YTS {
   }
 
   async getMovie(params) {
-    const data = await this._sendRequest('list_movies.json', {
+    const data = await this._sendRequest("list_movies.json", {
       query_term: params.imdbid
     });
 
@@ -98,7 +99,7 @@ class YTS {
   }
 
   search(options) {
-    return this._sendRequest('list_movies.json', {
+    return this._sendRequest("list_movies.json", {
       page: 1,
       limit: options.limit,
       query_term: options.q
@@ -108,10 +109,20 @@ class YTS {
 
 class TV {
   constructor() {
-    this.baseUrl = 'https://tv-v2.api-fetch.website';
+    this.baseUrl = "https://tv-v2.api-fetch.website";
     this._total = 0;
     this._hasTotal = false;
     this._limit = 50;
+  }
+
+  _getTrailerId(url) {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.searchParams.get("v");
+    } catch (err) {
+      console.log("invalid trailer url:", err.message);
+      return "";
+    }
   }
 
   _prepareMovie(movie) {
@@ -120,20 +131,20 @@ class TV {
 
     if (movie.images.poster) {
       poster = `https://image.tmdb.org/t/p/w500/${movie.images.poster
-        .split('/')
+        .split("/")
         .pop()}`;
     }
 
     if (movie.images.fanart) {
       banner = `https://image.tmdb.org/t/p/w1280/${movie.images.fanart
-        .split('/')
+        .split("/")
         .pop()}`;
     }
 
     return {
       source: {
         imdbid: movie._id,
-        provider: 'TV'
+        provider: "TV"
       },
       title: movie.title,
       description: movie.synopsis,
@@ -143,6 +154,7 @@ class TV {
       genres: movie.genres,
       poster: poster,
       banner: banner,
+      trailer: this._getTrailerId(movie.trailer),
       torrents: Object.keys(movie.torrents.en).map(key => {
         const torrent = movie.torrents.en[key];
         torrent.quality = key;
@@ -158,7 +170,7 @@ class TV {
   }
 
   _prepareData(data) {
-    if (typeof data === 'string') return [];
+    if (typeof data === "string") return [];
 
     const movies = Array.isArray(data) ? data : [data];
 
@@ -209,7 +221,7 @@ class TV {
 
 class PopCorn {
   constructor() {
-    this.baseUrl = 'https://api.apiumadomain.com';
+    this.baseUrl = "https://api.apiumadomain.com";
   }
 
   _prepareMovie(movie) {
@@ -217,14 +229,14 @@ class PopCorn {
 
     if (movie.poster_big) {
       poster = `https://image.tmdb.org/t/p/w500/${movie.poster_big
-        .split('/')
+        .split("/")
         .pop()}`;
     }
 
     return {
       source: {
         imdbid: movie.imdb,
-        provider: 'POPCORN'
+        provider: "POPCORN"
       },
       title: movie.title,
       description: movie.description,
@@ -232,6 +244,7 @@ class PopCorn {
       runtime: movie.runtime,
       year: movie.year,
       genres: movie.genres,
+      trailer: movie.trailer,
       poster: poster,
       torrents: movie.items.map(item => ({
         torrentLink: item.torrent_url,
@@ -261,13 +274,13 @@ class PopCorn {
   }
 
   getMovies(options) {
-    options.sort = 'seeds';
+    options.sort = "seeds";
 
-    return this._sendRequest('/list', options);
+    return this._sendRequest("/list", options);
   }
 
   async getMovie(params) {
-    const data = await this._sendRequest('/movie', { imdb: params.imdbid });
+    const data = await this._sendRequest("/movie", { imdb: params.imdbid });
 
     if (!data.movies.length) return null;
 
@@ -278,8 +291,8 @@ class PopCorn {
 
   search(options) {
     return this._sendRequest(`/list`, {
-      quality: '720p,1080p,3d',
-      sort: 'seeds',
+      quality: "720p,1080p,3d",
+      sort: "seeds",
       page: options.page,
       keywords: options.q
     });

@@ -37,6 +37,7 @@ module.exports = {
         style: true,
       },
     },
+    `gatsby-plugin-sass`,
     {
       resolve: "gatsby-plugin-less",
       options: {
