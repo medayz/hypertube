@@ -151,9 +151,12 @@ export default props => {
           </div>
           <img
             className="thumbnail"
-            src={`https://image.tmdb.org/t/p/w500/${movie.poster}`}
+            src={`${movie.poster}`}
             alt={movie.title}
             onClick={() => {}}
+            onError={e => {
+              e.target.src = "https://zupimages.net/up/20/08/aggz.png";
+            }}
           />
           <div className="ratings">
             <Link className="play" to={`/movie/${movie.source.imdbid}`}>
