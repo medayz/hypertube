@@ -8,6 +8,10 @@ class YTS {
     this.imageBaseUrl = "https://img.yts.mx";
   }
 
+  _generateMagnet(hash) {
+    return `magnet:?xt=urn:btih:${hash}`;
+  }
+
   _prepareMovie(movie) {
     let poster;
     let banner;
@@ -36,7 +40,7 @@ class YTS {
       banner: banner,
       trailer: movie.yt_trailer_code,
       torrents: movie.torrents.map(torrent => ({
-        torrentLink: `${this.baseUrl}/torrent/download/${torrent.hash}`,
+        torrentMagnet: this._generateMagnet(torrent.hash),
         quality: torrent.quality,
         type: torrent.type,
         seeds: torrent.seeds,
