@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   client:
@@ -8,7 +8,7 @@ services:
       - ./client:/app
       - node_modules_client:/app/node_modules
     ports:
-      - "8000:8000"
+      - '8000:8000'
     depends_on:
       - server
 
@@ -17,10 +17,11 @@ services:
     build: ./server
     volumes:
       - ./server:/app
+      - movies_server:/app/movies
       - node_modules_server:/app/node_modules
     ports:
-      - "3000:3000"
-      - "4000:4000"
+      - '3000:3000'
+      - '4000:4000'
     depends_on:
       - database
       - cache
@@ -31,7 +32,7 @@ services:
     volumes:
       - data:/data/db
     ports:
-      - "27017:27017"
+      - '27017:27017'
   cache:
     image: redis
     ports:
@@ -39,5 +40,6 @@ services:
 
 volumes:
   data:
+  movies_server:
   node_modules_client:
   node_modules_server:
