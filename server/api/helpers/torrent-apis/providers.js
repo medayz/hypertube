@@ -1,11 +1,11 @@
-const axios = require("axios");
-const cloudScrapper = require("cloudscraper");
-const { parse: parseURL } = require("url");
+const axios = require('axios');
+const cloudScrapper = require('cloudscraper');
+const { parse: parseURL } = require('url');
 
 class YTS {
   constructor() {
-    this.baseUrl = "https://yts.mx";
-    this.imageBaseUrl = "https://img.yts.mx";
+    this.baseUrl = 'https://yts.mx';
+    this.imageBaseUrl = 'https://img.yts.mx';
   }
 
   _generateMagnet(hash) {
@@ -28,7 +28,7 @@ class YTS {
     return {
       source: {
         imdbid: movie.imdb_code,
-        provider: "YTS"
+        provider: 'YTS'
       },
       title: movie.title,
       description: movie.summary,
@@ -83,15 +83,16 @@ class YTS {
   }
 
   getMovies(options) {
-    return this._sendRequest("list_movies.json", {
+    return this._sendRequest('list_movies.json', {
       page: options.page,
       limit: options.limit,
-      query_term: options.q
+      query_term: options.q,
+      sort_by: options.sort_by || 'rating'
     });
   }
 
   async getMovie(params) {
-    const data = await this._sendRequest("list_movies.json", {
+    const data = await this._sendRequest('list_movies.json', {
       query_term: params.imdbid
     });
 
@@ -103,7 +104,7 @@ class YTS {
   }
 
   search(options) {
-    return this._sendRequest("list_movies.json", {
+    return this._sendRequest('list_movies.json', {
       page: 1,
       limit: options.limit,
       query_term: options.q
@@ -113,7 +114,7 @@ class YTS {
 
 class TV {
   constructor() {
-    this.baseUrl = "https://tv-v2.api-fetch.website";
+    this.baseUrl = 'https://tv-v2.api-fetch.website';
     this._total = 0;
     this._hasTotal = false;
     this._limit = 50;
@@ -121,11 +122,14 @@ class TV {
 
   _getTrailerId(url) {
     try {
+      if (!url) return '';
+
       const urlObj = new URL(url);
-      return urlObj.searchParams.get("v");
+
+      return urlObj.searchParams.get('v');
     } catch (err) {
-      console.log("invalid trailer url:", err.message);
-      return "";
+      console.log('invalid trailer url:', err.message);
+      return '';
     }
   }
 
@@ -135,20 +139,20 @@ class TV {
 
     if (movie.images.poster) {
       poster = `https://image.tmdb.org/t/p/w500/${movie.images.poster
-        .split("/")
+        .split('/')
         .pop()}`;
     }
 
     if (movie.images.fanart) {
       banner = `https://image.tmdb.org/t/p/w1280/${movie.images.fanart
-        .split("/")
+        .split('/')
         .pop()}`;
     }
 
     return {
       source: {
         imdbid: movie._id,
-        provider: "TV"
+        provider: 'TV'
       },
       title: movie.title,
       description: movie.synopsis,
@@ -174,7 +178,7 @@ class TV {
   }
 
   _prepareData(data) {
-    if (typeof data === "string") return [];
+    if (typeof data === 'string') return [];
 
     const movies = Array.isArray(data) ? data : [data];
 
@@ -201,9 +205,11 @@ class TV {
   }
 
   getMovies(options = {}) {
-    if (!options.page) options.page = 1;
-
-    return this._sendRequest(`/movies/${options.page}`, options);
+    return this._sendRequest(`/movies/${options.page}`, {
+      page: options.page,
+      sort: options.sort_by || 'rating',
+      order: -1
+    });
   }
 
   async getMovie(params) {
@@ -225,7 +231,7 @@ class TV {
 
 class PopCorn {
   constructor() {
-    this.baseUrl = "https://api.apiumadomain.com";
+    this.baseUrl = 'https://api.apiumadomain.com';
   }
 
   _prepareMovie(movie) {
@@ -233,14 +239,14 @@ class PopCorn {
 
     if (movie.poster_big) {
       poster = `https://image.tmdb.org/t/p/w500/${movie.poster_big
-        .split("/")
+        .split('/')
         .pop()}`;
     }
 
     return {
       source: {
         imdbid: movie.imdb,
-        provider: "POPCORN"
+        provider: 'POPCORN'
       },
       title: movie.title,
       description: movie.description,
@@ -278,13 +284,13 @@ class PopCorn {
   }
 
   getMovies(options) {
-    options.sort = "seeds";
+    options.sort = 'rating';
 
-    return this._sendRequest("/list", options);
+    return this._sendRequest('/list', options);
   }
 
   async getMovie(params) {
-    const data = await this._sendRequest("/movie", { imdb: params.imdbid });
+    const data = await this._sendRequest('/movie', { imdb: params.imdbid });
 
     if (!data.movies.length) return null;
 
@@ -295,8 +301,8 @@ class PopCorn {
 
   search(options) {
     return this._sendRequest(`/list`, {
-      quality: "720p,1080p,3d",
-      sort: "seeds",
+      quality: '720p,1080p,3d',
+      sort: 'seeds',
       page: options.page,
       keywords: options.q
     });
