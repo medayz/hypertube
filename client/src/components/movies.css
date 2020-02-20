@@ -1,6 +1,6 @@
 .movie-container {
   position: relative;
-  background: #042a2b;
+  /* background: #042a2b; */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   max-width: 2142px;
