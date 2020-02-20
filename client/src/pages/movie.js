@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Spin, Icon, Button } from "antd";
+import { enableBodyScroll } from "body-scroll-lock";
 import {
   TimerIcon,
   ImdbIcon,
@@ -12,7 +13,7 @@ import ModalVideo from "react-modal-video";
 import "../../node_modules/react-modal-video/scss/modal-video.scss";
 import "./movie.css";
 import Layout from "../components/layout";
-import Player from "../components/video-react-player";
+import Player from "../components/videojs";
 
 const { Title, Paragraph } = Typography;
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
@@ -25,11 +26,13 @@ export default props => {
   useEffect(() => {
     const [id] = props["*"].split("/");
     const wallp = document.querySelector(".banner").style;
+    const body = document.querySelector("body");
 
     axios
       .get(`/api/v1/movies/${id}`)
       .then(({ data }) => {
         console.log(data.movie);
+        enableBodyScroll(body);
         updateMovie(data.movie);
         wallp.background = `url("${data.movie.banner}")`;
         // , url("https://zupimages.net/up/20/08/qs7e.png")
@@ -116,8 +119,8 @@ export default props => {
                       style={{
                         display: "inline-block",
                         marginLeft: "",
-                        width: "21px",
-                        height: "21px",
+                        width: "28px",
+                        height: "28px",
                       }}
                       className="imdb"
                     />
@@ -141,18 +144,21 @@ export default props => {
             </div>
           </div>
         )}
+        {movie.source && movie.source.imdbid && (
+          <Player
+            src={[
+              {
+                src: `/api/v1/stream/${movie.source.imdbid}/720p`,
+                type: "video/mp4",
+              },
+            ]}
+            poster={movie.banner}
+          />
+        )}
         <div className="banner">
           <div className="over-wallpaper"></div>
         </div>
       </div>
-      {movie.source && movie.source.imdbid && (
-        <div>
-          <Player
-            poster={movie.banner || ""}
-            imdbid={movie.source.imdbid || ""}
-          />
-        </div>
-      )}
     </Layout>
   );
 };

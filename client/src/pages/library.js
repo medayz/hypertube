@@ -65,40 +65,45 @@ export default props => {
               background: "#FED766",
               display: "block",
               position: "absolute",
-              transform: "translateY(15%) rotate(-2deg)",
+              transform: "translateY(-100%) rotate(-2deg)",
               webkitMaskBoxImage:
                 "url(https://www.onlygfx.com/wp-content/uploads/2017/04/grunge-brush-stroke-banner-2-6-1024x250.png)",
             }}
           ></div>
-          <Title className=".library-heading" style={{ position: "absolute" }}>
+          <Title
+            className=".library-heading"
+            style={{ position: "absolute", transform: "translateY(-100%)" }}
+          >
             It's Movie Time !
           </Title>
         </div>
       </div>
-      <PaginationContainer>
-        <Pagination
-          current={currentPage}
-          defaultPageSize={50}
-          onChange={switchPage}
-          total={total}
-        />
-      </PaginationContainer>
-      {!loading ? (
-        <Movies list={movies} />
-      ) : (
-        <Spin
-          indicator={spinIcon}
-          style={{ margin: "149px auto", display: "block" }}
-        />
-      )}
-      <PaginationContainer>
-        <Pagination
-          current={currentPage}
-          defaultPageSize={50}
-          onChange={switchPage}
-          total={total}
-        />
-      </PaginationContainer>
+      <div className="movies-pagination">
+        <PaginationContainer>
+          <Pagination
+            current={currentPage}
+            defaultPageSize={50}
+            onChange={switchPage}
+            total={total}
+          />
+        </PaginationContainer>
+        {!loading ? (
+          <Movies list={movies} />
+        ) : (
+          <Spin
+            indicator={spinIcon}
+            style={{ margin: "149px auto", display: "block" }}
+          />
+        )}
+        <PaginationContainer>
+          <Pagination
+            current={currentPage}
+            defaultPageSize={50}
+            onChange={switchPage}
+            total={total}
+          />
+        </PaginationContainer>
+      </div>
     </Layout>
   );
 };

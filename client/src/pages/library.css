@@ -43,10 +43,8 @@
   /* transform: rotate(2deg); */
   /* opacity: .8; */
 }
-.over-wallpaper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.movies-pagination {
+  transform: translateY(-21vw);
 }
 @media only screen and (max-width: 420px) {
 }
