@@ -141,30 +141,6 @@ exports.deleteComment = async (req, res, next) => {
   }
 };
 
-exports.getSubtitles = async (req, res, next) => {
-  try {
-    const movie = await Movie.findOne(req.params).select(
-      '-_id imdbid subtitles.lang subtitles.langShort'
-    );
-
-    if (!movie) return next(createError(404));
-
-    for (let i = 0; i < movie.subtitles.length; i++) {
-      const item = movie.subtitles[i];
-
-      movie.subtitles[i] = {
-        lang: item.lang,
-        langShort: item.langShort,
-        isDefault: item.langShort == req.user.defaultLanguage
-      };
-    }
-
-    res.status(200).send(movie);
-  } catch (err) {
-    next(err);
-  }
-};
-
 exports.getSubtitle = async (req, res, next) => {
   try {
     const movie = await Movie.findOne({

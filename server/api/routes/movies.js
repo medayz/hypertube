@@ -52,8 +52,6 @@ router.delete(
   moviesController.deleteComment
 );
 
-router.get('/subtitles/:imdbid', moviesController.getSubtitles);
-
 router.get('/subtitles/:imdbid/:lang', moviesController.getSubtitle);
 
 module.exports = router;
