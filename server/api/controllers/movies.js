@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
 const redisClient = require('../utils/redis-client');
+const subtitles = require('../utils/subtitles');
 const fs = require('fs');
 
 exports.search = async (req, res, next) => {
@@ -24,9 +25,27 @@ exports.getMovie = async (req, res, next) => {
   try {
     const { movie } = await movies.getMovie(req.params);
 
-    if (!movie) return res.status(404).send({ message: 'resource not found' });
+    if (!movie) return next(createError(404));
 
-    await Movie.add(movie.source.imdbid, { updateLastAccess: false });
+    const dbMovie = await Movie.add(movie.source.imdbid, {
+      updateLastAccess: false
+    });
+
+    let subs = dbMovie.subtitles;
+    if (subs.length == 0) {
+      subs = await subtitles.get(movie.source.imdbid);
+
+      await Movie.updateOne(
+        { imdbid: movie.source.imdbid },
+        {
+          $set: { subtitles: subs }
+        }
+      );
+    }
+    movie.subtitles = subs.map(item => ({
+      lang: item.lang,
+      langShort: item.langShort
+    }));
 
     await redisClient.setexAsync(
       req.redisKey,

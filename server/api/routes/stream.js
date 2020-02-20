@@ -3,9 +3,6 @@ const MovieStream = require('../helpers/MovieStream');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
 const { isAuth, getQueryToken } = require('../middlewares/auth');
-const getSubtitles = require('yifysubtitles');
-const fs = require('fs');
-const Movie = require('../models/movie');
 
 const movieStream = new MovieStream({
   clientSupportedFormat: ['mp4', 'mkv', 'webm'],
@@ -33,30 +30,6 @@ router.get('/:imdbid/:quality', async (req, res, next) => {
       const torrent = movie.torrents.find(item => item.quality === quality);
 
       if (!torrent) return next(createError(404));
-
-      fs.mkdirSync(`${process.env.MOVIES_PATH}/${movie.source.imdbid}`, {
-        recursive: true
-      });
-
-      let subtitles = await getSubtitles(imdbid, {
-        path: `${process.env.MOVIES_PATH}/${movie.source.imdbid}`,
-        langs: ['ar', 'fr', 'en', 'es']
-      });
-
-      subtitles = subtitles.map(item => ({
-        lang: item.lang,
-        langShort: item.langShort,
-        fileName: item.fileName
-      }));
-
-      await Movie.add(imdbid);
-
-      await Movie.updateOne(
-        { imdbid },
-        {
-          $set: { subtitles: subtitles }
-        }
-      );
 
       req.movieData = {
         ...req.params,
