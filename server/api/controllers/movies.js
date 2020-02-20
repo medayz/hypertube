@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
 const redisClient = require('../utils/redis-client');
+const fs = require('fs');
 
 exports.search = async (req, res, next) => {
   try {
@@ -116,6 +117,53 @@ exports.deleteComment = async (req, res, next) => {
     if (result.nModified === 0) return next(createError(404));
 
     res.status(200).send({ message: 'Success' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getSubtitles = async (req, res, next) => {
+  try {
+    const movie = await Movie.findOne(req.params).select(
+      '-_id imdbid subtitles.lang subtitles.langShort'
+    );
+
+    if (!movie) return next(createError(404));
+
+    for (let i = 0; i < movie.subtitles.length; i++) {
+      const item = movie.subtitles[i];
+
+      movie.subtitles[i] = {
+        lang: item.lang,
+        langShort: item.langShort,
+        isDefault: item.langShort == req.user.defaultLanguage
+      };
+    }
+
+    res.status(200).send(movie);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getSubtitle = async (req, res, next) => {
+  try {
+    const movie = await Movie.findOne({
+      imdbid: req.params.imdbid,
+      'subtitles.langShort': req.params.lang
+    }).select('-_id imdbid subtitles');
+
+    if (!movie) return next(createError(404));
+
+    const subtitle = movie.subtitles[0];
+
+    const path = `${process.env.MOVIES_PATH}/${movie.imdbid}/${subtitle.fileName}`;
+
+    if (!fs.existsSync(path)) return next(createError(404));
+
+    const stream = fs.createReadStream(path);
+
+    stream.pipe(res);
   } catch (err) {
     next(err);
   }

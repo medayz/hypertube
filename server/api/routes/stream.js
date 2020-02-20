@@ -2,7 +2,10 @@ const router = require('express').Router();
 const MovieStream = require('../helpers/MovieStream');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
-const { isAuth } = require('../middlewares/auth');
+const { isAuth, getQueryToken } = require('../middlewares/auth');
+const getSubtitles = require('yifysubtitles');
+const fs = require('fs');
+const Movie = require('../models/movie');
 
 const movieStream = new MovieStream({
   clientSupportedFormat: ['mp4', 'mkv', 'webm'],
@@ -10,42 +13,67 @@ const movieStream = new MovieStream({
   verbose: true
 });
 
-router.use((req, res, next) => {
-  const token = req.query.token || '';
-  req.headers.authorization = `Bearer ${token}`;
-  next();
-});
+router.use(getQueryToken);
 
 router.get('/:imdbid/:quality', isAuth);
 
 router.get('/:imdbid/:quality', async (req, res, next) => {
   const { imdbid, quality } = req.params;
 
-  let data = movieStream.get(imdbid, quality);
+  try {
+    let data = movieStream.get(imdbid, quality);
 
-  if (!data) {
-    let movie = await movies.getMovie({ imdbid });
+    if (!data) {
+      let movie = await movies.getMovie({ imdbid });
 
-    if (!movie) return next(createError(404));
+      if (!movie) return next(createError(404));
 
-    movie = movie.movie;
+      movie = movie.movie;
 
-    const torrent = movie.torrents.find(item => item.quality === quality);
+      const torrent = movie.torrents.find(item => item.quality === quality);
 
-    if (!torrent) return next(createError(404));
+      if (!torrent) return next(createError(404));
 
+      fs.mkdirSync(`${process.env.MOVIES_PATH}/${movie.source.imdbid}`, {
+        recursive: true
+      });
+
+      let subtitles = await getSubtitles(imdbid, {
+        path: `${process.env.MOVIES_PATH}/${movie.source.imdbid}`,
+        langs: ['ar', 'fr', 'en', 'es']
+      });
+
+      subtitles = subtitles.map(item => ({
+        lang: item.lang,
+        langShort: item.langShort,
+        fileName: item.fileName
+      }));
+
+      await Movie.add(imdbid);
+
+      await Movie.updateOne(
+        { imdbid },
+        {
+          $set: { subtitles: subtitles }
+        }
+      );
+
+      req.movieData = {
+        ...req.params,
+        magnet: torrent.torrentMagnet,
+        range: req.headers.range
+      };
+      return next();
+    }
     req.movieData = {
       ...req.params,
-      magnet: torrent.torrentMagnet,
       range: req.headers.range
     };
-    return next();
+    next();
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
-  req.movieData = {
-    ...req.params,
-    range: req.headers.range
-  };
-  next();
 });
 
 router.get('/:imdbid/:quality', async (req, res, next) => {

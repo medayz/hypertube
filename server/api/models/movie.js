@@ -5,6 +5,13 @@ const Watch = require('../models/watch');
 const movieSchema = new Schema({
   imdbid: { type: String, unique: true, required: true },
   lastAccess: { type: Date, default: Date.now },
+  subtitles: [
+    {
+      lang: { type: String, required: true },
+      langShort: { type: String, required: true },
+      fileName: { type: String, required: true }
+    }
+  ],
   comments: [
     {
       owner: { type: Schema.Types.ObjectId, required: true, ref: 'User' },

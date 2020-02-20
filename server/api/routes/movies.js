@@ -1,7 +1,9 @@
 const router = require('express').Router();
-const { isAuth } = require('../middlewares/auth');
+const { isAuth, getQueryToken } = require('../middlewares/auth');
 const moviesController = require('../controllers/movies');
 const movieValidator = require('../middlewares/movie');
+
+router.get('/subtitles/:imdbid/:lang', getQueryToken);
 
 router.use(isAuth);
 
@@ -49,5 +51,9 @@ router.delete(
   movieValidator.deleteCommentValidator,
   moviesController.deleteComment
 );
+
+router.get('/subtitles/:imdbid', moviesController.getSubtitles);
+
+router.get('/subtitles/:imdbid/:lang', moviesController.getSubtitle);
 
 module.exports = router;

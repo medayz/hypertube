@@ -14,15 +14,16 @@ const userSchema = new Schema({
     lowercase: true,
     required: true
   },
-  emailVerified: { type: Boolean, default: false },
   password: { type: String, select: false },
-  google: { id: String },
-  facebook: { id: String },
-  '42': { id: String },
+  defaultLanguage: { type: String, required: true, default: 'en' },
   watchList: {
     type: [{ type: Schema.Types.ObjectId, ref: 'Watch' }],
     select: false
   },
+  emailVerified: { type: Boolean, default: false },
+  google: { id: String },
+  facebook: { id: String },
+  '42': { id: String },
   createdAt: { type: Date, default: Date.now }
 });
 
