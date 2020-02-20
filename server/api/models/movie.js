@@ -1,8 +1,9 @@
 const { Schema, model } = require('mongoose');
 
+const Watch = require('../models/watch');
+
 const movieSchema = new Schema({
   imdbid: { type: String, unique: true, required: true },
-  provider: { type: String },
   lastAccess: { type: Date, default: Date.now },
   comments: [
     {
@@ -14,14 +15,34 @@ const movieSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-movieSchema.methods.watch = async function() {
+movieSchema.methods.watch = async function(userId) {
+  const User = model('User');
+
+  this.lastAccess = Date.now();
+  const { isNew, watch } = await Watch.add({
+    movieId: this._id
+  });
+
+  if (isNew) {
+    await User.updateOne(
+      { _id: userId },
+      {
+        $push: { watchList: watch._id }
+      }
+    );
+  }
+
+  return await this.save();
+};
+
+movieSchema.statics.add = async function(imdbid, options) {
   const Movie = model('Movie');
+  const { updateLastAccess } = options || { updateLastAccess: true };
 
-  const movie = await Movie.findOne({ imdbid: this.imdbid });
+  let movie = await Movie.findOne({ imdbid });
 
-  if (!movie) return this.save();
-
-  movie.lastAccess = Date.now();
+  if (!movie) movie = new Movie({ imdbid });
+  else if (updateLastAccess) movie.lastAccess = Date.now();
 
   return await movie.save();
 };

@@ -128,20 +128,12 @@ exports.verify = async (req, res, next) => {
 
 exports.watch = async (req, res, next) => {
   try {
-    let movie = Movie.find({ imdbid: req.params.imdbid });
-    let providerName = null;
+    let movie = await Movie.findOne(req.params);
 
-    if (!movie) providerName = movie.provider;
+    if (!movie) return res.status(404).send({ message: 'resource not found' });
 
-    const movieDetails = await utils.movies.getMovie(req.params, providerName);
-
-    if (!movieDetails)
-      return res.status(404).send({ message: 'resource not found' });
-
-    movie = new Movie(req.params);
-
-    const data = await movie.watch();
-    res.status(200).send(data);
+    await movie.watch(req.user._id);
+    res.status(200).send({ message: 'Success' });
   } catch (err) {
     next(err);
   }

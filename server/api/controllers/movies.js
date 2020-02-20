@@ -21,17 +21,19 @@ exports.search = async (req, res, next) => {
 
 exports.getMovie = async (req, res, next) => {
   try {
-    const movie = await movies.getMovie(req.params);
+    const { movie } = await movies.getMovie(req.params);
 
     if (!movie) return res.status(404).send({ message: 'resource not found' });
+
+    await Movie.add(movie.source.imdbid, { updateLastAccess: false });
 
     await redisClient.setexAsync(
       req.redisKey,
       redisClient.EXPIRE_IN,
-      JSON.stringify(movie)
+      JSON.stringify({ movie })
     );
 
-    res.status(200).send(movie);
+    res.status(200).send({ movie });
   } catch (err) {
     next(err);
   }

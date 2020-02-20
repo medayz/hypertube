@@ -19,7 +19,10 @@ const userSchema = new Schema({
   google: { id: String },
   facebook: { id: String },
   '42': { id: String },
-  watchList: [{ type: Schema.Types.ObjectId, ref: 'Watch' }],
+  watchList: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Watch' }],
+    select: false
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
