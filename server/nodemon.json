@@ -1,5 +1,6 @@
 {
   "env": {
+    "MOVIES_PATH": "movies",
     "IMAGES_PATH": "images",
     "MAX_IMAGE_SIZE": "5242880",
     "JWT_KEY": "hypertube:1337",
