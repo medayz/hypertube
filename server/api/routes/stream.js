@@ -25,8 +25,6 @@ router.get('/:imdbid/:quality', async (req, res, next) => {
 
       if (!movie) return next(createError(404));
 
-      movie = movie.movie;
-
       const torrent = movie.torrents.find(item => item.quality === quality);
 
       if (!torrent) return next(createError(404));

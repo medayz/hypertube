@@ -38,12 +38,6 @@ class Movies {
     this.providers = this._setProviders(options.providers);
   }
 
-  _getProvider(name) {
-    const provider = this.providers.find(item => item.name === name);
-
-    return provider || null;
-  }
-
   _setProviders(providers) {
     providers = providers.map(provider => {
       const instance = this._getProviderInstance(provider);
@@ -99,19 +93,24 @@ class Movies {
     };
   }
 
-  async getMovie(params, providerName = null) {
-    if (providerName) {
-      const provider = this._getProvider(providerName);
+  async getMovie(params) {
+    const ytsProvider = this.providers.find(item => item.name == 'YTS');
 
-      return provider.obj.getMovie(params);
-    }
-
-    for (const provider of this.providers) {
+    if (ytsProvider) {
       try {
-        const movie = await provider.obj.getMovie(params);
-
+        const movie = await ytsProvider.obj.getMovie(params);
         if (movie) return movie;
       } catch (err) {}
+
+      for (const provider of this.providers) {
+        try {
+          if (provider.name == 'YTS') continue;
+
+          const movie = await provider.obj.getMovie(params);
+
+          if (movie) return movie;
+        } catch (err) {}
+      }
     }
     return null;
   }

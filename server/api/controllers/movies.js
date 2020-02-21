@@ -23,7 +23,7 @@ exports.search = async (req, res, next) => {
 
 exports.getMovie = async (req, res, next) => {
   try {
-    const { movie } = await movies.getMovie(req.params);
+    const movie = await movies.getMovie(req.params);
 
     if (!movie) return next(createError(404));
 

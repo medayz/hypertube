@@ -98,9 +98,7 @@ class YTS {
 
     if (!data.movies.length) return null;
 
-    return {
-      movie: data.movies[0]
-    };
+    return data.movies[0];
   }
 
   search(options) {
@@ -217,9 +215,7 @@ class TV {
 
     if (!data.movies.length) return null;
 
-    return {
-      movie: data.movies[0]
-    };
+    return data.movies[0];
   }
 
   search(options) {
@@ -294,9 +290,7 @@ class PopCorn {
 
     if (!data.movies.length) return null;
 
-    return {
-      movie: data.movies[0]
-    };
+    return data.movies[0];
   }
 
   search(options) {
