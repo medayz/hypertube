@@ -14,9 +14,9 @@ const movieSchema = new Schema({
   ],
   comments: [
     {
-      owner: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-      text: { type: String, required: true },
-      createdAt: { type: Date, default: Date.now }
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Comment'
     }
   ],
   createdAt: { type: Date, default: Date.now }

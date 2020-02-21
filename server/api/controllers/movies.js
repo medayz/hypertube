@@ -1,4 +1,5 @@
 const Movie = require('../models/movie');
+const Comment = require('../models/comment');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
 const redisClient = require('../utils/redis-client');
@@ -77,16 +78,28 @@ exports.getMovies = async (req, res, next) => {
 
 exports.addComment = async (req, res, next) => {
   try {
-    let result = await Movie.updateOne(
-      { imdbid: req.body.imdbid },
-      {
-        $push: { comments: { owner: req.user._id, text: req.body.text } }
-      }
+    const movie = await Movie.findOne({ imdbid: req.params.imdbid }).select(
+      '_id imdbid'
     );
 
-    if (result.n == 0) return next(createError(404));
+    if (!movie) return next(createError(404));
 
-    res.status(200).send({ message: 'Success' });
+    const newComment = new Comment({
+      owner: req.user._id,
+      movie: {
+        id: movie._id,
+        imdbid: movie.imdbid
+      },
+      text: req.body.text
+    });
+
+    const comment = await newComment.save();
+    res.status(201).send({
+      _id: comment._id,
+      owner: comment.owner,
+      movie: comment.movie,
+      text: comment.text
+    });
   } catch (err) {
     next(err);
   }
@@ -94,15 +107,13 @@ exports.addComment = async (req, res, next) => {
 
 exports.getComments = async (req, res, next) => {
   try {
-    const movie = await Movie.findOne(req.params)
-      .select('comments')
-      .populate('comments.owner', '-_id username');
-
-    if (!movie) return next(createError(404));
+    const comments = await Comment.find({
+      'movie.imdbid': req.params.imdbid
+    }).populate('owner', 'username firstName lastName');
 
     res.status(200).send({
-      limit: movie.comments.length,
-      comments: movie.comments
+      limit: comments.length,
+      comments: comments
     });
   } catch (err) {
     next(err);
@@ -111,16 +122,21 @@ exports.getComments = async (req, res, next) => {
 
 exports.updateComment = async (req, res, next) => {
   try {
-    const result = await Movie.updateOne(
-      { imdbid: req.body.imdbid, 'comments._id': req.body.id },
+    const { nModified } = await Comment.updateOne(
       {
-        $set: { 'comments.$.text': req.body.text }
+        'movie.imdbid': req.params.imdbid,
+        _id: req.params.id
+      },
+      {
+        $set: { text: req.body.text }
       }
     );
 
-    if (result.nModified === 0) return next(createError(404));
+    if (nModified == 0) return next(createError(404));
 
-    res.status(200).send({ message: 'Success' });
+    res.status(200).send({
+      message: 'Comment updated'
+    });
   } catch (err) {
     next(err);
   }
@@ -128,16 +144,16 @@ exports.updateComment = async (req, res, next) => {
 
 exports.deleteComment = async (req, res, next) => {
   try {
-    const result = await Movie.updateOne(
-      { imdbid: req.params.imdbid },
-      {
-        $pull: { comments: { _id: req.params.id } }
-      }
-    );
+    const { deletedCount } = await Comment.deleteOne({
+      'movie.imdbid': req.params.imdbid,
+      _id: req.params.id
+    });
 
-    if (result.nModified === 0) return next(createError(404));
+    if (deletedCount == 0) return next(createError(404));
 
-    res.status(200).send({ message: 'Success' });
+    res.status(200).send({
+      message: 'Comment deleted'
+    });
   } catch (err) {
     next(err);
   }
