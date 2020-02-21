@@ -27,16 +27,16 @@ exports.getMovie = async (req, res, next) => {
 
     if (!movie) return next(createError(404));
 
-    const dbMovie = await Movie.add(movie.source.imdbid, {
+    const dbMovie = await Movie.add(movie.imdbid, {
       updateLastAccess: false
     });
 
     let subs = dbMovie.subtitles;
     if (subs.length == 0) {
-      subs = await subtitles.get(movie.source.imdbid);
+      subs = await subtitles.get(movie.imdbid);
 
       await Movie.updateOne(
-        { imdbid: movie.source.imdbid },
+        { imdbid: movie.imdbid },
         {
           $set: { subtitles: subs }
         }

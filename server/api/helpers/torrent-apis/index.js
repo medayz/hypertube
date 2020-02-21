@@ -10,9 +10,9 @@ const PROVIDERS = {
   Data structure:
     {
       "source": {
-        "id": int,
         "name": string
       },
+      "imdbid": string,
       "title": string,
       "description": string,
       "rating": { imdb | loved },

@@ -27,9 +27,9 @@ class YTS {
 
     return {
       source: {
-        imdbid: movie.imdb_code,
         provider: 'YTS'
       },
+      imdbid: movie.imdb_code,
       title: movie.title,
       description: movie.summary,
       rating: { imdb: movie.rating },
@@ -151,9 +151,9 @@ class TV {
 
     return {
       source: {
-        imdbid: movie._id,
         provider: 'TV'
       },
+      imdbid: movie._id,
       title: movie.title,
       description: movie.synopsis,
       rating: { loved: movie.rating.percentage },
@@ -245,9 +245,9 @@ class PopCorn {
 
     return {
       source: {
-        imdbid: movie.imdb,
         provider: 'POPCORN'
       },
+      imdbid: movie.imdb,
       title: movie.title,
       description: movie.description,
       rating: { imdb: movie.rating },
