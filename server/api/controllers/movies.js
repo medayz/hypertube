@@ -94,13 +94,15 @@ exports.addComment = async (req, res, next) => {
 
 exports.getComments = async (req, res, next) => {
   try {
-    const comments = await Movie.find(req.params)
+    const movie = await Movie.findOne(req.params)
       .select('comments')
-      .populate('comments.owner', 'username firstName lastName');
+      .populate('comments.owner', '-_id username');
+
+    if (!movie) return next(createError(404));
 
     res.status(200).send({
-      limit: comments.length,
-      comments
+      limit: movie.comments.length,
+      comments: movie.comments
     });
   } catch (err) {
     next(err);
