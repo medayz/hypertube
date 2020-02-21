@@ -144,13 +144,17 @@ exports.deleteComment = async (req, res, next) => {
 exports.getSubtitle = async (req, res, next) => {
   try {
     const movie = await Movie.findOne({
-      imdbid: req.params.imdbid,
-      'subtitles.langShort': req.params.lang
+      imdbid: req.params.imdbid
     }).select('-_id imdbid subtitles');
 
-    if (!movie) return next(createError(404));
+    let subtitle = null;
 
-    const subtitle = movie.subtitles[0];
+    if (movie)
+      subtitle = movie.subtitles.find(
+        item => item.langShort == req.params.lang
+      );
+
+    if (!subtitle) return next(createError(404));
 
     const path = `${process.env.MOVIES_PATH}/${movie.imdbid}/${subtitle.fileName}`;
 
