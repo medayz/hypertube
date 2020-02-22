@@ -1,0 +1,60 @@
+.video-js .vjs-tech {
+  /* background-color: rgb(4, 42, 43); */
+  border-radius: 1vw;
+}
+
+.video-js .vjs-tech:cue {
+  opacity: 1;
+  background: #042a2b;
+  font-size: 1.42em !important;
+  color: #48e5c2;
+}
+.video-js .vjs-control-bar {
+  background: #000;
+}
+
+/* Change all text and icon colors in the player. */
+.video-js .vjs-control {
+  color: #fcfcfc;
+}
+
+/* Change the border of the big play button. */
+.video-js .vjs-big-play-button {
+  background: url("../icons/play-button-arrowhead.svg");
+  background-color: rgba(0, 0, 0, 0.69);
+  backdrop-filter: blur(2.1px);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+  background-size: 113px;
+  background-position: 50% calc(50% - 10px);
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+.video-js .vjs-big-play-button .vjs-icon-placeholder:before {
+  content: "";
+  display: none;
+}
+.video-js .vjs-big-play-button .vjs-icon-placeholder:before:hover {
+  content: "";
+  display: none;
+}
+.video-js .vjs-big-play-button .vjs-icon-placeholder:hover {
+  /* background: transparent; */
+  background-color: rgba(0, 0, 0, 0.69);
+  opacity: 0;
+}
+.vjs-subs-caps-button {
+}
+
+/* Change the color of various "bars". */
+.video-js .vjs-volume-level,
+.video-js .vjs-play-progress,
+.video-js .vjs-slider-bar {
+  background: #fcfcfc;
+}

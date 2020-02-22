@@ -1,37 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Spin, Icon, Button } from "antd";
 import { enableBodyScroll } from "body-scroll-lock";
-import {
-  TimerIcon,
-  ImdbIcon,
-  PopCornTimeIcon,
-  CalendarIcon,
-  PlayIcon,
-} from "../icons";
+import { TimerIcon, ImdbIcon, PopCornTimeIcon, CalendarIcon } from "../icons";
 import axios from "axios";
 import ModalVideo from "react-modal-video";
 import "../../node_modules/react-modal-video/scss/modal-video.scss";
 import "./movie.css";
 import Layout from "../components/layout";
-import Player from "../components/videojs";
+import Player from "../components/player";
+import Comments from "../components/comments";
 
 const { Title, Paragraph } = Typography;
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
+const headers = {
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+};
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
-export default props => {
+export default ({ imdbid, location: { state: movieState } }) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
 
   useEffect(() => {
-    const [id] = props["*"].split("/");
     const wallp = document.querySelector(".banner").style;
     const body = document.querySelector("body");
+    const [id] = imdbid.split("/");
+    // console.log(id, location);
 
     axios
-      .get(`/api/v1/movies/${id}`)
+      .get(`/api/v1/movies/${id}`, headers)
       .then(({ data }) => {
-        console.log(data.movie);
+        // console.clear();
+        // console.log(data.movie);
         enableBodyScroll(body);
         updateMovie(data.movie);
         wallp.background = `url("${data.movie.banner}")`;
@@ -43,7 +48,7 @@ export default props => {
         updateLoadingState(false);
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [imdbid]);
 
   return (
     <Layout>
@@ -78,7 +83,7 @@ export default props => {
                       onClose={() => showTrailerModal(false)}
                     />
                     <Button
-                      style={{ margin: 0 }}
+                      style={{ height: "32px" }}
                       onClick={() => showTrailerModal(true)}
                       size="small"
                       icon="caret-right"
@@ -134,27 +139,32 @@ export default props => {
                 <Paragraph className="description">
                   {movie.description}
                 </Paragraph>
-                {movie.genres &&
-                  movie.genres.map((genre, id) => (
-                    <span key={id} className="genre">
-                      {genre}
-                    </span>
-                  ))}
+                {movie.genres.map((genre, id) => (
+                  <span key={id} className="genre">
+                    {genre}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
         )}
-        {movie.source && movie.source.imdbid && (
-          <Player
-            src={[
-              {
-                src: `/api/v1/stream/${movie.source.imdbid}/720p`,
-                type: "video/mp4",
-              },
-            ]}
-            poster={movie.banner}
+        {loading ? (
+          <Spin
+            indicator={spinIcon}
+            style={{ margin: "149px auto", display: "block" }}
           />
+        ) : (
+          <div className="video-streaming">
+            <Player
+              imdbid={imdbid}
+              banner={movie.banner}
+              subtitles={movie.subtitles}
+            />
+          </div>
         )}
+        <div className="comments">
+          <Comments imdbid={imdbid} />
+        </div>
         <div className="banner">
           <div className="over-wallpaper"></div>
         </div>

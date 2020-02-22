@@ -12,6 +12,15 @@ const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 const { Search } = Input;
 const { Title } = Typography;
 
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
+const headers = {
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+};
+
 const Header = ({ siteTitle }) => {
   let [movies, updateMovies] = useState([]);
   let [loading, updateLoadingState] = useState(false);
@@ -33,7 +42,7 @@ const Header = ({ siteTitle }) => {
   const onSearch = value => {
     updateLoadingState(true);
     axios
-      .get(`/api/v1/movies/search?q=${value}`)
+      .get(`/api/v1/movies/search?q=${value}`, headers)
       .then(({ data }) => {
         updateMovies(data.movies);
         updateLoadingState(false);

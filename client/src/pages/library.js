@@ -8,6 +8,15 @@ import Movies from "../components/movies";
 
 const { Title } = Typography;
 
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
+const headers = {
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+};
+
 const PaginationContainer = ({ children }) => (
   <div
     style={{
@@ -31,7 +40,7 @@ export default props => {
   const switchPage = async page => {
     updateLoading(true);
     axios
-      .get(`/api/v1/movies?page=${page}`)
+      .get(`/api/v1/movies?page=${page}`, headers)
       .then(results => {
         const list = results.data.movies;
         updatePage(page);
@@ -43,7 +52,7 @@ export default props => {
 
   useEffect(() => {
     axios
-      .get(`/api/v1/movies?page=${currentPage}`)
+      .get(`/api/v1/movies?page=${currentPage}`, headers)
       .then(async results => {
         const list = results.data.movies;
 
@@ -52,7 +61,7 @@ export default props => {
         updateLoading(false);
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [currentPage]);
 
   return (
     <Layout>

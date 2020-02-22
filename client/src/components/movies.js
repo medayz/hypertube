@@ -159,7 +159,7 @@ export default props => {
             }}
           />
           <div className="ratings">
-            <Link className="play" to={`/movie/${movie.source.imdbid}`}>
+            <Link className="play" to={`/movie/${movie.imdbid}`} state={movie}>
               <PlayIcon style={{ width: "16px", height: "16px" }} />
               <h2>watch</h2>
             </Link>
@@ -167,7 +167,7 @@ export default props => {
               className="rate"
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://www.imdb.com/title/${movie.source.imdbid}`}
+              href={`https://www.imdb.com/title/${movie.imdbid}`}
             >
               {movie.rating.imdb ? (
                 <ImdbIcon

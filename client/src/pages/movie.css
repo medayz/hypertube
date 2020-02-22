@@ -46,8 +46,8 @@
 .movie-info {
   width: 100%;
   position: relative;
-  background-color: rgba(72, 229, 194, 0.1);
-  backdrop-filter: blur(3px);
+  background-color: rgba(49, 80, 81, 0.21);
+  backdrop-filter: blur(4.2px);
   /* padding: 2vw 6vw; */
 }
 .poster {
@@ -109,7 +109,24 @@
   justify-content: left;
   margin: 0 0 13px 0;
 }
-
+.video-streaming {
+  width: 90vw;
+  max-width: 1200px;
+  max-height: 720px;
+  margin: 21px auto;
+}
+.comments {
+  display: block;
+  margin: 21px auto;
+  padding: 21px;
+  max-width: 1200px;
+  background-color: rgba(4, 42, 43, 0.42);
+  backdrop-filter: blur(4.2px);
+  border-radius: 8px;
+}
+.comment-text {
+  color: #fcfcfc;
+}
 @media only screen and (max-width: 1000px) {
   .content {
     grid-template-columns: 1fr;
@@ -122,6 +139,9 @@
   }
   .poster {
     margin-left: 42px;
+  }
+  .comments {
+    border-radius: 0;
   }
 }
 @media only screen and (max-device-width: 1000px) {
@@ -136,5 +156,8 @@
   }
   .poster {
     margin-left: 42px;
+  }
+  .comments {
+    border-radius: 0;
   }
 }
