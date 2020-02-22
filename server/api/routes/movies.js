@@ -52,6 +52,12 @@ router.delete(
   moviesController.deleteComment
 );
 
+router.post(
+  '/comments/:id/vote/:value',
+  movieValidator.voteValidator,
+  moviesController.voteComment
+);
+
 router.get('/subtitles/:imdbid/:lang', moviesController.getSubtitle);
 
 module.exports = router;

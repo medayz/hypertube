@@ -159,6 +159,35 @@ exports.deleteComment = async (req, res, next) => {
   }
 };
 
+exports.voteComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findOne({
+      _id: req.params.id
+    });
+
+    if (!comment) return next(createError(404));
+
+    const value = req.params.value == 'up' ? 1 : -1;
+
+    const vote = comment.votes.find(item => item.owner == req.user.id);
+    if (!vote) {
+      comment.votes.push({
+        owner: req.user.id,
+        value: value
+      });
+    } else {
+      vote.value = value;
+    }
+
+    await comment.save();
+    res.status(200).send({
+      message:`Comment ${req.params.value} voted`
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getSubtitle = async (req, res, next) => {
   try {
     const movie = await Movie.findOne({
