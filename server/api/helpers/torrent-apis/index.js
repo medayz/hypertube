@@ -94,6 +94,17 @@ class Movies {
   }
 
   async getMovie(params) {
+    for (const provider of this.providers) {
+      try {
+        const movie = await provider.obj.getMovie(params);
+
+        if (movie) return movie;
+      } catch (err) {}
+    }
+    return null;
+  }
+
+  async getMagnets(params) {
     const ytsProvider = this.providers.find(item => item.name == 'YTS');
 
     if (ytsProvider) {
@@ -101,16 +112,20 @@ class Movies {
         const movie = await ytsProvider.obj.getMovie(params);
         if (movie) return movie;
       } catch (err) {}
+    }
 
-      for (const provider of this.providers) {
-        try {
-          if (provider.name == 'YTS') continue;
+    for (const provider of this.providers) {
+      try {
+        if (provider.name == 'YTS') continue;
 
-          const movie = await provider.obj.getMovie(params);
+        const movie = await provider.obj.getMovie(params);
 
-          if (movie) return movie;
-        } catch (err) {}
-      }
+        if (movie)
+          return {
+            imdbid: movie.imdbid,
+            torrents: movie.torrents
+          };
+      } catch (err) {}
     }
     return null;
   }

@@ -21,7 +21,7 @@ router.get('/:imdbid/:quality', async (req, res, next) => {
     let data = movieStream.get(imdbid, quality);
 
     if (!data) {
-      let movie = await movies.getMovie({ imdbid });
+      let movie = await movies.getMagnets({ imdbid });
 
       if (!movie) return next(createError(404));
 
