@@ -53,7 +53,7 @@ router.delete(
 );
 
 router.post(
-  '/comments/:id/vote/:value',
+  '/comments/:id/vote',
   movieValidator.voteValidator,
   moviesController.voteComment
 );

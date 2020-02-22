@@ -69,9 +69,6 @@ exports.deleteCommentValidator = Joi.object().keys({
 });
 
 exports.voteValidator = Joi.object({
-  id: Joi.string()
-    .min(1)
-    .required(),
   value: Joi.string()
     .valid('up', 'down')
     .required()

@@ -73,7 +73,7 @@ exports.updateCommentValidator = (req, res, next) => {
 };
 
 exports.voteValidator = (req, res, next) => {
-  const { error } = movieSchema.voteValidator.validate(req.params);
+  const { error } = movieSchema.voteValidator.validate(req.body);
 
   if (!error) return next();
 

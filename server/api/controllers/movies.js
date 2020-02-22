@@ -161,13 +161,14 @@ exports.deleteComment = async (req, res, next) => {
 
 exports.voteComment = async (req, res, next) => {
   try {
-    const comment = await Comment.findOne({
+    let comment = await Comment.findOne({
       _id: req.params.id
     });
+    let changed = true;
 
     if (!comment) return next(createError(404));
 
-    const value = req.params.value == 'up' ? 1 : -1;
+    const value = req.body.value == 'up' ? 1 : -1;
 
     const vote = comment.votes.find(item => item.owner == req.user.id);
     if (!vote) {
@@ -176,12 +177,15 @@ exports.voteComment = async (req, res, next) => {
         value: value
       });
     } else {
+      changed = vote.value != value;
       vote.value = value;
     }
 
-    await comment.save();
+    if (changed) comment = await comment.save();
+
     res.status(200).send({
-      message:`Comment ${req.params.value} voted`
+      message: `Comment ${req.body.value} voted`,
+      changed: changed
     });
   } catch (err) {
     next(err);
