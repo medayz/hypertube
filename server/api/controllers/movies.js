@@ -43,9 +43,11 @@ exports.getMovie = async (req, res, next) => {
         }
       );
     }
+
     movie.subtitles = subs.map(item => ({
       lang: item.lang,
-      langShort: item.langShort
+      langShort: item.langShort,
+      isDefault: item.langShort == req.user.defaultLanguage
     }));
 
     await redisClient.setexAsync(
