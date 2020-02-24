@@ -200,14 +200,17 @@ exports.getSubtitle = async (req, res, next) => {
 
     let subtitle = null;
 
-    if (movie)
+    if (movie) {
       subtitle = movie.subtitles.find(
         item => item.langShort == req.params.lang
       );
+    }
 
     if (!subtitle) return next(createError(404));
 
     const path = `${process.env.MOVIES_PATH}/${movie.imdbid}/${subtitle.fileName}`;
+
+    if (!fs.existsSync(path)) await subtitles.get(req.params.imdbid);
 
     if (!fs.existsSync(path)) return next(createError(404));
 
