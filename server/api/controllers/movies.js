@@ -109,9 +109,28 @@ exports.addComment = async (req, res, next) => {
 
 exports.getComments = async (req, res, next) => {
   try {
-    const comments = await Comment.find({
+    let comments = await Comment.find({
       'movie.imdbid': req.params.imdbid
-    }).populate('owner', 'username firstName lastName');
+    }).populate('owner', '_id username firstName lastName');
+
+    comments = comments.map(comment => {
+      const currentUserVote = comment.votes.find(vote =>
+        vote.owner.equals(req.user._id)
+      );
+
+      let userVote = 0;
+
+      if (currentUserVote) userVote = currentUserVote.value;
+
+      return {
+        _id: comment._id,
+        owner: {
+          username: comment.owner.username
+        },
+        userVote: userVote,
+        votes: comment.votes.length
+      };
+    });
 
     res.status(200).send({
       limit: comments.length,
