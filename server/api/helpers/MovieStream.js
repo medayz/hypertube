@@ -1,11 +1,14 @@
 const torrentStream = require('torrent-stream');
 const FFmpeg = require('fluent-ffmpeg');
+const CronJob = require('cron').CronJob;
+const EventEmitter = require('events');
 
 class MovieStream {
-  constructor(options = {}) {
+  constructor(options = {}, cronCallback = () => {}) {
     this._verbose = options.verbose || false;
     this._clientSupportedFormat = options.clientSupportedFormat;
     this._convert = options.convert || false;
+    this._events = new EventEmitter();
     /*
     'imdbid-quality': {
       magnet: string,
@@ -13,6 +16,36 @@ class MovieStream {
     }
     */
     this.data = {};
+
+    if (typeof cronCallback != 'function') return;
+
+    const job = new CronJob(
+      '0 * * * *',
+      () => {
+        cronCallback(this);
+      },
+      null,
+      true,
+      'Africa/Casablanca'
+    );
+    job.start();
+  }
+
+  on(event, callback) {
+    this._events.on(event, callback);
+    return this;
+  }
+
+  destroyEngines(pattern) {
+    for (const key in this.data) {
+      if (pattern.test(key)) {
+        const result = this.data[key];
+        result.engine.destroy(() => {
+          delete this.data[key];
+        });
+      }
+    }
+    return false;
   }
 
   get(imdbid, quality) {
@@ -45,12 +78,14 @@ class MovieStream {
           'udp://tracker.leechers-paradise.org:6969'
         ]
       });
+
       this.data[key] = {
         magnet: magnet,
         engine: engine
       };
       isNewEngine = true;
     }
+    this._events.emit('access', { imdbid });
 
     const { engine } = this.data[key];
 

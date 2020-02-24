@@ -1,13 +1,45 @@
 const router = require('express').Router();
+const Movie = require('../models/movie');
+const removeMovieDir = require('../utils/removeMovieDir');
 const MovieStream = require('../helpers/MovieStream');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
 const { isAuth, getQueryToken } = require('../middlewares/auth');
 
-const movieStream = new MovieStream({
-  clientSupportedFormat: ['mp4', 'mkv', 'webm'],
-  convert: true, // To webm
-  verbose: true
+const movieStream = new MovieStream(
+  {
+    clientSupportedFormat: ['mp4', 'mkv', 'webm'],
+    convert: true, // To webm
+    verbose: true
+  },
+  async sender => {
+    const now = new Date();
+    now.setDate(now.getDate() - 30);
+
+    const movies = await Movie.find({
+      lastAccess: { $lte: now }
+    }).select('imdbid lastAccess');
+
+    movies.forEach(movie => {
+      removeMovieDir(movie.imdbid)
+        .then(() => {
+          const pattern = new RegExp(`${movie.imdbid}-.+`);
+          sender.destroyEngines(pattern);
+        })
+        .catch(err => console.log(err.message));
+    });
+  }
+);
+
+movieStream.on('access', async ({ imdbid }) => {
+  try {
+    await Movie.updateOne(
+      { imdbid },
+      { $set: { lastAccess: Date.now() } }
+    );
+  } catch (err) {
+    console.log(err.message);
+  }
 });
 
 router.use(getQueryToken);
