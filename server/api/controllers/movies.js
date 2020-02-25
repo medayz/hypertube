@@ -206,9 +206,11 @@ exports.voteComment = async (req, res, next) => {
 
     if (changed) comment = await comment.save();
 
+    const votes = comment.votes.reduce((acc, vote) => acc + vote.value, 0);
+
     res.status(200).send({
       message: `Comment ${req.body.value} voted`,
-      changed: changed
+      votes: votes
     });
   } catch (err) {
     next(err);
