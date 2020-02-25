@@ -191,7 +191,8 @@ exports.voteComment = async (req, res, next) => {
 
     if (!comment) return next(createError(404));
 
-    const value = req.body.value == 'up' ? 1 : -1;
+    let value = 0;
+    if (req.body.value != 'regret') value = req.body.value == 'up' ? 1 : -1;
 
     const vote = comment.votes.find(item => item.owner == req.user.id);
     if (!vote) {
@@ -209,7 +210,7 @@ exports.voteComment = async (req, res, next) => {
     const votes = comment.votes.reduce((acc, vote) => acc + vote.value, 0);
 
     res.status(200).send({
-      message: `Comment ${req.body.value} voted`,
+      message: `Comment voted`,
       votes: votes
     });
   } catch (err) {
