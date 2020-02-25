@@ -86,10 +86,14 @@ exports.getUserByUsername = async (req, res, next) => {
   try {
     const user = await User.findOne({ username: req.params.username })
       .select('-_id')
+      .select('username')
       .select('firstName')
-      .select('lastName');
+      .select('lastName')
+      .select('avatar');
 
-    res.status(200).send({ exists: user !== null });
+    if (!user) return res.status(404).send({ message: 'User not found' });
+
+    res.status(200).send({ user });
   } catch (err) {
     next(err);
   }
