@@ -6,6 +6,7 @@ class YTS {
   constructor() {
     this.baseUrl = 'https://yts.mx';
     this.imageBaseUrl = 'https://img.yts.mx';
+    this.sortAccept = { rating: 'rating', title: 'title' };
   }
 
   _generateMagnet(hash) {
@@ -25,6 +26,16 @@ class YTS {
       banner = `${this.imageBaseUrl}${bannerPath}`;
     }
 
+    if (!movie.torrents) return null;
+
+    const torrents = movie.torrents.map(torrent => ({
+      torrentMagnet: this._generateMagnet(torrent.hash),
+      quality: torrent.quality,
+      type: torrent.type,
+      seeds: torrent.seeds,
+      peers: torrent.peers
+    }));
+
     return {
       source: {
         provider: 'YTS'
@@ -39,13 +50,7 @@ class YTS {
       poster: poster,
       banner: banner,
       trailer: movie.yt_trailer_code,
-      torrents: movie.torrents.map(torrent => ({
-        torrentMagnet: this._generateMagnet(torrent.hash),
-        quality: torrent.quality,
-        type: torrent.type,
-        seeds: torrent.seeds,
-        peers: torrent.peers
-      }))
+      torrents: torrents
     };
   }
 
@@ -72,7 +77,9 @@ class YTS {
 
     const { data } = response;
 
-    const movies = this._prepareData(data.movies || []);
+    let movies = this._prepareData(data.movies || []);
+
+    movies = movies.filter(item => item);
 
     return {
       count: data.movie_count,
@@ -82,13 +89,24 @@ class YTS {
     };
   }
 
-  getMovies(options) {
-    return this._sendRequest('list_movies.json', {
+  async getMovies(options) {
+    let sort_by = this.sortAccept[options.sort_by];
+
+    const data = await this._sendRequest('list_movies.json', {
       page: options.page,
-      limit: options.limit,
-      query_term: options.q,
-      sort_by: options.sort_by || 'rating'
+      sort_by: sort_by,
+      genre: options.genre
     });
+
+    if (!sort_by) {
+      data.movies.sort((a, b) => {
+        const a_seeds = a.torrents.reduce((acc, cur) => acc + cur.seeds, 0);
+        const b_seeds = b.torrents.reduce((acc, cur) => acc + cur.seeds, 0);
+
+        return b_seeds - a_seeds;
+      });
+    }
+    return data;
   }
 
   async getMovie(params) {
@@ -103,8 +121,7 @@ class YTS {
 
   search(options) {
     return this._sendRequest('list_movies.json', {
-      page: 1,
-      limit: options.limit,
+      page: options.page,
       query_term: options.q
     });
   }
@@ -113,9 +130,8 @@ class YTS {
 class TV {
   constructor() {
     this.baseUrl = 'https://tv-v2.api-fetch.website';
-    this._total = 0;
-    this._hasTotal = false;
     this._limit = 50;
+    this.sortAccept = { rating: 'rating', title: 'title' };
   }
 
   _getTrailerId(url) {
@@ -146,6 +162,8 @@ class TV {
         .split('/')
         .pop()}`;
     }
+
+    if (!movie.torrents) return null;
 
     return {
       source: {
@@ -186,28 +204,40 @@ class TV {
   async _sendRequest(url, params = {}) {
     const { data } = await axios.get(`${this.baseUrl}${url}`, { params });
 
-    const movies = this._prepareData(data);
+    let movies = this._prepareData(data);
 
-    if (!this._hasTotal) {
-      const { data: pages } = await axios.get(`${this.baseUrl}/movies`);
+    movies = movies.filter(item => item);
 
-      this._total = pages.length * this._limit;
-      this._hasTotal = true;
-    }
+    const { data: pages } = await axios.get(`${this.baseUrl}/movies`);
+
+    const total = pages.length * this._limit;
 
     return {
-      count: this._total,
+      count: total,
       limit: movies.length,
       movies
     };
   }
 
-  getMovies(options = {}) {
-    return this._sendRequest(`/movies/${options.page}`, {
+  async getMovies(options = {}) {
+    let sort_by = this.sortAccept[options.sort_by];
+
+    let data = await this._sendRequest(`/movies/${options.page}`, {
       page: options.page,
-      sort: options.sort_by || 'rating',
-      order: -1
+      sort: sort_by,
+      genre: options.genre,
+      order: sort_by == 'rating' ? -1 : 1
     });
+
+    if (!sort_by) {
+      data.movies.sort((a, b) => {
+        const a_seeds = a.torrents.reduce((acc, cur) => acc + cur.seeds, 0);
+        const b_seeds = b.torrents.reduce((acc, cur) => acc + cur.seeds, 0);
+
+        return b_seeds - a_seeds;
+      });
+    }
+    return data;
   }
 
   async getMovie(params) {
@@ -228,6 +258,7 @@ class TV {
 class PopCorn {
   constructor() {
     this.baseUrl = 'https://api.apiumadomain.com';
+    this.sortAccept = { seeds: 'seeds', title: 'title' };
   }
 
   _prepareMovie(movie) {
@@ -271,7 +302,9 @@ class PopCorn {
   async _sendRequest(route, params) {
     const { data } = await axios.get(`${this.baseUrl}${route}`, { params });
 
-    const movies = this._prepareData(data);
+    let movies = this._prepareData(data);
+
+    movies = movies.filter(item => item);
 
     return {
       limit: movies.length,
@@ -279,10 +312,20 @@ class PopCorn {
     };
   }
 
-  getMovies(options) {
-    options.sort = 'rating';
+  async getMovies(options) {
+    let sort_by = this.sortAccept[options.sort_by];
 
-    return this._sendRequest('/list', options);
+    const data = await this._sendRequest('/list', {
+      page: options.page,
+      sort: sort_by,
+      genre: options.genre
+    });
+
+    if (!sort_by) {
+      data.movies.sort((a, b) => b.rating.imdb - a.rating.imdb);
+    } else if (sort_by !== 'title') data.movies.reverse();
+
+    return data;
   }
 
   async getMovie(params) {
