@@ -37,8 +37,21 @@ exports.updateValidator = (req, res, next) => {
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
+exports.changePassword = (req, res, next) => {
+  const { error, value } = userSchema.changePassword.validate(req.body);
+
+  if (!error) {
+    req.body = value;
+    return next();
+  }
+
+  res.status(400).send({ error: utils.prettyError(error) });
+};
+
 exports.getUserByUsername = (req, res, next) => {
-  const { error, value } = userSchema.getUserByUsernameValidator.validate(req.params);
+  const { error, value } = userSchema.getUserByUsernameValidator.validate(
+    req.params
+  );
 
   if (!error) {
     req.params = value;

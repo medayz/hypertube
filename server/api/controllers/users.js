@@ -1,5 +1,6 @@
 const utils = require('../utils');
 const fs = require('fs');
+const createError = require('http-errors');
 
 const User = require('../models/user');
 const Movie = require('../models/movie');
@@ -153,6 +154,24 @@ exports.addImage = async (req, res, next) => {
     res.status(201).send({
       message: 'Success'
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    let user = await User.findOne({ _id: req.user._id }).select('+password');
+
+    const isValid = await user.isValidPassword(oldPassword);
+    if (!isValid) return next(createError(422, 'Old password is incorrect'));
+
+    user.password = newPassword;
+    user = await user.save();
+
+    res.send(user);
   } catch (err) {
     next(err);
   }

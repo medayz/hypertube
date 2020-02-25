@@ -55,6 +55,17 @@ exports.updateUserValidator = Joi.object().keys({
     .lowercase()
 });
 
+exports.changePassword = Joi.object().keys({
+  oldPassword: Joi.string()
+    .min(4)
+    .max(100)
+    .required(),
+  newPassword: Joi.string()
+    .min(4)
+    .max(100)
+    .required()
+});
+
 exports.getUserByUsernameValidator = Joi.object().keys({
   username: Joi.string()
     .trim()

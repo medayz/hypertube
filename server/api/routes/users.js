@@ -23,6 +23,13 @@ router.patch(
   usersController.update
 );
 
+router.patch(
+  '/password',
+  isAuth,
+  userValidator.changePassword,
+  usersController.changePassword
+);
+
 router.post(
   '/avatar',
   isAuth,
