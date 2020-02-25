@@ -53,6 +53,18 @@ router.get(
 );
 
 router.get(
+  '/resetpassword/:email',
+  userValidator.sendResetPassword,
+  usersController.sendResetPassword
+);
+
+router.post(
+  '/resetpassword',
+  userValidator.resetPassword,
+  usersController.resetPassword
+);
+
+router.get(
   '/verification/:token',
   userValidator.verify,
   usersController.verify

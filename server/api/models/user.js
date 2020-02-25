@@ -1,6 +1,8 @@
 const { Schema, model } = require('mongoose');
 const utils = require('../utils');
 const bcrypt = require('bcryptjs');
+const EmailVerifcation = require('../models/email-verification');
+const ResetPassword = require('../models/reset-password');
 
 const userSchema = new Schema({
   username: { type: String, trim: true, lowercase: true },
@@ -59,6 +61,33 @@ userSchema.statics.emailExists = async email => {
   const user = await model('User').findOne({ email });
 
   return !!user;
+};
+
+userSchema.statics.verifyEmail = async email => {
+  const User = model('User');
+
+  await EmailVerifcation.deleteOne({ email });
+
+  await User.updateOne(
+    { email },
+    {
+      $set: { emailVerified: true }
+    }
+  );
+  return true;
+};
+
+userSchema.statics.resetPassword = async (email, password) => {
+  const User = model('User');
+
+  await ResetPassword.deleteMany({ email });
+
+  const user = await User.findOne({ email });
+
+  user.password = password;
+  await user.save();
+
+  return true;
 };
 
 userSchema.methods.isValidPassword = async function(password) {

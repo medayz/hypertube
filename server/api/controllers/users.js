@@ -1,7 +1,10 @@
-const utils = require('../utils');
+const { sendEmail } = require('../utils/email');
+const { generateToken, verfiyToken } = require('../utils/jwt');
 const fs = require('fs');
 const createError = require('http-errors');
 
+const ResetPassword = require('../models/reset-password');
+const EmailVerification = require('../models/email-verification');
 const User = require('../models/user');
 const Movie = require('../models/movie');
 
@@ -25,6 +28,25 @@ exports.create = async (req, res, next) => {
 
     const newUser = await user.save();
 
+    // insert email verifcation token
+    const token = generateToken({ email: req.body.email });
+    const emailVerification = new EmailVerification({
+      email: req.body.email,
+      token: token
+    });
+
+    await sendEmail(
+      process.env.EMAIL,
+      req.body.email,
+      'Account activation',
+      `
+      ${process.env.HOSTNAME}/api/v1/users/verification/${token}<br/>
+      <a href="${process.env.HOSTNAME}/api/v1/users/verification/${token}">Verify</a>
+      `
+    );
+
+    await emailVerification.save();
+
     res.status(201).send({
       message: 'User created',
       user: {
@@ -45,7 +67,7 @@ exports.login = (req, res, next) => {
     if (info) return res.status(401).send(info);
 
     const payload = { _id: user._id };
-    const token = utils.generateToken(payload);
+    const token = generateToken(payload);
 
     req.user = token;
     next();
@@ -113,14 +135,60 @@ exports.update = async (req, res, next) => {
   }
 };
 
+exports.sendResetPassword = async (req, res, next) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) return next(createError(422, 'Email non exists'));
+
+    const token = generateToken({ email });
+
+    const resetPassword = new ResetPassword({
+      email,
+      token
+    });
+
+    const result = await resetPassword.save();
+
+    const info = await sendEmail(
+      process.env.EMAIL,
+      email,
+      'Reset password',
+      `
+      ${process.env.HOSTNAME}/api/v1/users/resetpassword/${token}<br/>
+      <a href="${process.env.HOSTNAME}/api/v1/users/resetpassword/${token}">Verify</a>
+      `
+    );
+    res.status(200).send({ message: 'Reset password was sent to your email' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    await User.resetPassword(email, password);
+
+    res.status(200).send({
+      message: 'Password changed'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.verify = async (req, res, next) => {
   try {
-    await User.updateOne(
-      { _id: req.user.id },
-      {
-        $set: { verfied: true }
-      }
-    );
+    const { email } = req.payload;
+
+    const verified = await User.verifyEmail(email);
+
+    if (!verified) return next(createError(422, "Can't verfiy your account"));
+
     res.status(200).send({ message: 'user verified' });
   } catch (err) {
     next(err);

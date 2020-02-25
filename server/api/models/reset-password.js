@@ -1,17 +1,17 @@
 const { Schema, model } = require('mongoose');
 
 const resetPasswordSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, unique: true, required: true },
+  email: { type: String, unique: true, required: true },
   token: { type: String, unique: true, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 
 resetPasswordSchema.pre('save', async function(next) {
-  await resetPasswordSchema.deleteOne({ user: this.user });
+  const ResetPassword = model('ResetPassword');
 
-  await this.save();
+  await ResetPassword.deleteMany({ email: this.email });
 
   next();
 });
 
-module.exports.Cache = model('ResetPassword', resetPasswordSchema);
+module.exports = model('ResetPassword', resetPasswordSchema);

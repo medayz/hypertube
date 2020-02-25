@@ -9,17 +9,19 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendEmail = (from, to, subject, body) => {
-  transporter.sendMail(
-    {
-      from,
-      to,
-      subject,
-      html: body
-    },
-    (err, info) => {
-      if (err) return reject(err);
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(
+      {
+        from,
+        to,
+        subject,
+        html: body
+      },
+      (err, info) => {
+        if (err) return reject(err);
 
-      resolve(info);
-    }
-  );
+        resolve(info);
+      }
+    );
+  });
 };

@@ -66,6 +66,21 @@ exports.changePassword = Joi.object().keys({
     .required()
 });
 
+exports.sendResetPassword = Joi.object().keys({
+  email: Joi.string()
+    .trim()
+    .email()
+    .lowercase()
+    .required()
+});
+
+exports.resetPassword = Joi.object().keys({
+  token: Joi.string().required(),
+  password: Joi.string()
+    .min(1)
+    .required()
+});
+
 exports.getUserByUsernameValidator = Joi.object().keys({
   username: Joi.string()
     .trim()

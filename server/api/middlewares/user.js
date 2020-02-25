@@ -4,6 +4,9 @@ const { loadImage } = require('canvas');
 const createError = require('http-errors');
 const fs = require('fs');
 
+const EmailVerification = require('../models/email-verification');
+const ResetPassword = require('../models/reset-password');
+
 exports.createValidator = (req, res, next) => {
   const { error, value } = userSchema.createUserValidator.validate(req.body);
 
@@ -61,6 +64,44 @@ exports.getUserByUsername = (req, res, next) => {
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
+exports.sendResetPassword = async (req, res, next) => {
+  const { error, value } = userSchema.sendResetPassword.validate(req.params);
+
+  if (!error) {
+    req.params = value;
+    return next();
+  }
+
+  res.status(400).send({ error: utils.prettyError(error) });
+};
+
+exports.resetPassword = async (req, res, next) => {
+  const { error, value } = userSchema.resetPassword.validate(req.body);
+
+  if (!error) {
+    try {
+      const decoded = await utils.verfiyToken(req.body.token);
+
+      if (!decoded) return next(createError(400, 'invalid token'));
+
+      const resetPassword = await ResetPassword.findOne({
+        token: req.body.token
+      });
+
+      if (!resetPassword) return next(createError(400, 'invalid token'));
+
+      req.body = {
+        ...value,
+        email: decoded.email
+      };
+      return next();
+    } catch (err) {
+      return next(createError(400, 'invalid token'));
+    }
+  }
+  res.status(400).send({ error: utils.prettyError(error) });
+};
+
 exports.verify = async (req, res, next) => {
   const { error } = userSchema.verficationValidator.validate(req.params);
 
@@ -68,12 +109,21 @@ exports.verify = async (req, res, next) => {
     try {
       const decoded = await utils.verfiyToken(req.params.token);
 
-      if (!decoded.is_verification) throw new Error();
+      if (!decoded) return next(createError(400, 'invalid token'));
 
-      req.user = decoded;
+      const emailVerification = await EmailVerification.findOne({
+        token: req.params.token
+      });
+
+      if (!emailVerification) return next(createError(400, 'invalid token'));
+
+      req.payload = {
+        email: decoded.email
+      };
+
       return next();
     } catch (err) {
-      return res.status(400).send({ message: 'invalid token' });
+      return next(createError(400, 'invalid token'));
     }
   }
 
