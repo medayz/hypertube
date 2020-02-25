@@ -122,13 +122,15 @@ exports.getComments = async (req, res, next) => {
 
       if (currentUserVote) userVote = currentUserVote.value;
 
+      const votes = comment.votes.reduce((acc, vote) => acc + vote.value, 0);
+
       return {
         _id: comment._id,
         owner: {
           username: comment.owner.username
         },
         userVote: userVote,
-        votes: comment.votes.length
+        votes: votes
       };
     });
 
