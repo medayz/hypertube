@@ -8,7 +8,7 @@ const emailVerificationSchema = new Schema({
 
 emailVerificationSchema.pre('save', async function(next) {
   const EmailVerification = model('EmailVerification');
-  await EmailVerification.deleteOne({ token: this.token });
+  await EmailVerification.deleteMany({ email: this.email });
 
   next();
 });
