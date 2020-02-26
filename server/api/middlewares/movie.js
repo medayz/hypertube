@@ -92,7 +92,8 @@ exports.deleteCommentValidator = (req, res, next) => {
 
 exports.cacheMovies = async (req, res, next) => {
   try {
-    const key = `movies-${req.query.page}`;
+    const key = `movies-${req.url}`;
+
     const results = await redisClient.getAsync(key);
 
     if (results) return res.status(200).send(JSON.parse(results));
@@ -106,7 +107,8 @@ exports.cacheMovies = async (req, res, next) => {
 
 exports.cacheMovie = async (req, res, next) => {
   try {
-    const key = `movie-${req.params.imdbid}`;
+    const key = `movie-${req.url}`;
+
     const results = await redisClient.getAsync(key);
 
     if (results) return res.status(200).send(JSON.parse(results));
@@ -120,7 +122,8 @@ exports.cacheMovie = async (req, res, next) => {
 
 exports.cacheSearch = async (req, res, next) => {
   try {
-    const key = `search-${req.query.q}`;
+    const key = `search-${req.url}`;
+
     const results = await redisClient.getAsync(key);
 
     if (results) return res.status(200).send(JSON.parse(results));
