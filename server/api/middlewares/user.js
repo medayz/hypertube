@@ -8,29 +8,39 @@ const EmailVerification = require('../models/email-verification');
 const ResetPassword = require('../models/reset-password');
 
 exports.createValidator = (req, res, next) => {
-  const { error, value } = userSchema.createUserValidator.validate(req.body);
+  const { error, value } = userSchema.createUserValidator.validate(req.body, {
+    abortEarly: false
+  });
 
   if (!error) {
     req.body = value;
     return next();
   }
 
-  res.status(400).send({ error: utils.prettyError(error) });
+  res
+    .status(400)
+    .send({ message: 'Validation fails', details: utils.prettyError(error) });
 };
 
 exports.loginValidator = (req, res, next) => {
-  const { error, value } = userSchema.loginUserValidator.validate(req.body);
+  const { error, value } = userSchema.loginUserValidator.validate(req.body, {
+    abortEarly: false
+  });
 
   if (!error) {
     req.body = value;
     return next();
   }
 
-  res.status(400).send({ error: utils.prettyError(error) });
+  res
+    .status(400)
+    .send({ message: 'Validation fails', details: utils.prettyError(error) });
 };
 
 exports.updateValidator = (req, res, next) => {
-  const { error, value } = userSchema.updateUserValidator.validate(req.body);
+  const { error, value } = userSchema.updateUserValidator.validate(req.body, {
+    abortEarly: false
+  });
 
   if (!error) {
     req.body = value;
@@ -41,7 +51,9 @@ exports.updateValidator = (req, res, next) => {
 };
 
 exports.changePassword = (req, res, next) => {
-  const { error, value } = userSchema.changePassword.validate(req.body);
+  const { error, value } = userSchema.changePassword.validate(req.body, {
+    abortEarly: false
+  });
 
   if (!error) {
     req.body = value;
@@ -53,7 +65,10 @@ exports.changePassword = (req, res, next) => {
 
 exports.getUserByUsername = (req, res, next) => {
   const { error, value } = userSchema.getUserByUsernameValidator.validate(
-    req.params
+    req.params,
+    {
+      abortEarly: false
+    }
   );
 
   if (!error) {
@@ -65,7 +80,9 @@ exports.getUserByUsername = (req, res, next) => {
 };
 
 exports.sendResetPassword = async (req, res, next) => {
-  const { error, value } = userSchema.sendResetPassword.validate(req.params);
+  const { error, value } = userSchema.sendResetPassword.validate(req.params, {
+    abortEarly: false
+  });
 
   if (!error) {
     req.params = value;
@@ -76,7 +93,9 @@ exports.sendResetPassword = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
-  const { error, value } = userSchema.resetPassword.validate(req.body);
+  const { error, value } = userSchema.resetPassword.validate(req.body, {
+    abortEarly: false
+  });
 
   if (!error) {
     try {
@@ -103,7 +122,9 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.verify = async (req, res, next) => {
-  const { error } = userSchema.verficationValidator.validate(req.params);
+  const { error } = userSchema.verficationValidator.validate(req.params, {
+    abortEarly: false
+  });
 
   if (!error) {
     try {
@@ -131,7 +152,9 @@ exports.verify = async (req, res, next) => {
 };
 
 exports.watchValidator = async (req, res, next) => {
-  const { error } = userSchema.watchValidator.validate(req.params);
+  const { error } = userSchema.watchValidator.validate(req.params, {
+    abortEarly: false
+  });
 
   if (!error) return next();
 
