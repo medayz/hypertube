@@ -95,7 +95,8 @@ class YTS {
     const data = await this._sendRequest('list_movies.json', {
       page: options.page,
       sort_by: sort_by,
-      genre: options.genre
+      genre: options.genre,
+      limit: 50
     });
 
     if (!sort_by) {
