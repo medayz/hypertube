@@ -212,6 +212,16 @@ exports.watch = async (req, res, next) => {
   }
 };
 
+exports.getImage = async (req, res, next) => {
+  try {
+    const stream = fs.createReadStream(req.imagePath);
+
+    stream.pipe(res);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.addImage = async (req, res, next) => {
   try {
     await User.updateOne(

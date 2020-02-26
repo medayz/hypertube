@@ -138,6 +138,19 @@ exports.watchValidator = async (req, res, next) => {
   res.status(400).send({ error: utils.prettyError(error) });
 };
 
+exports.getImage = (req, res, next) => {
+  try {
+    const path = `${process.env.IMAGES_PATH}/${req.params.filename}`;
+
+    if (!fs.existsSync(path)) return next(createError(404));
+
+    req.imagePath = path;
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.addImage = async (req, res, next) => {
   try {
     if (!req.file) return next(createError(400, 'Invalid image'));

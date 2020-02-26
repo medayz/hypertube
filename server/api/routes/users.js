@@ -30,6 +30,13 @@ router.patch(
   usersController.changePassword
 );
 
+router.get(
+  '/avatar/:filename',
+  isAuth,
+  userValidator.getImage,
+  usersController.getImage
+);
+
 router.post(
   '/avatar',
   isAuth,
