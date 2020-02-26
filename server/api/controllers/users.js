@@ -17,13 +17,23 @@ exports.create = async (req, res, next) => {
     const usernameExists = await User.usernameExists(req.body.username);
 
     if (usernameExists) {
-      return res.status(400).send({ error: { username: 'already exists' } });
+      if (usernameExists) {
+        return res.status(400).send({
+          message: 'Validation fails',
+          details: { username: 'username is already exists' }
+        });
+      }
     }
 
     const emailExists = await User.emailExists(req.body.email);
 
     if (emailExists) {
-      return res.status(400).send({ error: { email: 'already exists' } });
+      if (usernameExists) {
+        return res.status(400).send({
+          message: 'Validation fails',
+          details: { username: 'email is already exists' }
+        });
+      }
     }
 
     const newUser = await user.save();
@@ -64,7 +74,14 @@ exports.login = (req, res, next) => {
   passport.authenticate('login', (err, user, info) => {
     if (err) return next(err);
 
-    if (info) return res.status(401).send(info);
+    if (info) {
+      return res.status(401).send({
+        message: 'Cannot login',
+        details: {
+          info
+        }
+      });
+    }
 
     const payload = { _id: user._id };
     const token = generateToken(payload);
@@ -101,19 +118,27 @@ exports.getUserByUsername = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    if (req.body.username) {
+    let emailChanged = false;
+
+    if (req.body.username && req.body.username != req.user.username) {
       const usernameExists = await User.usernameExists(req.body.username);
 
       if (usernameExists) {
-        return res.status(400).send({ message: 'username is already exists' });
+        return res.status(400).send({
+          message: 'Validation fails',
+          details: { username: 'username is already exists' }
+        });
       }
     }
 
-    if (req.body.email) {
+    if (req.body.email && req.body.email != req.user.email) {
       const emailExists = await User.emailExists(req.body.email);
 
       if (emailExists) {
-        return res.status(400).send({ message: 'email is already exists' });
+        return res.status(400).send({
+          message: 'Validation fails',
+          details: { username: 'email is already exists' }
+        });
       }
     }
 
@@ -122,6 +147,26 @@ exports.update = async (req, res, next) => {
     // Check email is updated
     if (req.body.email && req.body.email !== user.email) {
       // Send email validation
+      emailChanged = true;
+
+      // insert email verifcation token
+      const token = generateToken({ email: req.body.email });
+      const emailVerification = new EmailVerification({
+        email: req.body.email,
+        token: token
+      });
+
+      await sendEmail(
+        process.env.EMAIL,
+        req.body.email,
+        'Account activation',
+        `
+        ${process.env.HOSTNAME}/api/v1/users/verification/${token}<br/>
+        <a href="${process.env.HOSTNAME}/api/v1/users/verification/${token}">Verify</a>
+        `
+      );
+
+      await emailVerification.save();
     }
 
     // Update user object with given values
@@ -133,7 +178,9 @@ exports.update = async (req, res, next) => {
 
     user = await user.save();
 
-    res.status(200).send({ message: 'User updated', user });
+    res
+      .status(200)
+      .send({ message: 'User updated', emailChanged: emailChanged });
   } catch (err) {
     next(err);
   }
@@ -145,7 +192,14 @@ exports.sendResetPassword = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
 
-    if (!user) return next(createError(422, 'Email non exists'));
+    if (!user) {
+      return res.status(422).send({
+        message: 'Cannot send email',
+        details: {
+          email: 'email non exists'
+        }
+      });
+    }
 
     const token = generateToken({ email });
 
@@ -178,7 +232,10 @@ exports.resetPassword = async (req, res, next) => {
     await User.resetPassword(email, password);
 
     res.status(200).send({
-      message: 'Password changed'
+      message: 'Success',
+      details: {
+        password: 'password changed'
+      }
     });
   } catch (err) {
     next(err);
@@ -191,7 +248,11 @@ exports.verify = async (req, res, next) => {
 
     const verified = await User.verifyEmail(email);
 
-    if (!verified) return next(createError(422, "Can't verfiy your account"));
+    if (!verified) {
+      return res.status(422).send({
+        message: 'Cannot verfiy your account'
+      });
+    }
 
     res.status(200).send({ message: 'user verified' });
   } catch (err) {
@@ -249,7 +310,14 @@ exports.changePassword = async (req, res, next) => {
     let user = await User.findOne({ _id: req.user._id }).select('+password');
 
     const isValid = await user.isValidPassword(oldPassword);
-    if (!isValid) return next(createError(422, 'Old password is incorrect'));
+    if (!isValid) {
+      return res.status(422).send({
+        message: 'Cannot change password',
+        details: {
+          password: 'old password is incorrect'
+        }
+      });
+    }
 
     user.password = newPassword;
     user = await user.save();
