@@ -2,6 +2,19 @@ const axios = require('axios');
 const cloudScrapper = require('cloudscraper');
 const { parse: parseURL } = require('url');
 
+function filterTorrents(torrents) {
+  const newTorrents = {};
+
+  torrents.forEach(item => {
+    const obj = newTorrents[item.quality];
+
+    if (!obj) newTorrents[item.quality] = item;
+    else if (item.seeds > obj.seeds) newTorrents[item.quality] = item;
+  });
+
+  return Object.values(newTorrents);
+}
+
 class YTS {
   constructor() {
     this.baseUrl = 'https://yts.mx';
@@ -28,13 +41,15 @@ class YTS {
 
     if (!movie.torrents) return null;
 
-    const torrents = movie.torrents.map(torrent => ({
+    let torrents = movie.torrents.map(torrent => ({
       torrentMagnet: this._generateMagnet(torrent.hash),
       quality: torrent.quality,
       type: torrent.type,
       seeds: torrent.seeds,
       peers: torrent.peers
     }));
+
+    torrents = filterTorrents(torrents);
 
     return {
       source: {
@@ -166,6 +181,20 @@ class TV {
 
     if (!movie.torrents) return null;
 
+    let torrents = Object.keys(movie.torrents.en).map(key => {
+      const torrent = movie.torrents.en[key];
+      torrent.quality = key;
+
+      return {
+        torrentMagnet: torrent.url,
+        quality: torrent.quality,
+        seeds: torrent.seed,
+        peers: torrent.peer
+      };
+    });
+
+    torrents = filterTorrents(torrents);
+
     return {
       source: {
         provider: 'TV'
@@ -180,17 +209,7 @@ class TV {
       poster: poster,
       banner: banner,
       trailer: this._getTrailerId(movie.trailer),
-      torrents: Object.keys(movie.torrents.en).map(key => {
-        const torrent = movie.torrents.en[key];
-        torrent.quality = key;
-
-        return {
-          torrentMagnet: torrent.url,
-          quality: torrent.quality,
-          seeds: torrent.seed,
-          peers: torrent.peer
-        };
-      })
+      torrents: torrents
     };
   }
 
@@ -271,6 +290,16 @@ class PopCorn {
         .pop()}`;
     }
 
+    let torrents = movie.items.map(item => ({
+      torrentLink: item.torrent_url,
+      torrentMagnet: item.torrent_magnet,
+      quality: item.quality,
+      seeds: item.torrent_seeds,
+      peers: item.torrent_peers
+    }));
+
+    torrents = filterTorrents(torrents);
+
     return {
       source: {
         provider: 'POPCORN'
@@ -284,13 +313,7 @@ class PopCorn {
       genres: movie.genres,
       trailer: movie.trailer,
       poster: poster,
-      torrents: movie.items.map(item => ({
-        torrentLink: item.torrent_url,
-        torrentMagnet: item.torrent_magnet,
-        quality: item.quality,
-        seeds: item.torrent_seeds,
-        peers: item.torrent_peers
-      }))
+      torrents: torrents
     };
   }
 
