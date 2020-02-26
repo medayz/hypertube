@@ -66,7 +66,7 @@ userSchema.statics.emailExists = async email => {
 userSchema.statics.verifyEmail = async email => {
   const User = model('User');
 
-  await EmailVerifcation.deleteOne({ email });
+  await EmailVerifcation.deleteMany({ email });
 
   await User.updateOne(
     { email },

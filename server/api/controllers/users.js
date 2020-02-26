@@ -146,7 +146,7 @@ exports.update = async (req, res, next) => {
 
     // Check email is updated
     if (req.body.email && req.body.email !== user.email) {
-      // Send email validation
+      user.emailVerified = false;
       emailChanged = true;
 
       // insert email verifcation token
@@ -156,6 +156,7 @@ exports.update = async (req, res, next) => {
         token: token
       });
 
+      // Send email validation
       await sendEmail(
         process.env.EMAIL,
         req.body.email,
@@ -246,6 +247,7 @@ exports.verify = async (req, res, next) => {
   try {
     const { email } = req.payload;
 
+    console.log(email);
     const verified = await User.verifyEmail(email);
 
     if (!verified) {
