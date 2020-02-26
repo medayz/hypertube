@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { isAuth } = require('../middlewares/auth');
+const { isAuth, getQueryToken } = require('../middlewares/auth');
 
 const usersController = require('../controllers/users');
 const userValidator = require('../middlewares/user');
@@ -32,6 +32,7 @@ router.patch(
 
 router.get(
   '/avatar/:filename',
+  getQueryToken,
   isAuth,
   userValidator.getImage,
   usersController.getImage
