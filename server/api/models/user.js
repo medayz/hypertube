@@ -17,7 +17,7 @@ const userSchema = new Schema({
     required: true
   },
   password: { type: String, select: false },
-  defaultLanguage: { type: String, required: true, default: 'en' },
+  language: { type: String, required: true, default: 'en' },
   watchList: {
     type: [{ type: Schema.Types.ObjectId, ref: 'Watch' }],
     select: false
@@ -112,7 +112,7 @@ userSchema.methods.googleAuth = async function() {
       {
         $set: {
           google: { id: this.google.id },
-          emailVerified: true
+          emailVerified: user.emailVerified
         }
       }
     );
