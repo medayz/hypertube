@@ -224,7 +224,8 @@ exports.addImage = async (req, res, next) => {
     }
 
     res.status(201).send({
-      message: 'Success'
+      message: 'Success',
+      filename: req.file.filename
     });
   } catch (err) {
     next(err);
