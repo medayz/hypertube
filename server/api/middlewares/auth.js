@@ -7,11 +7,12 @@ exports.isAuth = (req, res, next) => {
       user = await User.findOne({ _id: user._id });
     }
 
-    if (err || !user) {
-      return res.status(401).json({ message: 'Unautorized' });
-    }
+    if (err || !user) return res.status(401).json({ message: 'Unautorized' });
 
-    req.user = user;
+    if (!user.emailVerified)
+      return res.status(403).json({ message: 'Forbidden' });
+
+    req.user = user.toJSON();
     next();
   })(req, res, next);
 };
