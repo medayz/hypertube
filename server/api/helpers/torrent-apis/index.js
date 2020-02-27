@@ -110,7 +110,12 @@ class Movies {
     if (ytsProvider) {
       try {
         const movie = await ytsProvider.obj.getMovie(params);
-        if (movie) return movie;
+        if (movie) {
+          const torrent = movie.torrents.find(
+            item => item.quality === params.quality
+          );
+          if (torrent) return torrent;
+        }
       } catch (err) {}
     }
 
@@ -120,11 +125,12 @@ class Movies {
 
         const movie = await provider.obj.getMovie(params);
 
-        if (movie)
-          return {
-            imdbid: movie.imdbid,
-            torrents: movie.torrents
-          };
+        if (movie) {
+          const torrent = movie.torrents.find(
+            item => item.quality === params.quality
+          );
+          if (torrent) return torrent;
+        }
       } catch (err) {}
     }
     return null;
