@@ -17,8 +17,3 @@ exports.isAuth = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.getQueryToken = (req, res, next) => {
-  const token = req.query.token || '';
-  req.headers.authorization = `Bearer ${token}`;
-  next();
-};

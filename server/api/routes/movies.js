@@ -1,9 +1,7 @@
 const router = require('express').Router();
-const { isAuth, getQueryToken } = require('../middlewares/auth');
+const { isAuth } = require('../middlewares/auth');
 const moviesController = require('../controllers/movies');
 const movieValidator = require('../middlewares/movie');
-
-router.get('/subtitles/:imdbid/:lang', getQueryToken);
 
 router.use(isAuth);
 

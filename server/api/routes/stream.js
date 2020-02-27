@@ -4,7 +4,7 @@ const removeMovieDir = require('../utils/removeMovieDir');
 const MovieStream = require('../helpers/MovieStream');
 const movies = require('../utils/movies');
 const createError = require('http-errors');
-const { isAuth, getQueryToken } = require('../middlewares/auth');
+const { isAuth } = require('../middlewares/auth');
 
 const movieStream = new MovieStream(
   {
@@ -38,8 +38,6 @@ movieStream.on('access', async ({ imdbid }) => {
     console.log(err.message);
   }
 });
-
-router.use(getQueryToken);
 
 router.get('/:imdbid/:quality', isAuth);
 
