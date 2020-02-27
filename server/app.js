@@ -3,6 +3,7 @@ const path = require('path');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const indexRouter = require('./api/routes/index');
 const usersRouter = require('./api/routes/users');
@@ -25,7 +26,7 @@ require('./api/socket')(io);
 server.listen(4000);
 
 app.set('io', io);
-
+app.use(cookieParser());
 // Enable CORS
 app.use(cors());
 

@@ -1,7 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
-const ExtractJWT = require('passport-jwt').ExtractJwt;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const FortyTwoStrategy = require('passport-42').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
@@ -16,9 +15,8 @@ passport.use(
       secretOrKey: process.env.JWT_KEY,
       // We expect the user to send the token as a query paramater with the name 'secret_token'
       jwtFromRequest: req => {
-        const cookie = ExtractJWT.fromHeader('cookie')(req);
-        const startIndex = cookie.indexOf('=');
-        return cookie.substr(startIndex + 1);
+        const token = req.cookies.token;
+        return token;
       }
     },
     (payload, done) => {
