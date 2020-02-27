@@ -33,10 +33,7 @@ const movieStream = new MovieStream(
 
 movieStream.on('access', async ({ imdbid }) => {
   try {
-    await Movie.updateOne(
-      { imdbid },
-      { $set: { lastAccess: Date.now() } }
-    );
+    await Movie.updateOne({ imdbid }, { $set: { lastAccess: Date.now() } });
   } catch (err) {
     console.log(err.message);
   }
@@ -53,11 +50,7 @@ router.get('/:imdbid/:quality', async (req, res, next) => {
     let data = movieStream.get(imdbid, quality);
 
     if (!data) {
-      let movie = await movies.getMagnets({ imdbid });
-
-      if (!movie) return next(createError(404));
-
-      const torrent = movie.torrents.find(item => item.quality === quality);
+      const torrent = await movies.getMagnets({ imdbid, quality });
 
       if (!torrent) return next(createError(404));
 
