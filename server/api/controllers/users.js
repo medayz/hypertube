@@ -92,7 +92,14 @@ exports.login = (req, res, next) => {
 
 exports.me = (req, res, next) => {
   try {
-    res.status(200).send(req.user);
+    res.status(200).send({
+      username: req.user.username,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      language: req.user.language,
+      avatar: req.user.avatar
+    });
   } catch (err) {
     next(err);
   }
@@ -105,11 +112,19 @@ exports.getUserByUsername = async (req, res, next) => {
       .select('username')
       .select('firstName')
       .select('lastName')
-      .select('avatar');
+      .select('email')
+      .select('avatar')
+      .select('language');
 
     if (!user) return res.status(404).send({ message: 'User not found' });
 
-    res.status(200).send({ user });
+    res.status(200).send({
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      language: user.language,
+      avatar: user.avatar
+    });
   } catch (err) {
     next(err);
   }
