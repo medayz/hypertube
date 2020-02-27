@@ -54,7 +54,7 @@ export default props => {
       <video ref={playerRef} className="video-js vjs-16-9" playsInline>
         {subtitles.map((item, index) => (
           <track
-            default={index ? false : true}
+            default={item.isDefault ? false : true}
             kind="captions"
             srcLang={item.langShort}
             label={item.lang}

@@ -1,8 +1,9 @@
 import { Link } from "gatsby";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { Input, Button, Spin, Icon, Typography } from "antd";
+import { Input, Button, Spin, Icon, Typography, Avatar } from "antd";
 import { disableBodyScroll, enableBodyScroll } from "body-scroll-lock";
+import SettingsButton from "./settings";
 import Logo from "./image";
 import Movies from "./movies";
 import axios from "axios";
@@ -80,10 +81,14 @@ const Header = ({ siteTitle }) => {
         placeholder="search for movies..."
         onChange={event => onChange(event.currentTarget.value)}
         onSearch={onSearch}
-        style={{ width: "300px" }}
+        style={{ width: "300px", maxWidth: "42%" }}
       />
-      <div>
-        <Button icon="logout" style={{ margin: "0 21px" }} />
+      <div className="header-btns">
+        <Button size="small" icon="logout" style={{ margin: "2px" }} />
+        <SettingsButton />
+        <Avatar shape="square" size="medium" style={{ marginLeft: ".42vw" }}>
+          {`test`}
+        </Avatar>
       </div>
     </header>
   );

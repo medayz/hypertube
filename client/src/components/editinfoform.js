@@ -1,11 +1,10 @@
-import React from "react";
-import "./forms.css";
-import { Form, Input, Button } from "antd";
-import { Link } from "gatsby";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Select } from "antd";
 import axios from "axios";
 
+const { Option } = Select;
 const styleOutline = {
-  border: 0,
+  border: "0",
   outline: "none",
 };
 const token =
@@ -17,34 +16,26 @@ const headers = {
   },
 };
 
-const SignUpForm = ({ form }) => {
-  const { getFieldDecorator, getFieldsValue, resetFields, setFields } = form;
+const EditForm = ({ info, form }) => {
+  const { getFieldDecorator } = form;
 
-  const handleSubmit = e => {
+  const handleSubmit = function(e) {
     e.preventDefault();
-    const newUser = getFieldsValue();
+    const edited = form.getFieldsValue();
     axios
-      .post(`/api/v1/users`, newUser, headers)
+      .patch(`/api/v1/users`, edited, headers)
       .then(({ data }) => {
         console.log(data);
-        resetFields();
       })
-      .catch(({ response: { data } }) => {
-        const errorObj = Object.assign({}, newUser);
-        for (const key in errorObj) {
-          errorObj[key] = {
-            value: errorObj[key],
-            errors: [new Error(data.details[key]) || ""],
-          };
-        }
-        setFields(errorObj);
-      });
+      .catch(err => console.log(err.message));
   };
 
+  useEffect(() => {
+    form.setFieldsValue(info);
+  }, []);
+
   return (
-    <Form onSubmit={handleSubmit} className="login-form">
-      <h2 id="my-h2">SIGN UP</h2>
-      <div className="empty" />
+    <Form onSubmit={handleSubmit}>
       <Form.Item>
         {getFieldDecorator("username", {
           rules: [{ required: true, message: "Please enter your username!" }],
@@ -68,26 +59,25 @@ const SignUpForm = ({ form }) => {
         })(<Input placeholder="Email Address" style={styleOutline} />)}
       </Form.Item>
       <Form.Item>
-        {getFieldDecorator("password", {
-          rules: [{ required: true, message: "Please enter your Password!" }],
+        {getFieldDecorator("language", {
+          rules: [
+            { required: true, message: "Choose your prefered language!" },
+          ],
         })(
-          <Input.Password
-            type="password"
-            placeholder="Password"
-            style={styleOutline}
-          />
+          <Select style={{ width: "32%" }} onChange={() => {}}>
+            <Option value="ar">Arabic</Option>
+            <Option value="en">English</Option>
+            <Option value="fr">French</Option>
+          </Select>
         )}
       </Form.Item>
       <Form.Item>
-        <Link className="login-form-forgot" to="/signin">
-          Sign In ?
-        </Link>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          SIGN UP
+        <Button type="primary" htmlType="submit" className="edit-form-button">
+          Edit
         </Button>
       </Form.Item>
     </Form>
   );
 };
 
-export default Form.create({ name: "register" })(SignUpForm);
+export default Form.create({ name: "edit" })(EditForm);

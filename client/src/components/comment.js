@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { Comment, Icon, Tooltip, Avatar } from "antd";
+import { Comment, Icon, Tooltip, Avatar, Button } from "antd";
 import moment from "moment";
 import axios from "axios";
 
@@ -14,36 +14,67 @@ const headers = {
 };
 
 export default props => {
-  const [votes, setVotes] = useState(0);
-  const [action, setAction] = useState(null);
+  const [votes, setVotes] = useState(props.votes);
+  const [action, setAction] = useState(
+    !props.userVote ? 0 : props.userVote === -1 ? "downvoted" : "upvoted"
+  );
 
   const upvote = () => {
+    if (action === "upvoted") {
+      setVotes(votes - 1);
+      axios
+        .post(
+          `/api/v1/movies/comments/${props.id}/vote`,
+          { value: "regret" },
+          headers
+        )
+        .then(({ data: { votes } }) => {
+          setVotes(votes);
+        })
+        .catch(err => console.log(err));
+      setAction("regret");
+      return;
+    }
     setVotes(votes + 1);
     setAction("upvoted");
     axios
       .post(
-        `/api/v1/movies/comments/${props._id}/vote`,
-        { value: "down" },
+        `/api/v1/movies/comments/${props.id}/vote`,
+        { value: "up" },
         headers
       )
-      .then(({ data: { changed } }) =>
-        changed ? setVotes(votes) : setVotes(votes - 1)
-      )
+      .then(({ data: { votes } }) => {
+        setVotes(votes);
+      })
       .catch(err => console.log(err));
   };
 
   const downvote = () => {
-    setVotes(votes - 1);
+    if (action === "downvoted") {
+      setVotes(votes - 1);
+      axios
+        .post(
+          `/api/v1/movies/comments/${props.id}/vote`,
+          { value: "regret" },
+          headers
+        )
+        .then(({ data: { votes } }) => {
+          setVotes(votes);
+        })
+        .catch(err => console.log(err));
+      setAction("regret");
+      return;
+    }
     setAction("downvoted");
     axios
       .post(
-        `/api/v1/movies/comments/${props._id}/vote`,
-        { value: "up" },
+        `/api/v1/movies/comments/${props.id}/vote`,
+        { value: "down" },
         headers
       )
-      .then(({ data: { changed } }) =>
-        changed ? setVotes(votes) : setVotes(votes + 1)
-      )
+      .then(({ data: { votes } }) => {
+        setVotes(votes);
+      })
       .catch(err => console.log(err));
   };
 
@@ -66,14 +97,36 @@ export default props => {
         />
       </Tooltip>
     </span>,
-    <span style={{ paddingLeft: 8, cursor: "auto" }}>{`${votes} votes`}</span>,
+    <span style={{ paddingLeft: 8, cursor: "auto" }}>{`${
+      Math.abs(votes) == 1 ? String(votes) + " vote" : String(votes) + " votes"
+    }`}</span>,
   ];
 
   return (
     <Comment
       actions={props.author && actions}
       author={props.author || ""}
-      avatar={<Avatar src={props.avatar || ""} alt={props.author || ""} />}
+      avatar={
+        <Avatar
+          style={{ background: "#1A3D3E", color: "#DCF763" }}
+          shape="square"
+          src={props.avatar || ""}
+          alt={props.author || ""}
+        >
+          <Button
+            size="medium"
+            onClick={props.showModal}
+            style={{
+              position: "absolute",
+              transform: "scaleY(1.69) scaleX(1.3)",
+              border: 0,
+              width: "100%",
+              margin: 0,
+            }}
+          ></Button>
+          {props.author}
+        </Avatar>
+      }
       content={props.content || ""}
       datetime={props.datetime || ""}
     />

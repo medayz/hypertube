@@ -7,6 +7,13 @@
   justify-content: space-between;
   align-items: center;
 }
+.header-btns {
+  margin: 0 1vw 0 0;
+}
+.header-btns > button {
+  /* height: 24px; */
+  /* width: 24px; */
+}
 .search-results {
   display: none;
   position: absolute;
@@ -42,4 +49,7 @@
   right: 0;
   position: absolute;
   z-index: -1;
+}
+.gatsby-image-wrapper {
+  padding: 21px;
 }

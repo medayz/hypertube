@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, List, Input, Tooltip } from "antd";
 import Comment from "./comment";
+import Profile from "./profile";
 import axios from "axios";
 import "./comment.css";
 import moment from "moment";
@@ -49,11 +50,28 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
 );
 
 export default props => {
-  const [comments, setComments] = useState([]);
-  const [submitting, setSubmittingState] = useState(false);
-  const [value, setValue] = useState("");
+  let [comments, setComments] = useState([]);
+  let [submitting, setSubmittingState] = useState(false);
+  let [value, setValue] = useState("");
+  let [modalVisible, changeVisibility] = useState(false);
+  let [profile, changeProfile] = useState({});
 
   const { imdbid } = props;
+
+  const showModal = username => {
+    axios
+      .get(`/api/v1/users/${username}`, headers)
+      .then(({ data: { user } }) => {
+        console.log(user);
+        changeProfile(user);
+      })
+      .catch(err => console.log(err));
+    changeVisibility(true);
+  };
+
+  const handleCancel = () => {
+    changeVisibility(false);
+  };
 
   const handleSubmit = () => {
     if (!value) {
@@ -71,14 +89,15 @@ export default props => {
           ...comments,
           {
             author: "Hamid",
-            avatar:
-              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+            avatar: `/api/v1/users/avatar/${props.avatar}?token=${token}`,
             content: <p>{value}</p>,
             datetime: (
               <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
                 <span>{moment().fromNow()}</span>
               </Tooltip>
             ),
+            votes: 0,
+            userVote: 0,
           },
         ]);
       })
@@ -95,13 +114,13 @@ export default props => {
     axios
       .get(`/api/v1/movies/comments/${imdbid}`, headers)
       .then(({ data: { comments: allComments } }) => {
-        // console.log("comments:", allComments);
+        console.log(allComments);
         const newComments = allComments.map(
-          ({ _id, owner, text, createdAt }) => {
+          ({ _id, owner, text, createdAt, votes, userVote }) => {
             return {
-              _id: _id,
+              id: _id,
               author: owner.username,
-              avatar: `/api/v1/users/${owner._id}/avatar`,
+              avatar: `/api/v1/users/avatar/${/*avatar*/ ""}?token=${token}`,
               content: <p>{text}</p>,
               datetime: (
                 <Tooltip
@@ -110,10 +129,13 @@ export default props => {
                   <span>{moment(createdAt).fromNow()}</span>
                 </Tooltip>
               ),
+              votes: votes,
+              userVote: userVote,
+              showModal: () => showModal(owner.username),
             };
           }
         );
-        console.log(newComments);
+        console.log("comments:", newComments);
         setComments(newComments);
       })
       .catch(err => console.log(err));
@@ -123,7 +145,8 @@ export default props => {
     <div>
       {comments.length > 0 && <CommentList comments={comments} />}
       <Comment
-        avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+        showModal={showModal}
+        avatar={`/api/v1/users/avatar/${props.avatar}?token=${token}`}
         content={
           <Editor
             onChange={handleChange}
@@ -132,6 +155,11 @@ export default props => {
             value={value}
           />
         }
+      />
+      <Profile
+        visible={modalVisible}
+        handleCancel={handleCancel}
+        user={profile}
       />
     </div>
   );

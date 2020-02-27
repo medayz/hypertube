@@ -148,12 +148,7 @@ export default ({ imdbid, location: { state: movieState } }) => {
             </div>
           </div>
         )}
-        {loading ? (
-          <Spin
-            indicator={spinIcon}
-            style={{ margin: "149px auto", display: "block" }}
-          />
-        ) : (
+        {!loading && (
           <div className="video-streaming">
             <Player
               imdbid={imdbid}

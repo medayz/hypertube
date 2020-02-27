@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Pagination, Typography, Spin, Icon } from "antd";
+import { Pagination, Typography, Spin, Icon, Select } from "antd";
 import axios from "axios";
 import "./library.css";
 
@@ -7,6 +7,7 @@ import Layout from "../components/layout";
 import Movies from "../components/movies";
 
 const { Title } = Typography;
+const { Option } = Select;
 
 const token =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
@@ -30,12 +31,37 @@ const PaginationContainer = ({ children }) => (
   </div>
 );
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
+const genres = [
+  <Option key={1337} value="Action">
+    Action
+  </Option>,
+  <Option key={1338} value="Drama">
+    Drama
+  </Option>,
+  <Option key={1339} value="Comedy">
+    Comedy
+  </Option>,
+  <Option key={1340} value="Romance">
+    Romance
+  </Option>,
+  <Option key={1341} value="Fantasy">
+    Fantasy
+  </Option>,
+  <Option key={1342} value="Sci-Fi">
+    Sci-Fi
+  </Option>,
+  <Option key={1343} value="Animation">
+    Fantasy
+  </Option>,
+];
 
 export default props => {
   const [movies, updateMovies] = useState([]);
   const [currentPage, updatePage] = useState(1);
   const [total, updateTotal] = useState(200);
   const [loading, updateLoading] = useState(true);
+  const [genresFilter, updateGenre] = useState("");
+  const [sort, updateSort] = useState("");
 
   const switchPage = async page => {
     updateLoading(true);
@@ -88,6 +114,42 @@ export default props => {
         </div>
       </div>
       <div className="movies-pagination">
+        <div className="sortnfilter">
+          <Select
+            className="filter-sort"
+            showSearch
+            placeholder="Filter by genres"
+            optionFilterProp="children"
+            onChange={value => {
+              updateGenre(value);
+            }}
+            filterOption={(input, option) =>
+              option.props.children
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            {genres}
+          </Select>
+          <Select
+            className="filter-sort"
+            showSearch
+            placeholder="Sorting Criteria"
+            optionFilterProp="children"
+            onChange={value => {
+              updateSort(value);
+            }}
+            filterOption={(input, option) =>
+              option.props.children
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            <Option key={2142} value="Rating">
+              Rating
+            </Option>
+          </Select>
+        </div>
         <PaginationContainer>
           <Pagination
             current={currentPage}
