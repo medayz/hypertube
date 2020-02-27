@@ -1,7 +1,6 @@
 const { sendEmail } = require('../utils/email');
 const { generateToken, verfiyToken } = require('../utils/jwt');
 const fs = require('fs');
-const createError = require('http-errors');
 
 const ResetPassword = require('../models/reset-password');
 const EmailVerification = require('../models/email-verification');
@@ -247,7 +246,6 @@ exports.verify = async (req, res, next) => {
   try {
     const { email } = req.payload;
 
-    console.log(email);
     const verified = await User.verifyEmail(email);
 
     if (!verified) {
@@ -351,5 +349,8 @@ exports.facebookCallback = passport.authenticate('facebook', {
 });
 
 exports.authToken = (req, res) => {
-  res.status(200).send({ token: req.user });
+  res
+    .status(200)
+    .cookie('token', req.user, { httpOnly: true })
+    .send({ message: 'OK' });
 };

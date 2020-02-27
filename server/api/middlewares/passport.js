@@ -15,7 +15,11 @@ passport.use(
       // Secret we used to sign our JWT
       secretOrKey: process.env.JWT_KEY,
       // We expect the user to send the token as a query paramater with the name 'secret_token'
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+      jwtFromRequest: req => {
+        const cookie = ExtractJWT.fromHeader('cookie')(req);
+        const startIndex = cookie.indexOf('=');
+        return cookie.substr(startIndex + 1);
+      }
     },
     (payload, done) => {
       try {
