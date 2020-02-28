@@ -43,9 +43,9 @@ passport.use(
         // Find the user associated with the username provided by the user
         const user = await User.findOne({ username }).select('+password');
 
+        // If the user isn't found in the database, return a message
         if (!user) {
-          // If the user isn't found in the database, return a message
-          return done(null, false, { message: 'User not found' });
+          return done(null, false, { username: 'User not found' });
         }
 
         // Validate password and make sure it matches with the corresponding hash stored in the database
@@ -53,8 +53,11 @@ passport.use(
         let validate = false;
         if (password) validate = await user.isValidPassword(password);
 
-        if (!validate) {
-          return done(null, false, { message: 'Wrong Password' });
+        if (!validate) return done(null, false, { password: 'Wrong Password' });
+
+        // Verify if user email activated
+        if (!user.emailVerified) {
+          return done(null, false, { email: 'email not verified' });
         }
 
         // Send the user information to the next middleware
@@ -81,14 +84,14 @@ passport.use(
       const email = profile.emails[0];
 
       try {
-        const token = await new User({
+        const data = await new User({
           firstName: profile.name.givenName,
           lastName: profile.name.familyName,
           email: email.value,
-          emailVerified: email.verified,
+          emailVerified: true,
           google: { id: profile.id }
         }).googleAuth();
-        return done(null, token);
+        return done(null, data);
       } catch (err) {
         done(err);
       }
@@ -107,13 +110,14 @@ passport.use(
       const email = profile.emails[0];
 
       try {
-        const token = await new User({
+        const data = await new User({
           firstName: profile.name.givenName,
           lastName: profile.name.familyName,
           email: email.value,
+          emailVerified: true,
           '42': { id: profile.id }
         }).fortyTwoAuth();
-        return done(null, token);
+        return done(null, data);
       } catch (err) {
         done(err);
       }
@@ -133,13 +137,14 @@ passport.use(
       const email = profile.emails[0];
 
       try {
-        const token = await new User({
+        const data = await new User({
           firstName: profile.name.givenName,
           lastName: profile.name.familyName,
           email: email.value,
+          emailVerified: true,
           facebook: { id: profile.id }
         }).facebookAuth();
-        return done(null, token);
+        return done(null, data);
       } catch (err) {
         done(err);
       }
