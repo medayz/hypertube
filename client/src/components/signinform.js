@@ -157,9 +157,21 @@ const SignInForm = ({ form }) => {
       )}
       <Form.Item>
         {pwd ? (
-          <Link className="login-form-forgot" to="/">
+          <a
+            className="login-form-forgot"
+            onClick={() => {
+              axios
+                .get(`/api/v1/users/resetpassword/${username}`)
+                .then(({ data }) => {
+                  console.log(data);
+                })
+                .catch(({ response: err }) => {
+                  console.log(err);
+                });
+            }}
+          >
             Forgot Password ?
-          </Link>
+          </a>
         ) : (
           <Link className="login-form-forgot" to="/signup">
             Sign Up ?

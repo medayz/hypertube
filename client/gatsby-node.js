@@ -11,5 +11,9 @@ exports.onCreatePage = ({ page, actions }) => {
   if (page.path.match(/^\/movie\/((?!\/).)+\/?$/)) {
     page.matchPath = `/movie/:imdbid`;
     createPage(page);
+  } else if (page.path.match(/^\/resetpassword/)) {
+    page.matchPath = "/app/:token";
+    // Update the page.
+    createPage(page);
   }
 };

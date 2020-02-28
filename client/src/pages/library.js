@@ -60,13 +60,16 @@ export default props => {
   const [currentPage, updatePage] = useState(1);
   const [total, updateTotal] = useState(200);
   const [loading, updateLoading] = useState(true);
-  const [genresFilter, updateGenre] = useState("");
+  const [genre, updateGenre] = useState("");
   const [sort, updateSort] = useState("");
 
   const switchPage = async page => {
     updateLoading(true);
     axios
-      .get(`/api/v1/movies?page=${page}`, headers)
+      .get(
+        `/api/v1/movies?page=${page}?genre=${genre}&sort_by=${sort}`,
+        headers
+      )
       .then(results => {
         const list = results.data.movies;
         updatePage(page);
@@ -78,7 +81,10 @@ export default props => {
 
   useEffect(() => {
     axios
-      .get(`/api/v1/movies?page=${currentPage}`, headers)
+      .get(
+        `/api/v1/movies?page=${currentPage}?genre=${genre}&sort_by=${sort}`,
+        headers
+      )
       .then(async results => {
         const list = results.data.movies;
 
