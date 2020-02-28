@@ -1,85 +1,176 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./forms.css";
-import { Form, Input, Button } from 'antd';
-import { Link } from 'gatsby';
+import { Form, Input, Button, Icon } from "antd";
+import { FortyTwoIcon } from "../icons";
+import { Link, navigate } from "gatsby";
+import axios from "axios";
 
 const styleOutline = {
-	border: '0',
-	outline: 'none'
+  border: "0",
+  outline: "none",
+};
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
+const headers = {
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
 };
 
-const SignInForm = (props) => {
-	let [pwd, setType] = useState(false);
-	let [username, setUsername] = useState("");
+const SignInForm = ({ form }) => {
+  let [pwd, setType] = useState(false);
+  let [username, setUsername] = useState("");
 
-	const handleUsernameSubmit = e => {
-		e.preventDefault();
-		username && setType(true);
-	};
+  const { getFieldDecorator, getFieldsValue, setFieldsValue, setFields } = form;
 
-	const handlePasswordSubmit = e => {
-		e.preventDefault();
-		setType(false);
-	};
+  const handleUsernameSubmit = e => {
+    e.preventDefault();
+    const user = getFieldsValue();
+    axios
+      .get(`/api/v1/users/${user.username}`, headers)
+      .then(({ data }) => {
+        setType(true);
+        setUsername(user.username);
+        console.log(data);
+      })
+      .catch(({ response: err }) => {
+        console.log(err);
+        const message = !user.username
+          ? "Please enter your Username!"
+          : err.status === 404
+          ? "Username not registered"
+          : err.data.message;
+        const fields = {
+          username: { value: user.username, errors: [new Error(message)] },
+        };
+        setFields(fields);
+      });
+  };
 
-	const handleUsernameChange = e => {
-		e.preventDefault();
-		console.log(username);
-		setUsername(e.target.value);
-	}
+  const handlePasswordSubmit = e => {
+    e.preventDefault();
+    const formData = getFieldsValue();
+    const user = {
+      username: username,
+      password: formData.password,
+    };
+    console.log(user);
+    axios
+      .post(`/api/v1/users/login`, user, headers)
+      .then(({ data }) => {
+        console.log(data);
+        navigate(`/library`);
+      })
+      .catch(err => {
+        console.log(err.response);
+        const fields = {
+          password: {
+            value: user.password,
+            errors: [new Error("Incorrect Password")],
+          },
+        };
+        setFields(fields);
+      });
+    // setType(false);
+  };
 
-	const { getFieldDecorator } = props.form;
+  const handleUsernameChange = e => {
+    e.preventDefault();
+    console.log(username);
+    setUsername(e.target.value);
+  };
 
-	return (
-		<Form onSubmit={pwd ? handlePasswordSubmit : handleUsernameSubmit } className="login-form">
-			<h2 id="my-h2">SIGN IN</h2>
-			{pwd ? <div className="user-badge"><span>{ username }</span></div> : <div className="empty" />}
-			{pwd ?
-				<Form.Item>
-					{getFieldDecorator("pwd", {
-						rules: [
-							{ required: true, message: "Please enter your Password!" }
-						]
-					})(
-						<Input
-							type="password"
-							placeholder="Password"
-							style={ styleOutline }
-						/>
-					)}
-				</Form.Item>
-				: <Form.Item>
-					{getFieldDecorator("username", {
-						rules: [{ required: true, message: "Please enter your Username!" }]
-					})(
-						<Input
-							placeholder="Username"
-							style={ styleOutline }
-							value={ username }
-							onChange={ handleUsernameChange }
-						/>
-					)}
-				</Form.Item>
-			}
-			<Form.Item>
-				{pwd ?
-					<Link className="login-form-forgot" to="/">
-						Forgot Password ?
-					</Link>
-					: <Link className="login-form-forgot" to="/signup">
-						Sign Up ?
-					</Link>
-				}
-				<Button type="primary" htmlType="submit" className="login-form-button">
-					{pwd ?
-					"SIGN IN"
-					: "NEXT"}
-				</Button>
-			</Form.Item>
-		</Form>
-	);
-}
+  return (
+    <Form
+      onSubmit={pwd ? handlePasswordSubmit : handleUsernameSubmit}
+      className="login-form"
+    >
+      <h2 id="my-h2">SIGN IN</h2>
+      <div>
+        {pwd && (
+          <Button
+            icon="caret-left"
+            style={{ border: 0, float: "left" }}
+            onClick={() => {
+              setType(false);
+            }}
+          />
+        )}
+        {pwd ? (
+          <div className="user-badge">
+            <span>{username}</span>
+          </div>
+        ) : (
+          <div className="empty">
+            <a href="http://localhost:3000/api/v1/users/auth/google">
+              <Icon
+                type="google-square"
+                theme="filled"
+                style={{ fontSize: "21px", borderRadius: "4px" }}
+              />
+            </a>
+            <a href="http://localhost:3000/api/v1/users/auth/42">
+              <FortyTwoIcon style={{ width: 19, height: 19, marginTop: 1 }} />
+            </a>
+            <a href="/api/v1/users/auth/facebook">
+              <Icon
+                type="facebook"
+                theme="filled"
+                style={{ fontSize: "21px", borderRadius: "4px" }}
+              />
+            </a>
+          </div>
+        )}
+        {pwd && (
+          <Button
+            icon="caret-right"
+            style={{ border: 0, float: "right" }}
+            onClick={handlePasswordSubmit}
+          />
+        )}
+      </div>
+      {pwd ? (
+        <Form.Item>
+          {getFieldDecorator("password", {
+            rules: [{ required: true, message: "Please enter your Password!" }],
+          })(
+            <Input
+              type="password"
+              placeholder="Password"
+              style={styleOutline}
+            />
+          )}
+        </Form.Item>
+      ) : (
+        <Form.Item>
+          {getFieldDecorator("username", {
+            rules: [{ required: true, message: "Please enter your Username!" }],
+          })(
+            <Input
+              placeholder="Username"
+              style={styleOutline}
+              onChange={handleUsernameChange}
+            />
+          )}
+        </Form.Item>
+      )}
+      <Form.Item>
+        {pwd ? (
+          <Link className="login-form-forgot" to="/">
+            Forgot Password ?
+          </Link>
+        ) : (
+          <Link className="login-form-forgot" to="/signup">
+            Sign Up ?
+          </Link>
+        )}
+        <Button type="primary" htmlType="submit" className="login-form-button">
+          {pwd ? "SIGN IN" : "NEXT"}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
 
-export default Form.create({ name: "login" })(
-    SignInForm
-);
+export default Form.create({ name: "login" })(SignInForm);

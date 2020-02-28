@@ -47,6 +47,12 @@ span.ant-alert-message {
 .empty {
   background: #fcfcfc;
   height: 39px;
+  margin: 4.2px 0;
+  display: flex;
+  justify-content: center;
+}
+.empty a {
+  margin: 0 4.2px;
 }
 .ant-form-item-control .login-form {
   max-width: 300px;
