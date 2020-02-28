@@ -30,8 +30,6 @@ const userSchema = new Schema({
 });
 
 userSchema.pre('save', function(next) {
-  if (this.isModified('email')) this.emailVerified = false;
-
   // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
 
@@ -119,7 +117,7 @@ userSchema.methods.googleAuth = async function() {
   }
 
   const payload = { _id: user._id };
-  return utils.generateToken(payload);
+  return { token: utils.generateToken(payload) };
 };
 
 userSchema.methods.fortyTwoAuth = async function() {
@@ -138,7 +136,7 @@ userSchema.methods.fortyTwoAuth = async function() {
   if (!user) user = await this.save();
 
   const payload = { _id: user._id };
-  return utils.generateToken(payload);
+  return { token: utils.generateToken(payload) };
 };
 
 userSchema.methods.facebookAuth = async function() {
@@ -157,7 +155,7 @@ userSchema.methods.facebookAuth = async function() {
   if (!user) user = await this.save();
 
   const payload = { _id: user._id };
-  return utils.generateToken(payload);
+  return { token: utils.generateToken(payload) };
 };
 
 module.exports = model('User', userSchema);

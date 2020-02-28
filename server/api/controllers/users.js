@@ -76,9 +76,7 @@ exports.login = (req, res, next) => {
     if (info) {
       return res.status(401).send({
         message: 'Cannot login',
-        details: {
-          info
-        }
+        details: info
       });
     }
 
@@ -364,8 +362,16 @@ exports.facebookCallback = passport.authenticate('facebook', {
 });
 
 exports.authToken = (req, res) => {
+  const { token, error } = req.user;
+
+  if (error) {
+    return res.redirect(
+      `http://localhost:8000/signin?message=${error.email}`
+    );
+  }
+
   res
     .status(200)
-    .cookie('token', req.user, { httpOnly: true })
-    .send({ message: 'OK' });
+    .cookie('token', token, { httpOnly: true })
+    .redirect('http://localhost:8000/library');
 };
