@@ -88,6 +88,14 @@ exports.login = (req, res, next) => {
   })(req, res, next);
 };
 
+exports.logout = (req, res, next) => {
+  res.clearCookie('token');
+
+  res.status(200).send({
+    message: 'logged out'
+  });
+};
+
 exports.me = (req, res, next) => {
   try {
     res.status(200).send({

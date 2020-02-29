@@ -14,6 +14,8 @@ router.post(
   usersController.authToken
 );
 
+router.get('/logout', isAuth, usersController.logout);
+
 router.get('/me', isAuth, usersController.me);
 
 router.patch(
