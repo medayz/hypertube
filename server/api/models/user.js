@@ -107,12 +107,14 @@ userSchema.methods.googleAuth = async function() {
     this.username = this._id;
     user = await this.save();
   } else {
+    if (!user.emailVerified) return { error: { email: 'already exists' } };
+
     await User.updateOne(
       { _id: user._id },
       {
         $set: {
           google: { id: this.google.id },
-          emailVerified: user.emailVerified
+          emailVerified: true
         }
       }
     );
