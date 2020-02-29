@@ -67,7 +67,7 @@ export default props => {
     updateLoading(true);
     axios
       .get(
-        `/api/v1/movies?page=${page}?genre=${genre}&sort_by=${sort}`,
+        `/api/v1/movies?page=${page}&genre=${genre}&sort_by=${sort}`,
         headers
       )
       .then(results => {
@@ -82,7 +82,7 @@ export default props => {
   useEffect(() => {
     axios
       .get(
-        `/api/v1/movies?page=${currentPage}?genre=${genre}&sort_by=${sort}`,
+        `/api/v1/movies?page=${currentPage}&genre=${genre}&sort_by=${sort}`,
         headers
       )
       .then(async results => {
