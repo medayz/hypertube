@@ -103,8 +103,10 @@ userSchema.methods.googleAuth = async function() {
     user = await User.findOne({ email: this.email });
   }
 
-  if (!user) user = await this.save();
-  else {
+  if (!user) {
+    this.username = this._id;
+    user = await this.save();
+  } else {
     await User.updateOne(
       { _id: user._id },
       {
@@ -133,7 +135,10 @@ userSchema.methods.fortyTwoAuth = async function() {
     }
   }
 
-  if (!user) user = await this.save();
+  if (!user) {
+    this.username = this._id;
+    user = await this.save();
+  }
 
   const payload = { _id: user._id };
   return { token: utils.generateToken(payload) };
@@ -152,7 +157,10 @@ userSchema.methods.facebookAuth = async function() {
     }
   }
 
-  if (!user) user = await this.save();
+  if (!user) {
+    this.username = this._id;
+    user = await this.save();
+  }
 
   const payload = { _id: user._id };
   return { token: utils.generateToken(payload) };
