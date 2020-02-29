@@ -200,24 +200,24 @@ exports.update = async (req, res, next) => {
 };
 
 exports.sendResetPassword = async (req, res, next) => {
-  const { email } = req.params;
+  const { username } = req.params;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(422).send({
         message: 'Cannot send email',
         details: {
-          email: 'email non exists'
+          email: 'username non exists'
         }
       });
     }
 
-    const token = generateToken({ email });
+    const token = generateToken({ user: user._id });
 
     const resetPassword = new ResetPassword({
-      email,
+      user: user._id,
       token
     });
 
@@ -225,7 +225,7 @@ exports.sendResetPassword = async (req, res, next) => {
 
     const info = await sendEmail(
       process.env.EMAIL,
-      email,
+      user.email,
       'Reset password',
       `
       ${process.env.HOSTNAME}/api/v1/users/resetpassword/${token}<br/>
@@ -239,10 +239,10 @@ exports.sendResetPassword = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { user, password } = req.body;
 
   try {
-    await User.resetPassword(email, password);
+    await User.resetPassword(user, password);
 
     res.status(200).send({
       message: 'Success',
@@ -361,17 +361,24 @@ exports.facebookCallback = passport.authenticate('facebook', {
   session: false
 });
 
-exports.authToken = (req, res) => {
+exports.oauthToken = (req, res) => {
   const { token, error } = req.user;
 
   if (error) {
-    return res.redirect(
-      `http://localhost:8000/signin?message=${error.email}`
-    );
+    return res.redirect(`http://localhost:8000/signin?message=${error.email}`);
   }
 
   res
     .status(200)
     .cookie('token', token, { httpOnly: true })
     .redirect('http://localhost:8000/library');
+};
+
+exports.authToken = (req, res) => {
+  const token = req.user;
+
+  res
+    .status(200)
+    .cookie('token', token, { httpOnly: true })
+    .send({ message: 'Success' });
 };

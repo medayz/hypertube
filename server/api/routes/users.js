@@ -60,7 +60,7 @@ router.get(
 );
 
 router.get(
-  '/resetpassword/:email',
+  '/resetpassword/:username',
   userValidator.sendResetPassword,
   usersController.sendResetPassword
 );
@@ -82,7 +82,7 @@ router.get('/auth/google', usersController.google);
 router.get(
   '/auth/google/callback',
   usersController.googleCallback,
-  usersController.authToken
+  usersController.oauthToken
 );
 
 router.get('/auth/42', usersController.fortyTwo);
@@ -90,7 +90,7 @@ router.get('/auth/42', usersController.fortyTwo);
 router.get(
   '/auth/42/callback',
   usersController.fortyTwoCallback,
-  usersController.authToken
+  usersController.oauthToken
 );
 
 router.get('/auth/facebook', usersController.facebook);
@@ -98,7 +98,7 @@ router.get('/auth/facebook', usersController.facebook);
 router.get(
   '/auth/facebook/callback',
   usersController.facebookCallback,
-  usersController.authToken
+  usersController.oauthToken
 );
 
 module.exports = router;

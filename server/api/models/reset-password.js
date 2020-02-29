@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const resetPasswordSchema = new Schema({
-  email: { type: String, unique: true, required: true },
+  user: { type: String, unique: true, required: true },
   token: { type: String, unique: true, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -9,7 +9,7 @@ const resetPasswordSchema = new Schema({
 resetPasswordSchema.pre('save', async function(next) {
   const ResetPassword = model('ResetPassword');
 
-  await ResetPassword.deleteMany({ email: this.email });
+  await ResetPassword.deleteMany({ user: this.user });
 
   next();
 });

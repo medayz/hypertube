@@ -67,9 +67,8 @@ exports.changePassword = Joi.object().keys({
 });
 
 exports.sendResetPassword = Joi.object().keys({
-  email: Joi.string()
+  username: Joi.string()
     .trim()
-    .email()
     .lowercase()
     .required()
 });

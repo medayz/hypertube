@@ -111,7 +111,7 @@ exports.resetPassword = async (req, res, next) => {
 
       req.body = {
         ...value,
-        email: decoded.email
+        user: decoded.user
       };
       return next();
     } catch (err) {

@@ -6,12 +6,11 @@ exports.getMoviesValidator = Joi.object().keys({
     .min(1)
     .default(1),
   sort_by: Joi.string()
-    .min(1)
-    .max(20)
-    .valid('seeds', 'rating', 'title')
+
+    .valid('seeds', 'rating', 'title', '')
     .default('seeds'),
   genre: Joi.string()
-    .min(1)
+    .allow('')
     .max(100)
 });
 

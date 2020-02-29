@@ -75,12 +75,12 @@ userSchema.statics.verifyEmail = async email => {
   return true;
 };
 
-userSchema.statics.resetPassword = async (email, password) => {
+userSchema.statics.resetPassword = async (id, password) => {
   const User = model('User');
 
-  await ResetPassword.deleteMany({ email });
+  await ResetPassword.deleteMany({ user: id });
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ _id: id });
 
   user.password = password;
   await user.save();
