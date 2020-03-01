@@ -107,25 +107,30 @@ export default props => {
       actions={props.author && actions}
       author={props.author || ""}
       avatar={
-        <Avatar
-          style={{ background: "#1A3D3E", color: "#DCF763" }}
-          shape="square"
-          src={props.avatar || ""}
-          alt={props.author || ""}
+        <Button
+          size="default"
+          onClick={props.showModal}
+          style={{
+            position: "relative",
+            border: 0,
+            margin: 0,
+            padding: 0,
+            background: "transparent",
+          }}
         >
-          <Button
-            size="default"
-            onClick={props.showModal}
+          <Avatar
             style={{
-              position: "absolute",
-              transform: "scaleY(1.69) scaleX(1.3)",
-              border: 0,
-              width: "100%",
-              margin: 0,
+              background: "#1A3D3E",
+              color: "#DCF763",
+              position: "relative",
             }}
-          ></Button>
-          {props.author}
-        </Avatar>
+            shape="square"
+            src={props.avatar || ""}
+            alt={props.author || ""}
+          >
+            {props.author}
+          </Avatar>
+        </Button>
       }
       content={props.content || ""}
       datetime={props.datetime || ""}
