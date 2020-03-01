@@ -3,6 +3,8 @@ const { isAuth } = require('../middlewares/auth');
 const moviesController = require('../controllers/movies');
 const movieValidator = require('../middlewares/movie');
 
+const mongoIdRegex = '^[0-9a-z]{24}$';
+
 router.use(isAuth);
 
 router.get(
@@ -39,19 +41,19 @@ router.post(
 );
 
 router.patch(
-  '/comments/:imdbid/:id',
+  `/comments/:imdbid/:id(${mongoIdRegex})`,
   movieValidator.updateCommentValidator,
   moviesController.updateComment
 );
 
 router.delete(
-  '/comments/:imdbid/:id',
+  `/comments/:imdbid/:id(${mongoIdRegex})`,
   movieValidator.deleteCommentValidator,
   moviesController.deleteComment
 );
 
 router.post(
-  '/comments/:id/vote',
+  `/comments/:id(${mongoIdRegex})/vote`,
   movieValidator.voteValidator,
   moviesController.voteComment
 );
