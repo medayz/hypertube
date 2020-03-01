@@ -138,7 +138,8 @@ class YTS {
   search(options) {
     return this._sendRequest('list_movies.json', {
       page: options.page,
-      query_term: options.q
+      query_term: options.q,
+      sort_by: 'title'
     });
   }
 }
@@ -242,11 +243,14 @@ class TV {
   async getMovies(options = {}) {
     let sort_by = this.sortAccept[options.sort_by];
 
+    let order;
+
+    if (sort_by == 'rating') order = 1;
+
     let data = await this._sendRequest(`/movies/${options.page}`, {
-      page: options.page,
       sort: sort_by,
       genre: options.genre,
-      order: sort_by == 'rating' ? -1 : 1
+      order: order
     });
 
     if (!sort_by) {
@@ -270,7 +274,9 @@ class TV {
 
   search(options) {
     return this._sendRequest(`/movies/${options.page}`, {
-      keywords: options.q
+      keywords: options.q,
+      sort: 'title',
+      order: 1
     });
   }
 }
@@ -360,13 +366,16 @@ class PopCorn {
     return data.movies[0];
   }
 
-  search(options) {
-    return this._sendRequest(`/list`, {
-      quality: '720p,1080p,3d',
-      sort: 'seeds',
+  async search(options) {
+    const data = await this._sendRequest(`/list`, {
       page: options.page,
-      keywords: options.q
+      keywords: options.q,
+      quality: '720p,1080p,3d',
+      sort: 'title'
     });
+
+    data.movies.reverse();
+    return data;
   }
 }
 
