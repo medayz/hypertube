@@ -104,7 +104,8 @@ exports.me = (req, res, next) => {
       lastName: req.user.lastName,
       email: req.user.email,
       language: req.user.language,
-      avatar: req.user.avatar
+      avatar: req.user.avatar,
+      watchList: req.user.watchList
     });
   } catch (err) {
     next(err);
@@ -289,19 +290,6 @@ exports.watch = async (req, res, next) => {
 
     await movie.watch(req.user._id, req.body.progress, req.params.imdbid);
     res.status(200).send({ message: 'Success' });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getWatchList = async (req, res, next) => {
-  try {
-    const user = await User.findOne({ _id: req.user._id }).populate(
-      'watchList', '-_id imdbid progress seenAt'
-    );
-    res.status(200).send({
-      watchList: user.watchList
-    });
   } catch (err) {
     next(err);
   }
