@@ -14,7 +14,6 @@ const App = props => {
   const context = useMemo(() => ({ user, setUser }), [user, setUser]);
 
   useEffect(() => {
-    console.log("props", props);
     const [_, imdbid] = props["*"].split("/");
     axios
       .get(`/api/v1/users/me`)
@@ -22,7 +21,6 @@ const App = props => {
         console.log("data:", data);
         setUser(data);
         setId(imdbid);
-        // !["movie", "library"].includes(props.route) && navigate("/app/library");
       })
       .catch(({ response: err }) => {
         console.log("error:", err);
@@ -31,7 +29,7 @@ const App = props => {
         }
         navigate("/signin");
       });
-  }, [user]);
+  }, []);
 
   return (
     <>

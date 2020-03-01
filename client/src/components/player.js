@@ -35,7 +35,7 @@ export default props => {
           });
         sent = percentage;
       }
-    });
+    }, []);
     const player = videojs(
       playerRef.current,
       {
