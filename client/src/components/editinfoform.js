@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Form, Input, Button, Select } from "antd";
+import UserContext from "../context/user";
 import axios from "axios";
 
 const { Option } = Select;
@@ -16,23 +17,24 @@ const headers = {
   },
 };
 
-const EditForm = ({ info, form }) => {
+const EditForm = ({ form }) => {
   const { getFieldDecorator } = form;
+  const { user, setUser } = useContext(UserContext);
 
   const handleSubmit = function(e) {
     e.preventDefault();
     const edited = form.getFieldsValue();
+
     axios
-      .patch(`/api/v1/users`, edited, headers)
+      .patch(`/api/v1/users`, edited)
       .then(({ data }) => {
         console.log(data);
+        setUser(data);
       })
       .catch(err => console.log(err.message));
   };
 
-  useEffect(() => {
-    form.setFieldsValue(info);
-  }, []);
+  useEffect(() => form.setFieldsValue(user), []);
 
   return (
     <Form onSubmit={handleSubmit}>

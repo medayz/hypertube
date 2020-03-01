@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Typography, Spin, Icon, Button } from "antd";
 import { enableBodyScroll } from "body-scroll-lock";
 import { TimerIcon, ImdbIcon, PopCornTimeIcon, CalendarIcon } from "../icons";
@@ -8,6 +8,7 @@ import "../../node_modules/react-modal-video/scss/modal-video.scss";
 import "./movie.css";
 import Player from "./player";
 import Comments from "./comments";
+import UserContext from "../context/user";
 
 const { Title, Paragraph } = Typography;
 const token =
@@ -24,6 +25,7 @@ export default ({ imdbid }) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
+  const { user } = useContext(UserContext);
 
   // const [_dummy, id] = props.imdbid.split("/");
   // const id = ""; //imdbid={props["*"]}
@@ -48,7 +50,7 @@ export default ({ imdbid }) => {
         updateLoadingState(false);
       })
       .catch(err => console.log(err));
-  }, [imdbid]);
+  }, [imdbid, user]);
 
   return (
     <div className="movie-wallpaper">
@@ -145,15 +147,16 @@ export default ({ imdbid }) => {
           </div>
         </div>
       )}
-      {!loading && (
-        <div className="video-streaming">
+      <div className="video-streaming">
+        {!loading && (
           <Player
             imdbid={imdbid}
             banner={movie.banner}
+            lang={user.language}
             subtitles={movie.subtitles}
           />
-        </div>
-      )}
+        )}
+      </div>
       <div className="comments">
         <Comments imdbid={imdbid} />
       </div>

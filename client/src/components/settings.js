@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Modal, Button } from "antd";
 import EditForm from "./editinfoform";
 import ChangePwdForm from "./changepwd";
 import UploadAvatar from "./uploadavatar";
+import UserContext from "../context/user";
 import axios from "axios";
 import "./settings.css";
 
@@ -18,17 +19,8 @@ const headers = {
 export default props => {
   let [visible, changeVisibility] = useState(false);
   let [loading, updateLoadingState] = useState(false);
-  let [info, updateInfo] = useState({});
+  const { user, setUser } = useContext(UserContext);
 
-  useEffect(() => {
-    axios
-      .get(`/api/v1/users/me`, headers)
-      .then(({ data }) => {
-        console.log(data);
-        updateInfo(data);
-      })
-      .catch(err => console.log(err));
-  }, []);
   const showModal = () => {
     changeVisibility(true);
   };
@@ -61,10 +53,8 @@ export default props => {
         confirmLoading={loading}
         onCancel={handleCancel}
       >
-        <UploadAvatar
-          url={`/api/v1/users/avatar/${info.avatar}?token=${token}`}
-        />
-        <EditForm info={info} />
+        {user && <UploadAvatar url={`/api/v1/users/avatar/${user.avatar}`} />}
+        <EditForm />
         <ChangePwdForm />
       </Modal>
     </div>

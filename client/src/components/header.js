@@ -1,12 +1,13 @@
 import { Link, navigate } from "gatsby";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Input, Button, Spin, Icon, Typography, Avatar } from "antd";
 import { disableBodyScroll, enableBodyScroll } from "body-scroll-lock";
 import SettingsButton from "./settings";
 import Logo from "./image";
 import Movies from "./movies";
 import axios from "axios";
+import UserContext from "../context/user";
 import "./header.css";
 
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
@@ -25,6 +26,7 @@ const headers = {
 const Header = ({ siteTitle }) => {
   let [movies, updateMovies] = useState([]);
   let [loading, updateLoadingState] = useState(false);
+  const { user } = useContext(UserContext);
 
   const onChange = value => {
     const resultsContainer = document.querySelector(".search-results").style;
@@ -96,9 +98,16 @@ const Header = ({ siteTitle }) => {
           }}
         />
         <SettingsButton />
-        <Avatar shape="square" size="medium" style={{ marginLeft: ".42vw" }}>
-          {`test`}
-        </Avatar>
+        {user && (
+          <Avatar
+            size="medium"
+            style={{ marginLeft: ".42vw" }}
+            src={`/api/v1/users/avatar/${user.avatar}`}
+            alt={user.username}
+          >
+            {user.username}
+          </Avatar>
+        )}
       </div>
     </header>
   );

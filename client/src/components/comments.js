@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Form, Button, List, Input, Tooltip } from "antd";
 import Comment from "./comment";
 import Profile from "./profile";
 import axios from "axios";
 import "./comment.css";
 import moment from "moment";
+import UserContext from "../context/user";
 
 const { TextArea } = Input;
 const token =
@@ -55,13 +56,13 @@ export default props => {
   let [value, setValue] = useState("");
   let [modalVisible, changeVisibility] = useState(false);
   let [profile, changeProfile] = useState({});
-  let [user, setUser] = useState({});
+  const { user } = useContext(UserContext);
 
   const { imdbid } = props;
 
   const showModal = username => {
     axios
-      .get(`/api/v1/users/${username}`, headers)
+      .get(`/api/v1/users/${username}`)
       .then(({ data: user }) => {
         changeProfile(user);
       })
@@ -88,8 +89,8 @@ export default props => {
         setComments([
           ...comments,
           {
-            author: "Hamid",
-            avatar: `/api/v1/users/avatar/${props.avatar}`,
+            author: user.username,
+            avatar: `/api/v1/users/avatar/${user.avatar}`,
             content: <p>{value}</p>,
             datetime: (
               <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
@@ -114,8 +115,6 @@ export default props => {
     axios
       .get(`/api/v1/movies/comments/${imdbid}`, headers)
       .then(async ({ data: { comments: allComments } }) => {
-        const user = (await axios.get(`/api/v1/users/me`)).data;
-        setUser(user);
         const newComments = allComments.map(
           ({ _id, owner, text, createdAt, votes, userVote }) => {
             return {
@@ -145,18 +144,20 @@ export default props => {
   return (
     <div>
       {comments.length > 0 && <CommentList comments={comments} />}
-      <Comment
-        showModal={showModal}
-        avatar={`/api/v1/users/avatar/${user.avatar}`}
-        content={
-          <Editor
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            submitting={submitting}
-            value={value}
-          />
-        }
-      />
+      {user && (
+        <Comment
+          showModal={() => showModal(user.username)}
+          avatar={`/api/v1/users/avatar/${user.avatar}`}
+          content={
+            <Editor
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              submitting={submitting}
+              value={value}
+            />
+          }
+        />
+      )}
       <Profile
         visible={modalVisible}
         handleCancel={handleCancel}

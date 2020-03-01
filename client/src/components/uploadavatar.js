@@ -45,7 +45,7 @@ export default props => {
         .post(`/api/v1/users/avatar`, formData, headers)
         .then(({ data: { message, filename } }) => {
           updateLoadingState(false);
-          updateImageUrl(`/api/v1/users/avatar/${filename}?token=${token}`);
+          updateImageUrl(`/api/v1/users/avatar/${filename}`);
         });
     }
   };

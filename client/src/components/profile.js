@@ -32,10 +32,7 @@ export default ({ visible, handleCancel, user }) => {
       <Card
         style={{ width: "100%", border: 0 }}
         cover={
-          <img
-            alt="example"
-            src={`/api/v1/users/avatar/${user.avatar}?token=${token}`}
-          />
+          <img alt="example" src={`/api/v1/users/avatar/${user.avatar}`} />
         }
       >
         <Title level={3}>{user.username}</Title>

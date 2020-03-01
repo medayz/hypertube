@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { navigate } from "gatsby";
 import { Router } from "@reach/router";
 import axios from "axios";
 import Layout from "../components/layout";
 import Movie from "../components/movie";
 import Library from "../components/library";
+import UserContext from "../context/user";
 
 const App = props => {
-  // let [loggedOn, setLoggedOn] = useState(null);
+  let [user, setUser] = useState(null);
   let [id, setId] = useState("");
+
+  const context = useMemo(() => ({ user, setUser }), [user, setUser]);
 
   useEffect(() => {
     console.log("props", props);
@@ -17,6 +20,7 @@ const App = props => {
       .get(`/api/v1/users/me`)
       .then(({ data }) => {
         console.log("data:", data);
+        setUser(data);
         setId(imdbid);
         // !["movie", "library"].includes(props.route) && navigate("/app/library");
       })
@@ -27,15 +31,21 @@ const App = props => {
         }
         navigate("/signin");
       });
-  }, []);
+  }, [user]);
 
   return (
-    <Layout>
-      <Router basepath="/app">
-        <Library path="/library" />
-        <Movie path={`/movie/${id}`} imdbid={id} />
-      </Router>
-    </Layout>
+    <>
+      {context && (
+        <UserContext.Provider value={context}>
+          <Layout>
+            <Router basepath="/app">
+              <Library path="/library" />
+              <Movie path={`/movie/${id}`} imdbid={id} />
+            </Router>
+          </Layout>
+        </UserContext.Provider>
+      )}
+    </>
   );
 };
 

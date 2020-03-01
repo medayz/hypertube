@@ -52,7 +52,8 @@ exports.updateUserValidator = Joi.object().keys({
   email: Joi.string()
     .trim()
     .email()
-    .lowercase()
+    .lowercase(),
+  language: Joi.string().valid('en', 'ar', 'fr', 'es')
 });
 
 exports.changePassword = Joi.object().keys({

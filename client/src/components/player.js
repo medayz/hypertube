@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import videojs from "video.js";
 import axios from "axios";
+import UserContext from "../context/user";
 import "../../node_modules/video.js/dist/video-js.css";
 import "./player.css";
 
@@ -14,9 +15,27 @@ const headers = {
 };
 export default props => {
   const { imdbid, banner, subtitles } = props;
+  const { user } = useContext(UserContext);
   const playerRef = useRef();
+  let sent = 0;
 
   useEffect(() => {
+    console.log(subtitles);
+    playerRef.current.addEventListener("timeupdate", function() {
+      const coeff = parseInt((this.currentTime * 100) / this.duration / 5);
+      const percentage = coeff * 5;
+      if (percentage && percentage > sent) {
+        axios
+          .post(`/api/v1/users/watch/${imdbid}`, { progress: percentage })
+          .then(({ data }) => {
+            console.log(data);
+          })
+          .catch(({ response: err }) => {
+            console.log(err);
+          });
+        sent = percentage;
+      }
+    });
     const player = videojs(
       playerRef.current,
       {
@@ -30,7 +49,7 @@ export default props => {
       () => {
         player.src([
           {
-            src: `/api/v1/stream/${imdbid}/1080p?token=${token}`,
+            src: `/api/v1/stream/${imdbid}/1080p`,
             type: "video/mp4",
           },
         ]);
@@ -52,16 +71,17 @@ export default props => {
       }}
     >
       <video ref={playerRef} className="video-js vjs-16-9" playsInline>
-        {subtitles.map((item, index) => (
-          <track
-            key={index}
-            default={item.isDefault ? false : true}
-            kind="captions"
-            srcLang={item.langShort}
-            label={item.lang}
-            src={`/api/v1/movies/subtitles/${imdbid}/${item.langShort}?token=${token}`}
-          />
-        ))}
+        {subtitles &&
+          subtitles.map((item, index) => (
+            <track
+              key={index}
+              default={item.langShort === user.language ? true : false}
+              kind="captions"
+              srcLang={item.langShort}
+              label={item.lang}
+              src={`/api/v1/movies/subtitles/${imdbid}/${item.langShort}`}
+            />
+          ))}
       </video>
     </div>
   );
