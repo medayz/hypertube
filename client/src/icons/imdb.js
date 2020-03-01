@@ -3,7 +3,7 @@ import React from "react";
 export default () => (
   <svg
     id="home_img"
-    class="ipc-logo"
+    className="ipc-logo"
     xmlns="http://www.w3.org/2000/svg"
     width="100%"
     height="100%"

@@ -8,11 +8,14 @@ exports.onCreatePage = ({ page, actions }) => {
   const { createPage } = actions;
   // Make the front page match everything client side.
   // Normally your paths should be a bit more judicious.
-  if (page.path.match(/^\/movie\/((?!\/).)+\/?$/)) {
-    page.matchPath = `/movie/:imdbid`;
+  if (page.path.match(/^\/resetpassword/)) {
+    page.matchPath = "/resetpassword/:token";
+    // Update the page.
     createPage(page);
-  } else if (page.path.match(/^\/resetpassword/)) {
-    page.matchPath = "/app/:token";
+  } else if (page.path.match(/^\/app/)) {
+    console.clear();
+    console.log("page:", page);
+    page.matchPath = "/app/*";
     // Update the page.
     createPage(page);
   }

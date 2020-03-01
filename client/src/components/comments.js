@@ -61,8 +61,7 @@ export default props => {
   const showModal = username => {
     axios
       .get(`/api/v1/users/${username}`, headers)
-      .then(({ data: { user } }) => {
-        console.log(user);
+      .then(({ data: user }) => {
         changeProfile(user);
       })
       .catch(err => console.log(err));
@@ -89,7 +88,7 @@ export default props => {
           ...comments,
           {
             author: "Hamid",
-            avatar: `/api/v1/users/avatar/${props.avatar}?token=${token}`,
+            avatar: `/api/v1/users/avatar/${props.avatar}`,
             content: <p>{value}</p>,
             datetime: (
               <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
@@ -114,13 +113,12 @@ export default props => {
     axios
       .get(`/api/v1/movies/comments/${imdbid}`, headers)
       .then(({ data: { comments: allComments } }) => {
-        console.log(allComments);
         const newComments = allComments.map(
           ({ _id, owner, text, createdAt, votes, userVote }) => {
             return {
               id: _id,
               author: owner.username,
-              avatar: `/api/v1/users/avatar/${/*avatar*/ ""}?token=${token}`,
+              avatar: `/api/v1/users/avatar/${owner.username}`,
               content: <p>{text}</p>,
               datetime: (
                 <Tooltip

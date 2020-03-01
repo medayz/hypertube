@@ -159,7 +159,11 @@ export default props => {
             }}
           />
           <div className="ratings">
-            <Link className="play" to={`/movie/${movie.imdbid}`} state={movie}>
+            <Link
+              className="play"
+              to={`/app/movie/${movie.imdbid}`}
+              state={movie}
+            >
               <PlayIcon style={{ width: "16px", height: "16px" }} />
               <h2>watch</h2>
             </Link>

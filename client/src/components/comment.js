@@ -114,7 +114,7 @@ export default props => {
           alt={props.author || ""}
         >
           <Button
-            size="medium"
+            size="default"
             onClick={props.showModal}
             style={{
               position: "absolute",

@@ -129,6 +129,8 @@ exports.getComments = async (req, res, next) => {
         owner: {
           username: comment.owner.username
         },
+        text: comment.text,
+        createdAt: comment.createdAt,
         userVote: userVote,
         votes: votes
       };
@@ -194,10 +196,10 @@ exports.voteComment = async (req, res, next) => {
     let value = 0;
     if (req.body.value != 'regret') value = req.body.value == 'up' ? 1 : -1;
 
-    const vote = comment.votes.find(item => item.owner == req.user.id);
+    const vote = comment.votes.find(item => item.owner.equals(req.user._id));
     if (!vote) {
       comment.votes.push({
-        owner: req.user.id,
+        owner: req.user._id,
         value: value
       });
     } else {

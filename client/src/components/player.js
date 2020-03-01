@@ -30,7 +30,7 @@ export default props => {
       () => {
         player.src([
           {
-            src: `/api/v1/stream/${imdbid}/720p?token=${token}`,
+            src: `/api/v1/stream/${imdbid}/1080p?token=${token}`,
             type: "video/mp4",
           },
         ]);
@@ -54,6 +54,7 @@ export default props => {
       <video ref={playerRef} className="video-js vjs-16-9" playsInline>
         {subtitles.map((item, index) => (
           <track
+            key={index}
             default={item.isDefault ? false : true}
             kind="captions"
             srcLang={item.langShort}

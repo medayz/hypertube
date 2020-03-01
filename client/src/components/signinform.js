@@ -60,7 +60,7 @@ const SignInForm = ({ form }) => {
       .post(`/api/v1/users/login`, user, headers)
       .then(({ data }) => {
         console.log(data);
-        navigate(`/library`);
+        navigate(`/app/library`);
       })
       .catch(err => {
         console.log(err.response);

@@ -15,8 +15,6 @@ import Header from "./header";
 import "./layout.css";
 
 const Layout = ({ children }) => {
-  let [loggedOn, setLoggedOn] = useState(false);
-
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -27,60 +25,40 @@ const Layout = ({ children }) => {
     }
   `);
 
-  useEffect(() => {
-    axios
-      .get(`/api/v1/users/me`)
-      .then(({ data }) => {
-        console.log(data);
-        setLoggedOn(true);
-      })
-      .catch(({ response: err }) => {
-        console.log(err);
-        if (err.status === 403) {
-          alert("You must verify your e-mail address before you can log in !");
-        }
-        setLoggedOn(false);
-      });
-  }, []);
-
   return (
     <>
-      {loggedOn ? (
-        <div>
-          <Helmet>
-            <link
-              href="https://fonts.googleapis.com/css?family=Cairo&display=swap"
-              rel="stylesheet"
-            />
-          </Helmet>
-          <Header siteTitle={data.site.siteMetadata.title} />
-          <div
-            style={{
-              margin: `0 auto`,
-              padding: `0`,
-              paddingTop: 0,
-            }}
-          >
-            <main>{children}</main>
-          </div>
-          <footer
-            style={{ color: "#48E5C2", textAlign: "center", margin: "42px" }}
-          >
-            © {new Date().getFullYear()} with love from the
-            {` `}
-            <a
-              href="https://twitter.com/notsilentcorner"
-              style={{ color: "#DCF763" }}
-            >
-              !silentCorner
-            </a>
-            {` `}
-            🍆
-          </footer>
+      <div>
+        <Helmet>
+          <link
+            href="https://fonts.googleapis.com/css?family=Cairo&display=swap"
+            rel="stylesheet"
+          />
+        </Helmet>
+        <Header siteTitle={data.site.siteMetadata.title} />
+        <div
+          style={{
+            margin: `0 auto`,
+            padding: `0`,
+            paddingTop: 0,
+          }}
+        >
+          <main>{children}</main>
         </div>
-      ) : (
-        navigate(`/signin`)
-      )}
+        <footer
+          style={{ color: "#48E5C2", textAlign: "center", margin: "42px" }}
+        >
+          © {new Date().getFullYear()} with love from the
+          {` `}
+          <a
+            href="https://twitter.com/notsilentcorner"
+            style={{ color: "#DCF763" }}
+          >
+            !silentCorner
+          </a>
+          {` `}
+          🍆
+        </footer>
+      </div>
     </>
   );
 };

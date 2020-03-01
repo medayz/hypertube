@@ -1,4 +1,4 @@
-import { Link } from "gatsby";
+import { Link, navigate } from "gatsby";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Input, Button, Spin, Icon, Typography, Avatar } from "antd";
@@ -69,7 +69,7 @@ const Header = ({ siteTitle }) => {
         )}
       </div>
       <Link
-        to="/library"
+        to="/app/library"
         style={{
           color: `#48E5C2`,
           textDecoration: `none`,
@@ -84,7 +84,17 @@ const Header = ({ siteTitle }) => {
         style={{ width: "300px", maxWidth: "42%" }}
       />
       <div className="header-btns">
-        <Button size="small" icon="logout" style={{ margin: "2px" }} />
+        <Button
+          size="small"
+          icon="logout"
+          style={{ margin: "2px" }}
+          onClick={() => {
+            axios
+              .get("/api/v1/users/logout")
+              .then(() => navigate("/signin"))
+              .catch(err => console.log(err));
+          }}
+        />
         <SettingsButton />
         <Avatar shape="square" size="medium" style={{ marginLeft: ".42vw" }}>
           {`test`}

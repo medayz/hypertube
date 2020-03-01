@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Pagination, Typography, Spin, Icon, Select } from "antd";
 import axios from "axios";
 import "./library.css";
-
-import Layout from "../components/layout";
-import Movies from "../components/movies";
+import Movies from "./movies";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -82,21 +80,24 @@ export default props => {
   useEffect(() => {
     axios
       .get(
-        `/api/v1/movies?page=${currentPage}&genre=${genre}&sort_by=${sort}`,
+        `/api/v1/movies?page=${currentPage}&genre=${
+          !genre ? "" : genre.toLowerCase()
+        }&sort_by=${!sort ? "" : sort.toLowerCase()}`,
         headers
       )
       .then(async results => {
         const list = results.data.movies;
 
+        console.log(list);
         updateTotal(results.data.count);
         updateMovies(list);
         updateLoading(false);
       })
       .catch(err => console.log(err));
-  }, [currentPage]);
+  }, [currentPage, sort, genre]);
 
   return (
-    <Layout>
+    <>
       <div id="wallp" className="library-wallpaper">
         <div className="over-wallpaper">
           <div
@@ -107,7 +108,7 @@ export default props => {
               display: "block",
               position: "absolute",
               transform: "translateY(-100%) rotate(-2deg)",
-              webkitMaskBoxImage:
+              WebkitMaskBoxImage:
                 "url(https://www.onlygfx.com/wp-content/uploads/2017/04/grunge-brush-stroke-banner-2-6-1024x250.png)",
             }}
           ></div>
@@ -181,6 +182,6 @@ export default props => {
           />
         </PaginationContainer>
       </div>
-    </Layout>
+    </>
   );
 };
