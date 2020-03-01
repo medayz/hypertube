@@ -31,8 +31,9 @@ export default props => {
         imdb.transform = "scale(1)";
         rate.background = "rgba(252, 252, 252, 0)";
         play.background = "rgba(252, 252, 252, 0)";
+        btns.visibility = "hidden";
         btns.bottom = "0";
-        btns.transition = "bottom none";
+        btns.transition = "none";
       } else {
         parentStyle.zIndex = "1337";
         parentStyle.borderRadius = "10px 10px 0 0";
@@ -47,8 +48,9 @@ export default props => {
         image.top = "0";
         rate.background = "rgba(252, 252, 252, .21)";
         play.background = "rgba(252, 252, 252, .21)";
+        btns.visibility = "visible";
         btns.bottom = "33%";
-        btns.transition = "bottom .4s";
+        btns.transition = "visibility .4s, bottom .4s";
       }
     } else {
       if (parentStyle.transform === "scaleY(1.6)") {
@@ -64,6 +66,7 @@ export default props => {
         imdb.transform = "scale(1)";
         rate.background = "rgba(252, 252, 252, 0)";
         play.background = "rgba(252, 252, 252, 0)";
+        btns.visibility = "hidden";
         btns.bottom = "0";
         btns.transition = "none";
       } else {
@@ -80,8 +83,9 @@ export default props => {
         image.top = "0";
         rate.background = "rgba(252, 252, 252, .21)";
         play.background = "rgba(252, 252, 252, .21)";
+        btns.visibility = "visible";
         btns.bottom = "33%";
-        btns.transition = "bottom .4";
+        btns.transition = "visibility .4s, bottom .4s";
       }
     }
   };
@@ -109,6 +113,8 @@ export default props => {
       rate.background = "rgba(252, 252, 252, 0)";
       play.background = "rgba(252, 252, 252, 0)";
       btns.bottom = "0";
+      btns.visibility = "hidden";
+      btns.transition = "none";
     }
   };
   const mouseEnter = e => {

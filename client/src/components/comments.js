@@ -55,6 +55,7 @@ export default props => {
   let [value, setValue] = useState("");
   let [modalVisible, changeVisibility] = useState(false);
   let [profile, changeProfile] = useState({});
+  let [user, setUser] = useState({});
 
   const { imdbid } = props;
 
@@ -112,13 +113,15 @@ export default props => {
     // console.log("comment", props);
     axios
       .get(`/api/v1/movies/comments/${imdbid}`, headers)
-      .then(({ data: { comments: allComments } }) => {
+      .then(async ({ data: { comments: allComments } }) => {
+        const user = (await axios.get(`/api/v1/users/me`)).data;
+        setUser(user);
         const newComments = allComments.map(
           ({ _id, owner, text, createdAt, votes, userVote }) => {
             return {
               id: _id,
               author: owner.username,
-              avatar: `/api/v1/users/avatar/${owner.username}`,
+              avatar: `/api/v1/users/avatar/${owner.avatar}`,
               content: <p>{text}</p>,
               datetime: (
                 <Tooltip
@@ -144,7 +147,7 @@ export default props => {
       {comments.length > 0 && <CommentList comments={comments} />}
       <Comment
         showModal={showModal}
-        avatar={`/api/v1/users/avatar/${props.avatar}?token=${token}`}
+        avatar={`/api/v1/users/avatar/${user.avatar}`}
         content={
           <Editor
             onChange={handleChange}
