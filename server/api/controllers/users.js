@@ -287,7 +287,7 @@ exports.watch = async (req, res, next) => {
 
     if (!movie) return res.status(404).send({ message: 'resource not found' });
 
-    await movie.watch(req.user._id);
+    await movie.watch(req.user._id, req.body.progress);
     res.status(200).send({ message: 'Success' });
   } catch (err) {
     next(err);
@@ -379,7 +379,7 @@ exports.oauthToken = (req, res) => {
   res
     .status(200)
     .cookie('token', token, { httpOnly: true })
-    .redirect('http://localhost:8000/library');
+    .redirect('http://localhost:8000/app/library');
 };
 
 exports.authToken = (req, res) => {

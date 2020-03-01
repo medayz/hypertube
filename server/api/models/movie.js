@@ -22,12 +22,13 @@ const movieSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-movieSchema.methods.watch = async function(userId) {
+movieSchema.methods.watch = async function(userId, progress) {
   const User = model('User');
 
   this.lastAccess = Date.now();
   const { isNew, watch } = await Watch.add({
-    movieId: this._id
+    movieId: this._id,
+    progress: progress
   });
 
   if (isNew) {
@@ -42,14 +43,17 @@ movieSchema.methods.watch = async function(userId) {
   return await this.save();
 };
 
-movieSchema.statics.add = async function(imdbid, options) {
+movieSchema.statics.add = async function(imdbid, progress, options) {
   const Movie = model('Movie');
   const { updateLastAccess } = options || { updateLastAccess: true };
 
   let movie = await Movie.findOne({ imdbid });
 
   if (!movie) movie = new Movie({ imdbid });
-  else if (updateLastAccess) movie.lastAccess = Date.now();
+  else if (updateLastAccess) {
+    movie.progress = progress;
+    movie.lastAccess = Date.now();
+  }
 
   return await movie.save();
 };

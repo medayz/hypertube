@@ -94,5 +94,10 @@ exports.verficationValidator = Joi.object().keys({
 exports.watchValidator = Joi.object().keys({
   imdbid: Joi.string()
     .min(1)
+    .required(),
+  progress: Joi.number()
+    .integer()
+    .min(5)
+    .max(100)
     .required()
 });

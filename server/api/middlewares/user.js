@@ -152,9 +152,15 @@ exports.verify = async (req, res, next) => {
 };
 
 exports.watchValidator = async (req, res, next) => {
-  const { error } = userSchema.watchValidator.validate(req.params, {
-    abortEarly: false
-  });
+  const { error } = userSchema.watchValidator.validate(
+    {
+      ...req.params,
+      ...req.body
+    },
+    {
+      abortEarly: false
+    }
+  );
 
   if (!error) return next();
 
