@@ -28,9 +28,12 @@ exports.getMovie = async (req, res, next) => {
 
     if (!movie) return next(createError(404));
 
-    const dbMovie = await Movie.add(movie.imdbid, {
-      updateLastAccess: false
-    });
+    const dbMovie = await Movie.add(
+      { imdbid: movie.imdbid },
+      {
+        updateLastAccess: false
+      }
+    );
 
     let subs = dbMovie.subtitles;
     if (subs.length == 0) {

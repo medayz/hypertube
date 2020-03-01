@@ -55,6 +55,8 @@ router.post(
   usersController.watch
 );
 
+router.get('/watchlist', isAuth, usersController.getWatchList);
+
 router.get(
   '/:username',
   userValidator.getUserByUsername,

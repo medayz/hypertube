@@ -2,6 +2,7 @@ const { Schema, model } = require('mongoose');
 
 const watchSchema = new Schema({
   movieId: { type: Schema.Types.ObjectId, required: true, ref: 'Movie' },
+  imdbid: { type: String, required: true },
   progress: { type: Number, required: true },
   seenAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now }
