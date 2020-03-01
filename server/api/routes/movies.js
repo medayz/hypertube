@@ -3,7 +3,7 @@ const { isAuth } = require('../middlewares/auth');
 const moviesController = require('../controllers/movies');
 const movieValidator = require('../middlewares/movie');
 
-const mongoIdRegex = '^[0-9a-z]{24}$';
+const mongoIdRegex = '[0-9a-z]{24}';
 
 router.use(isAuth);
 
