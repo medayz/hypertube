@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Typography, Spin, Icon, Button } from "antd";
+import { navigate } from "gatsby";
 import { enableBodyScroll } from "body-scroll-lock";
 import { TimerIcon, ImdbIcon, PopCornTimeIcon, CalendarIcon } from "../icons";
 import axios from "axios";
@@ -11,20 +12,14 @@ import Comments from "./comments";
 import UserContext from "../context/user";
 
 const { Title, Paragraph } = Typography;
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
+
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
 export default ({ imdbid }) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
+  let [quality, setQuality] = useState("720p");
   const { user } = useContext(UserContext);
 
   // const [_dummy, id] = props.imdbid.split("/");
@@ -35,18 +30,19 @@ export default ({ imdbid }) => {
     const body = document.querySelector("body");
 
     axios
-      .get(`/api/v1/movies/${imdbid}`, headers)
-      .then(({ data }) => {
+      .get(`/api/v1/movies/${imdbid}`)
+      .then(({ data: { movie } }) => {
         // console.clear();
-        // console.log(data.movie);
+        // console.log(movie);
         enableBodyScroll(body);
-        updateMovie(data.movie);
-        wallp.background = `url("${data.movie.banner}")`;
+        updateMovie(movie);
+        wallp.background = `url("${movie.banner}")`;
         // , url("https://zupimages.net/up/20/08/qs7e.png")
         wallp.backgroundPosition = "top center";
         wallp.backgroundRepeat = "no-repeat";
         wallp.backgroundColor = "#042a2b";
         wallp.backgroundSize = `cover`;
+        movie.torrents[0] && setQuality(movie.torrents[0].quality);
         updateLoadingState(false);
       })
       .catch(err => console.log(err));
@@ -148,15 +144,34 @@ export default ({ imdbid }) => {
         </div>
       )}
       <div className="video-streaming">
-        {!loading && (
+        {!loading ? (
           <Player
             imdbid={imdbid}
+            quality={quality || "720p"}
             banner={movie.banner}
             lang={user.language}
             subtitles={movie.subtitles}
           />
+        ) : (
+          <div>fen</div>
         )}
       </div>
+      {movie && (
+        <div className="qualities">
+          {!movie.torrents || !movie.torrents.length
+            ? "No torrents available for this movie"
+            : movie.torrents.map(item => (
+                <Button
+                  onClick={() => {
+                    setQuality(item.quality);
+                    navigate(`/app/movie/${imdbid}`);
+                  }}
+                >
+                  {item.quality}
+                </Button>
+              ))}
+        </div>
+      )}
       <div className="comments">
         <Comments imdbid={imdbid} />
       </div>

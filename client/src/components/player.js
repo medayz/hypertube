@@ -1,27 +1,26 @@
-import React, { useEffect, useRef, useContext } from "react";
+import React, { useEffect, useRef, useContext, useState } from "react";
+import { Icon, Spin } from "antd";
 import videojs from "video.js";
 import axios from "axios";
 import UserContext from "../context/user";
 import "../../node_modules/video.js/dist/video-js.css";
 import "./player.css";
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
+const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
+
 export default props => {
-  const { imdbid, banner, subtitles } = props;
+  // let [loading, updateLoadingState] = useState(true);
+  const { imdbid, banner, subtitles, quality } = props;
   const { user } = useContext(UserContext);
   const playerRef = useRef();
   let sent = 0;
 
   useEffect(() => {
-    console.log(subtitles);
-    playerRef.current.addEventListener("timeupdate", function() {
+    console.clear();
+    console.log(quality);
+    console.log(`/api/v1/stream/${imdbid}/${quality || "720p"}`);
+
+    playerRef.current.timeupdate = function() {
       const coeff = parseInt((this.currentTime * 100) / this.duration / 5);
       const percentage = coeff * 5;
       if (percentage && percentage > sent) {
@@ -35,7 +34,12 @@ export default props => {
           });
         sent = percentage;
       }
-    }, []);
+    };
+    playerRef.current.loadstart = function() {
+      // loading = false;
+      console.log("loadstart");
+    };
+
     const player = videojs(
       playerRef.current,
       {
@@ -49,7 +53,7 @@ export default props => {
       () => {
         player.src([
           {
-            src: `/api/v1/stream/${imdbid}/1080p`,
+            src: `/api/v1/stream/${imdbid}/${quality || "720p"}`,
             type: "video/mp4",
           },
         ]);
@@ -59,7 +63,7 @@ export default props => {
     return () => {
       player.dispose();
     };
-  }, [imdbid, banner]);
+  }, [playerRef, imdbid, banner, quality]);
 
   return (
     <div

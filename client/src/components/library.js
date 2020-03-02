@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Pagination, Typography, Spin, Icon, Select } from "antd";
 import axios from "axios";
 import "./library.css";
 import Movies from "./movies";
+import UserContext from "../context/user";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -48,9 +49,6 @@ const genres = [
   <Option key={1342} value="Sci-Fi">
     Sci-Fi
   </Option>,
-  <Option key={1343} value="Animation">
-    Fantasy
-  </Option>,
 ];
 
 export default props => {
@@ -60,6 +58,8 @@ export default props => {
   const [loading, updateLoading] = useState(true);
   const [genre, updateGenre] = useState("");
   const [sort, updateSort] = useState("");
+
+  const { user } = useContext(UserContext);
 
   const switchPage = async page => {
     updateLoading(true);
@@ -166,7 +166,7 @@ export default props => {
           />
         </PaginationContainer>
         {!loading ? (
-          <Movies list={movies} />
+          <Movies list={movies} watchList={user.watchList} />
         ) : (
           <Spin
             indicator={spinIcon}

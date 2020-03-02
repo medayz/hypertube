@@ -62,7 +62,7 @@ const Header = ({ siteTitle }) => {
           </div>
         </div>
         {!loading ? (
-          <Movies list={movies} />
+          <Movies list={movies} watchList={user ? user.watchList : []} />
         ) : (
           <Spin
             indicator={spinIcon}

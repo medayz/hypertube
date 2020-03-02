@@ -111,6 +111,14 @@
 .ratings > a:hover {
   cursor: pointer;
 }
+.watch-progress {
+  position: absolute;
+  background: #dcf763;
+  height: 5px;
+  width: 0;
+  top: 0;
+  left: 0;
+}
 @media only screen and (max-width: 420px) {
   .movie-container {
     margin: 49px;

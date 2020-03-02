@@ -127,6 +127,11 @@
 .comment-text {
   color: #fcfcfc;
 }
+.qualities {
+  position: relative;
+  max-width: 1200px;
+  margin: 13px auto;
+}
 @media only screen and (max-width: 1000px) {
   .content {
     grid-template-columns: 1fr;

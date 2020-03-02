@@ -7,6 +7,8 @@ import "./movies.css";
 const { Text } = Typography;
 
 export default props => {
+  const { list, watchList } = props;
+
   const click = e => {
     const parent = e.currentTarget;
     const imdb = parent.querySelector(".ratings").style;
@@ -130,7 +132,7 @@ export default props => {
 
   return (
     <div className="movie-container">
-      {props.list.map((movie, id) => (
+      {list.map((movie, id) => (
         <div
           key={id}
           className="movie"
@@ -164,6 +166,18 @@ export default props => {
               e.target.src = "https://zupimages.net/up/20/08/aggz.png";
             }}
           />
+          <div
+            className="watch-progress"
+            style={{
+              width: `${
+                watchList &&
+                watchList.find(watch => watch.imdbid === movie.imdbid)
+                  ? watchList.find(watch => watch.imdbid === movie.imdbid)
+                      .progress
+                  : 0
+              }%`,
+            }}
+          ></div>
           <div className="ratings">
             <Link
               className="play"
