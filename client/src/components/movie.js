@@ -19,7 +19,7 @@ export default ({ imdbid }) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
-  let [quality, setQuality] = useState("720p");
+  // let [quality, setQuality] = useState("720p");
   const { user } = useContext(UserContext);
 
   // const [_dummy, id] = props.imdbid.split("/");
@@ -42,7 +42,7 @@ export default ({ imdbid }) => {
         wallp.backgroundRepeat = "no-repeat";
         wallp.backgroundColor = "#042a2b";
         wallp.backgroundSize = `cover`;
-        movie.torrents[0] && setQuality(movie.torrents[0].quality);
+        // movie.torrents[0] && setQuality(movie.torrents[0].quality);
         updateLoadingState(false);
       })
       .catch(err => console.log(err));
@@ -147,7 +147,11 @@ export default ({ imdbid }) => {
         {!loading ? (
           <Player
             imdbid={imdbid}
-            quality={quality || "720p"}
+            qualities={
+              movie.torrents
+                ? movie.torrents.map(torrent => torrent.quality)
+                : []
+            }
             banner={movie.banner}
             lang={user.language}
             subtitles={movie.subtitles}
@@ -156,22 +160,6 @@ export default ({ imdbid }) => {
           <div>fen</div>
         )}
       </div>
-      {movie && (
-        <div className="qualities">
-          {!movie.torrents || !movie.torrents.length
-            ? "No torrents available for this movie"
-            : movie.torrents.map(item => (
-                <Button
-                  onClick={() => {
-                    setQuality(item.quality);
-                    navigate(`/app/movie/${imdbid}`);
-                  }}
-                >
-                  {item.quality}
-                </Button>
-              ))}
-        </div>
-      )}
       <div className="comments">
         <Comments imdbid={imdbid} />
       </div>

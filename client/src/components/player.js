@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
-import { Icon, Spin } from "antd";
+import { Icon, Spin, Button } from "antd";
 import videojs from "video.js";
 import axios from "axios";
 import UserContext from "../context/user";
@@ -10,15 +10,14 @@ const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
 export default props => {
   // let [loading, updateLoadingState] = useState(true);
-  const { imdbid, banner, subtitles, quality } = props;
+  const { imdbid, banner, subtitles, qualities } = props;
   const { user } = useContext(UserContext);
   const playerRef = useRef();
   let sent = 0;
 
   useEffect(() => {
     console.clear();
-    console.log(quality);
-    console.log(`/api/v1/stream/${imdbid}/${quality || "720p"}`);
+    console.log(qualities);
 
     playerRef.current.timeupdate = function() {
       const coeff = parseInt((this.currentTime * 100) / this.duration / 5);
@@ -53,7 +52,7 @@ export default props => {
       () => {
         player.src([
           {
-            src: `/api/v1/stream/${imdbid}/${quality || "720p"}`,
+            src: `/api/v1/stream/${imdbid}/${qualities[0] || "720p"}`,
             type: "video/mp4",
           },
         ]);
@@ -63,30 +62,45 @@ export default props => {
     return () => {
       player.dispose();
     };
-  }, [playerRef, imdbid, banner, quality]);
+  }, [playerRef, imdbid, banner, qualities]);
 
   return (
-    <div
-      data-vjs-player
-      style={{
-        border: ".42vw solid #000",
-        borderRadius: ".42vw",
-        backgroundClip: "padding-box",
-      }}
-    >
-      <video ref={playerRef} className="video-js vjs-16-9" playsInline>
-        {subtitles &&
-          subtitles.map((item, index) => (
-            <track
-              key={index}
-              default={item.langShort === user.language ? true : false}
-              kind="captions"
-              srcLang={item.langShort}
-              label={item.lang}
-              src={`/api/v1/movies/subtitles/${imdbid}/${item.langShort}`}
-            />
-          ))}
-      </video>
-    </div>
+    <>
+      <div
+        data-vjs-player
+        style={{
+          border: ".42vw solid #000",
+          borderRadius: ".42vw",
+          backgroundClip: "padding-box",
+        }}
+      >
+        <video ref={playerRef} className="video-js vjs-16-9" playsInline>
+          {subtitles &&
+            subtitles.map((item, index) => (
+              <track
+                key={index}
+                default={item.langShort === user.language ? true : false}
+                kind="captions"
+                srcLang={item.langShort}
+                label={item.lang}
+                src={`/api/v1/movies/subtitles/${imdbid}/${item.langShort}`}
+              />
+            ))}
+        </video>
+      </div>
+      <div className="qualities">
+        {!qualities || !qualities.length
+          ? "No torrents available for this movie"
+          : qualities.map(item => (
+              <Button
+                onClick={() => {
+                  playerRef.current.src = `/api/v1/stream/${imdbid}/${item}`;
+                }}
+              >
+                {item}
+              </Button>
+            ))}
+      </div>
+    </>
   );
 };
