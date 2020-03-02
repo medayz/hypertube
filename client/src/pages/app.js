@@ -29,7 +29,7 @@ const App = props => {
         }
         navigate("/signin");
       });
-  }, []);
+  }, [props]);
 
   return (
     <>

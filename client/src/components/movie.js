@@ -15,11 +15,16 @@ const { Title, Paragraph } = Typography;
 
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
-export default ({ imdbid }) => {
+export default ({
+  imdbid: urlid,
+  location: {
+    state: { imdbid: stateid },
+  },
+}) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
-  // let [quality, setQuality] = useState("720p");
+  let [imdbid, setImdbid] = useState(urlid || stateid);
   const { user } = useContext(UserContext);
 
   // const [_dummy, id] = props.imdbid.split("/");
@@ -29,6 +34,8 @@ export default ({ imdbid }) => {
     const wallp = document.querySelector(".banner").style;
     const body = document.querySelector("body");
 
+    console.log(imdbid, urlid, stateid);
+    setImdbid(urlid || stateid);
     axios
       .get(`/api/v1/movies/${imdbid}`)
       .then(({ data: { movie } }) => {
@@ -46,7 +53,7 @@ export default ({ imdbid }) => {
         updateLoadingState(false);
       })
       .catch(err => console.log(err));
-  }, [imdbid, user]);
+  }, [user, urlid, stateid]);
 
   return (
     <div className="movie-wallpaper">

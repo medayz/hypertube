@@ -8,14 +8,6 @@ const styleOutline = {
   border: 0,
   outline: "none",
 };
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
 
 const SignUpForm = ({ form }) => {
   const { getFieldDecorator, getFieldsValue, resetFields, setFields } = form;
@@ -24,7 +16,7 @@ const SignUpForm = ({ form }) => {
     e.preventDefault();
     const newUser = getFieldsValue();
     axios
-      .post(`/api/v1/users`, newUser, headers)
+      .post(`/api/v1/users`, newUser)
       .then(({ data }) => {
         console.log(data);
         resetFields();

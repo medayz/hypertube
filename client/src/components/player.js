@@ -16,7 +16,7 @@ export default props => {
   let sent = 0;
 
   useEffect(() => {
-    console.clear();
+    // console.clear();
     console.log(qualities);
 
     playerRef.current.timeupdate = function() {
