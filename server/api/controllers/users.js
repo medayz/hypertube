@@ -16,23 +16,19 @@ exports.create = async (req, res, next) => {
     const usernameExists = await User.usernameExists(req.body.username);
 
     if (usernameExists) {
-      if (usernameExists) {
-        return res.status(400).send({
-          message: 'Validation fails',
-          details: { username: 'username is already exists' }
-        });
-      }
+      return res.status(400).send({
+        message: 'Validation fails',
+        details: { username: 'username already exists' }
+      });
     }
 
     const emailExists = await User.emailExists(req.body.email);
 
     if (emailExists) {
-      if (usernameExists) {
-        return res.status(400).send({
-          message: 'Validation fails',
-          details: { username: 'email is already exists' }
-        });
-      }
+      return res.status(400).send({
+        message: 'Validation fails',
+        details: { email: 'email already exists' }
+      });
     }
 
     const newUser = await user.save();
@@ -147,7 +143,7 @@ exports.update = async (req, res, next) => {
       if (usernameExists) {
         return res.status(400).send({
           message: 'Validation fails',
-          details: { username: 'username is already exists' }
+          details: { username: 'username already exists' }
         });
       }
     }
@@ -158,7 +154,7 @@ exports.update = async (req, res, next) => {
       if (emailExists) {
         return res.status(400).send({
           message: 'Validation fails',
-          details: { username: 'email is already exists' }
+          details: { username: 'email already exists' }
         });
       }
     }
