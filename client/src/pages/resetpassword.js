@@ -15,20 +15,21 @@ const ResetPasswordComponent = ({ form, token }) => {
   const handleSubmit = e => {
     e.preventDefault();
     const newPwd = getFieldsValue();
+    newPwd.token = token;
     axios
       .post(`/api/v1/users/resetpassword`, newPwd)
       .then(({ data }) => {
         console.log(data);
       })
       .catch(({ response: { data } }) => {
-        console.log(data.error);
         const fields = {
           password: {
             value: newPwd.password,
-            errors: [new Error(data.message)],
+            errors: [new Error(data.error ? data.error.password : "")],
           },
         };
         setFields(fields);
+        data.message && alert(data.message);
       });
   };
 
