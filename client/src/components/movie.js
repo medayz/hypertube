@@ -151,7 +151,7 @@ export default ({
         </div>
       )}
       <div className="video-streaming">
-        {!loading ? (
+        {!loading && (
           <Player
             imdbid={imdbid}
             qualities={
@@ -163,8 +163,6 @@ export default ({
             lang={user.language}
             subtitles={movie.subtitles}
           />
-        ) : (
-          <div>fen</div>
         )}
       </div>
       <div className="comments">
