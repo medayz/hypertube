@@ -5,10 +5,15 @@ exports.getMoviesValidator = Joi.object().keys({
     .integer()
     .min(1)
     .default(1),
-  sort_by: Joi.string().valid('seeds', 'rating', 'title', ''),
+  sort_by: Joi.string()
+    .valid('seeds', 'rating', 'title', '')
+    .trim()
+    .lowercase(),
   genre: Joi.string()
     .allow('')
     .max(100)
+    .trim()
+    .lowercase()
 });
 
 exports.searchValidator = Joi.object().keys({
