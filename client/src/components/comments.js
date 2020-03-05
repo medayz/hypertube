@@ -83,14 +83,15 @@ export default props => {
 
     axios
       .post(`/api/v1/movies/comments/${imdbid}`, { text: value }, headers)
-      .then(({ data: allComments }) => {
+      .then(({ data: comment }) => {
         setSubmittingState(false);
         setValue("");
         setComments([
           ...comments,
           {
+            id: comment._id,
             author: user.username,
-            avatar: `/api/v1/users/avatar/${user.avatar}`,
+            avatar: user.avatar ? `/api/v1/users/avatar/${user.avatar}` : "",
             content: <p>{value}</p>,
             datetime: (
               <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
@@ -120,7 +121,9 @@ export default props => {
             return {
               id: _id,
               author: owner.username,
-              avatar: `/api/v1/users/avatar/${owner.avatar}`,
+              avatar: owner.avatar
+                ? `/api/v1/users/avatar/${owner.avatar}`
+                : "",
               content: <p>{text}</p>,
               datetime: (
                 <Tooltip
@@ -147,7 +150,8 @@ export default props => {
       {user && (
         <Comment
           showModal={() => showModal(user.username)}
-          avatar={`/api/v1/users/avatar/${user.avatar}`}
+          avatar={user.avatar ? `/api/v1/users/avatar/${user.avatar}` : ""}
+          author={user.username}
           content={
             <Editor
               onChange={handleChange}

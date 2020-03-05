@@ -53,7 +53,11 @@ export default props => {
         confirmLoading={loading}
         onCancel={handleCancel}
       >
-        {user && <UploadAvatar url={`/api/v1/users/avatar/${user.avatar}`} />}
+        {user && (
+          <UploadAvatar
+            url={user.avatar ? `/api/v1/users/avatar/${user.avatar}` : ""}
+          />
+        )}
         <EditForm />
         <ChangePwdForm />
       </Modal>

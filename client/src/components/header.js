@@ -102,7 +102,7 @@ const Header = ({ siteTitle }) => {
           <Avatar
             size="medium"
             style={{ marginLeft: ".42vw" }}
-            src={`/api/v1/users/avatar/${user.avatar}`}
+            src={user.avatar ? `/api/v1/users/avatar/${user.avatar}` : ""}
             alt={user.username}
           >
             {user.username}

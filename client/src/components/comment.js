@@ -104,6 +104,7 @@ export default props => {
 
   return (
     <Comment
+      id={props.id}
       actions={props.author && actions}
       author={props.author || ""}
       avatar={
