@@ -62,17 +62,18 @@ const SignInForm = ({ form }) => {
         console.log(data);
         navigate(`/app/library`);
       })
-      .catch(err => {
-        console.log(err.response);
+      .catch(({ response: { data } }) => {
+        let message =
+          data.details.email || data.details.password || "Cannot login";
+
         const fields = {
           password: {
             value: user.password,
-            errors: [new Error("Incorrect Password")],
+            errors: [new Error(message)],
           },
         };
         setFields(fields);
       });
-    // setType(false);
   };
 
   const handleUsernameChange = e => {
