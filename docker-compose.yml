@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   client:
@@ -8,9 +8,13 @@ services:
       - ./client:/app
       - node_modules_client:/app/node_modules
     ports:
-      - '8000:8000'
+      - "8000:8000"
     depends_on:
       - server
+    environment:
+      - NODE_ENV=development
+      - GATSBY_WEBPACK_PUBLICPATH=/
+      - CHOKIDAR_USEPOLLING=1
 
   server:
     container_name: server
@@ -20,8 +24,8 @@ services:
       - movies_server:/app/movies
       - node_modules_server:/app/node_modules
     ports:
-      - '3000:3000'
-      - '4000:4000'
+      - "3000:3000"
+      - "4000:4000"
     depends_on:
       - database
       - cache
@@ -32,7 +36,7 @@ services:
     volumes:
       - data:/data/db
     ports:
-      - '27017:27017'
+      - "27017:27017"
   cache:
     image: redis
     ports:

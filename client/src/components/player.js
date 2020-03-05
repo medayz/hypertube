@@ -17,7 +17,8 @@ export default props => {
 
   useEffect(() => {
     // console.clear();
-    console.log(qualities);
+    // console.log(qualities);
+    console.log(props);
 
     playerRef.current.timeupdate = function() {
       const coeff = parseInt((this.currentTime * 100) / this.duration / 5);
@@ -91,13 +92,15 @@ export default props => {
       <div className="qualities">
         {!qualities || !qualities.length
           ? "No torrents available for this movie"
-          : qualities.map(item => (
+          : qualities.map((quality, index) => (
               <Button
+                key={index + 21}
                 onClick={() => {
-                  playerRef.current.src = `/api/v1/stream/${imdbid}/${item}`;
+                  playerRef.current.src = `/api/v1/stream/${imdbid}/${quality}`;
+                  console.log(playerRef.current.src);
                 }}
               >
-                {item}
+                {quality}
               </Button>
             ))}
       </div>
