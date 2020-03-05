@@ -38,7 +38,18 @@ exports.loginValidator = (req, res, next) => {
 };
 
 exports.updateValidator = (req, res, next) => {
-  const { error, value } = userSchema.updateUserValidator.validate(req.body, {
+  const body = {};
+
+  for (const key in req.body) {
+    const newValue = req.body[key];
+    const oldValue = req.user[key];
+
+    if (oldValue != newValue) {
+      body[key] = newValue;
+    }
+  }
+
+  const { error, value } = userSchema.updateUserValidator.validate(body, {
     abortEarly: false
   });
 
