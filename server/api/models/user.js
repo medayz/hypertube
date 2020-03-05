@@ -6,8 +6,8 @@ const ResetPassword = require('../models/reset-password');
 
 const userSchema = new Schema({
   username: { type: String, trim: true, lowercase: true },
-  firstName: { type: String, trim: true, required: true },
-  lastName: { type: String, trim: true, required: true },
+  firstName: { type: String, trim: true, default: '' },
+  lastName: { type: String, trim: true, default: '' },
   avatar: { type: String },
   email: {
     type: String,
