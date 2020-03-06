@@ -29,7 +29,6 @@ export default props => {
         ]}
         title="Edit Info"
         visible={visible}
-        onOk={handleOk}
         onCancel={handleCancel}
       >
         {user && (

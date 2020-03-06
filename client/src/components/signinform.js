@@ -106,7 +106,7 @@ const SignInForm = ({ form }) => {
             <a href="http://localhost:3000/api/v1/users/auth/42">
               <FortyTwoIcon style={{ width: 19, height: 19, marginTop: 1 }} />
             </a>
-            <a href="/api/v1/users/auth/facebook">
+            <a href="http://localhost:3000/api/v1/users/auth/facebook">
               <Icon
                 type="facebook"
                 theme="filled"

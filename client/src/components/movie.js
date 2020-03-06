@@ -17,15 +17,15 @@ const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
 export default ({
   imdbid: urlid,
-  location: {
-    state: { imdbid: stateid },
-  },
+  location
 }) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
   let [imdbid, setImdbid] = useState(urlid || stateid);
+
   const { user } = useContext(UserContext);
+  const stateid = location.state ? location.state.imdbid : "";
 
   // const [_dummy, id] = props.imdbid.split("/");
   // const id = ""; //imdbid={props["*"]}

@@ -89,6 +89,8 @@ userSchema.statics.resetPassword = async (id, password) => {
 };
 
 userSchema.methods.isValidPassword = async function(password) {
+  if (!password || !this.password) return false;
+
   const compare = await bcrypt.compare(password, this.password);
 
   return compare;

@@ -62,6 +62,7 @@ const EditForm = ({ form }) => {
             <Option value="ar">Arabic</Option>
             <Option value="en">English</Option>
             <Option value="fr">French</Option>
+            <Option value="es">Spanish</Option>
           </Select>
         )}
       </Form.Item>

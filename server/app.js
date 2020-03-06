@@ -33,6 +33,24 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.get('/app/*', (req, res, next) => {
+  res.sendFile('app/index.html', { root: path.join(__dirname, 'build') });
+});
+
+app.get('/resetpassword/*', (req, res, next) => {
+  res.sendFile('resetpassword/index.html', {
+    root: path.join(__dirname, 'build')
+  });
+});
+
+app.get('/confirmation/*', (req, res, next) => {
+  res.sendFile('confirmation/index.html', {
+    root: path.join(__dirname, 'build')
+  });
+});
+
+app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

@@ -45,8 +45,8 @@ exports.create = async (req, res, next) => {
       req.body.email,
       'Account activation',
       `
-      ${process.env.HOSTNAME}/api/v1/users/verification/${token}<br/>
-      <a href="${process.env.HOSTNAME}/api/v1/users/verification/${token}">Verify</a>
+      ${process.env.HOSTNAME}/confirmation/${token}<br/>
+      <a href="${process.env.HOSTNAME}/confirmation/${token}">Verify</a>
       `
     )
       .then()
@@ -230,15 +230,17 @@ exports.sendResetPassword = async (req, res, next) => {
 
     const result = await resetPassword.save();
 
-    const info = await sendEmail(
+    await sendEmail(
       process.env.EMAIL,
       user.email,
       'Reset password',
       `
-      ${process.env.HOSTNAME}/api/v1/users/resetpassword/${token}<br/>
-      <a href="${process.env.HOSTNAME}/api/v1/users/resetpassword/${token}">Verify</a>
+      ${process.env.HOSTNAME}/resetpassword/${token}<br/>
+      <a href="${process.env.HOSTNAME}/resetpassword/${token}">Verify</a>
       `
-    );
+    )
+      .then()
+      .catch();
     res.status(200).send({ message: 'Reset password was sent to your email' });
   } catch (err) {
     next(err);
@@ -372,13 +374,13 @@ exports.oauthToken = (req, res) => {
   const { token, error } = req.user;
 
   if (error) {
-    return res.redirect(`http://localhost:8000/signin?message=${error.email}`);
+    return res.redirect(`http://localhost:3000/signin?message=${error.email}`);
   }
 
   res
     .status(200)
     .cookie('token', token, { httpOnly: true })
-    .redirect('http://localhost:8000/app/library');
+    .redirect('http://localhost:3000/app/library');
 };
 
 exports.authToken = (req, res) => {

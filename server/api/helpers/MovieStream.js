@@ -1,7 +1,10 @@
 const torrentStream = require('torrent-stream');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const FFmpeg = require('fluent-ffmpeg');
 const CronJob = require('cron').CronJob;
 const EventEmitter = require('events');
+
+FFmpeg.setFfmpegPath(ffmpegPath);
 
 class MovieStream {
   constructor(options = {}, cronCallback = () => {}) {
@@ -145,7 +148,7 @@ class MovieStream {
     return { start, end };
   }
 
-  _getHead(range, fileSize, ext) {
+  _getHead(range, fileSize, ext, hasFileSize = true) {
     if (!range) {
       return {
         'Content-Type': `video/${ext}`
@@ -154,7 +157,7 @@ class MovieStream {
 
     const { start, end } = this._getStartEnd(range, fileSize);
 
-    if (!fileSize) {
+    if (!hasFileSize) {
       return {
         'Content-Range': `bytes ${start}-${end}/*`,
         'Content-Type': `video/${ext}`
@@ -180,8 +183,10 @@ class MovieStream {
       console.log('[INFO]', file.name);
     }
 
-    const ext = file.name.split('.').pop();
+    let ext = file.name.split('.').pop();
+
     const convert = !this._clientSupportedFormat.includes(ext);
+
     const total = file.length;
     const { start, end } = this._getStartEnd(range, total);
 
@@ -190,10 +195,11 @@ class MovieStream {
     }
 
     if (convert && this._convert) {
+      console.log('Converting...');
       const stream = file.createReadStream({ start, end });
 
       return {
-        head: this._getHead(range, total, ext),
+        head: this._getHead(range, total, 'webm', false),
         stream: this._transcode(stream)
       };
     } else if (!convert) {

@@ -55,9 +55,7 @@ export default props => {
   const switchPage = async page => {
     updateLoading(true);
     axios
-      .get(
-        `/api/v1/movies?page=${page}&genre=${genre}&sort_by=${sort}`
-      )
+      .get(`/api/v1/movies?page=${page}&genre=${genre}&sort_by=${sort}`)
       .then(results => {
         const list = results.data.movies;
         updatePage(page);
@@ -155,7 +153,7 @@ export default props => {
           />
         </PaginationContainer>
         {!loading ? (
-          <Movies list={movies} watchList={user.watchList} />
+          user && <Movies list={movies} watchList={user.watchList} />
         ) : (
           <Spin
             indicator={spinIcon}

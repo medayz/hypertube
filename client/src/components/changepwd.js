@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Button, Select } from "antd";
+import { Form, Input, Button } from "antd";
 import axios from "axios";
 
 const styleOutline = {
@@ -16,7 +16,7 @@ const ChangePwdForm = ({ form }) => {
     axios
       .patch(`/api/v1/users/password`, newPwd)
       .then(({ data }) => {
-        console.log(data);
+        console.log("data");
       })
       .catch(({ response: { data } }) => console.log(data.error));
   };
