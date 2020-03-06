@@ -40,7 +40,7 @@ exports.create = async (req, res, next) => {
       token: token
     });
 
-    await sendEmail(
+    sendEmail(
       process.env.EMAIL,
       req.body.email,
       'Account activation',
@@ -48,7 +48,9 @@ exports.create = async (req, res, next) => {
       ${process.env.HOSTNAME}/api/v1/users/verification/${token}<br/>
       <a href="${process.env.HOSTNAME}/api/v1/users/verification/${token}">Verify</a>
       `
-    );
+    )
+      .then()
+      .catch();
 
     await emailVerification.save();
 
