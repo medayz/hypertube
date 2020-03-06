@@ -2,15 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Upload, Icon, message } from "antd";
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
-
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -42,7 +33,7 @@ export default props => {
       const formData = new FormData();
       formData.append("avatar", info.file.originFileObj);
       axios
-        .post(`/api/v1/users/avatar`, formData, headers)
+        .post(`/api/v1/users/avatar`, formData)
         .then(({ data: { message, filename } }) => {
           updateLoadingState(false);
           updateImageUrl(`/api/v1/users/avatar/${filename}`);

@@ -8,14 +8,7 @@ import moment from "moment";
 import UserContext from "../context/user";
 
 const { TextArea } = Input;
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
+
 const CommentList = ({ comments }) => (
   <List
     dataSource={comments}
@@ -82,7 +75,7 @@ export default props => {
     setSubmittingState(true);
 
     axios
-      .post(`/api/v1/movies/comments/${imdbid}`, { text: value }, headers)
+      .post(`/api/v1/movies/comments/${imdbid}`, { text: value })
       .then(({ data: comment }) => {
         setSubmittingState(false);
         setValue("");
@@ -114,7 +107,7 @@ export default props => {
   useEffect(() => {
     // console.log("comment", props);
     axios
-      .get(`/api/v1/movies/comments/${imdbid}`, headers)
+      .get(`/api/v1/movies/comments/${imdbid}`)
       .then(async ({ data: { comments: allComments } }) => {
         const newComments = allComments.map(
           ({ _id, owner, text, createdAt, votes, userVote }) => {

@@ -8,15 +8,6 @@ import UserContext from "../context/user";
 const { Title } = Typography;
 const { Option } = Select;
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
-
 const PaginationContainer = ({ children }) => (
   <div
     style={{
@@ -65,8 +56,7 @@ export default props => {
     updateLoading(true);
     axios
       .get(
-        `/api/v1/movies?page=${page}&genre=${genre}&sort_by=${sort}`,
-        headers
+        `/api/v1/movies?page=${page}&genre=${genre}&sort_by=${sort}`
       )
       .then(results => {
         const list = results.data.movies;
@@ -82,8 +72,7 @@ export default props => {
       .get(
         `/api/v1/movies?page=${currentPage}&genre=${
           !genre ? "" : genre.toLowerCase()
-        }&sort_by=${!sort ? "" : sort.toLowerCase()}`,
-        headers
+        }&sort_by=${!sort ? "" : sort.toLowerCase()}`
       )
       .then(async results => {
         const list = results.data.movies;

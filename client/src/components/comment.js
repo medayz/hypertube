@@ -1,17 +1,6 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
 import { Comment, Icon, Tooltip, Avatar, Button } from "antd";
-import moment from "moment";
 import axios from "axios";
-
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
 
 export default props => {
   const [votes, setVotes] = useState(props.votes);
@@ -25,8 +14,7 @@ export default props => {
       axios
         .post(
           `/api/v1/movies/comments/${props.id}/vote`,
-          { value: "regret" },
-          headers
+          { value: "regret" }
         )
         .then(({ data: { votes } }) => {
           setVotes(votes);
@@ -40,8 +28,7 @@ export default props => {
     axios
       .post(
         `/api/v1/movies/comments/${props.id}/vote`,
-        { value: "up" },
-        headers
+        { value: "up" }
       )
       .then(({ data: { votes } }) => {
         setVotes(votes);
@@ -55,8 +42,7 @@ export default props => {
       axios
         .post(
           `/api/v1/movies/comments/${props.id}/vote`,
-          { value: "regret" },
-          headers
+          { value: "regret" }
         )
         .then(({ data: { votes } }) => {
           setVotes(votes);
@@ -69,8 +55,7 @@ export default props => {
     axios
       .post(
         `/api/v1/movies/comments/${props.id}/vote`,
-        { value: "down" },
-        headers
+        { value: "down" }
       )
       .then(({ data: { votes } }) => {
         setVotes(votes);

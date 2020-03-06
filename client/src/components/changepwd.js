@@ -7,15 +7,6 @@ const styleOutline = {
   outline: "none",
 };
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
-const headers = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
-
 const ChangePwdForm = ({ form }) => {
   const { getFieldDecorator } = form;
 
@@ -23,7 +14,7 @@ const ChangePwdForm = ({ form }) => {
     e.preventDefault();
     const newPwd = form.getFieldsValue();
     axios
-      .patch(`/api/v1/users/password`, newPwd, headers)
+      .patch(`/api/v1/users/password`, newPwd)
       .then(({ data }) => {
         console.log(data);
       })
