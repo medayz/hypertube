@@ -151,7 +151,6 @@ export default props => {
         <Comment
           showModal={() => showModal(user.username)}
           avatar={user.avatar ? `/api/v1/users/avatar/${user.avatar}` : ""}
-          author={user.username}
           content={
             <Editor
               onChange={handleChange}
