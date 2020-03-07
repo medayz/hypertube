@@ -54,9 +54,7 @@ router.get('/:imdbid/:quality', async (req, res, next) => {
 
       req.movieData = {
         ...req.params,
-        magnet:
-        'magnet:?xt=urn:btih:C05570C23D834FD47AF4BD35DBE0F6BD4BD37B90&dn=All+Yours+%282016%29+Hallmark+720p+WEB-DL+%28DDP+2.0%29+X264+Solar&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.pirateparty.gr%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.si%3A1337%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Fdenis.stalker.upeer.me%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce',
-        // magnet: torrent.torrentMagnet,
+        magnet: torrent.torrentMagnet,
         range: req.headers.range
       };
       return next();
