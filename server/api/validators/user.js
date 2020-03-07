@@ -1,19 +1,36 @@
 const Joi = require('@hapi/joi');
 
+const usernameRegex = /^[a-z0-9_@-]{2,100}$/i;
+const nameRegex = /^[a-z0-9_ -]{2,100}$/i;
+const passwordRegex = /^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,30}$/;
+
+const usernameMessage =
+  'username accept only (a-z, 0-9, _, @, -) and a length between 2 and 100';
+const nameMessage = '{{#label}} accept only (a-z, 0-9, _, -, ( )space) and a length between 2 and 100';
+const passwordMessage = 'password must have (a-z, A-Z, 0-9 and one symbol) with a length between 8 and 30';
+
 exports.createUserValidator = Joi.object().keys({
   username: Joi.string()
     .trim()
     .lowercase()
+    .pattern(usernameRegex)
+    .messages({
+      'string.pattern.base': usernameMessage
+    })
     .required(),
   firstName: Joi.string()
-    .min(3)
-    .max(100)
     .trim()
+    .pattern(nameRegex)
+    .messages({
+      'string.pattern.base': nameMessage
+    })
     .required(),
   lastName: Joi.string()
-    .min(3)
-    .max(100)
     .trim()
+    .pattern(nameRegex)
+    .messages({
+      'string.pattern.base': nameMessage
+    })
     .required(),
   email: Joi.string()
     .email()
@@ -21,8 +38,10 @@ exports.createUserValidator = Joi.object().keys({
     .lowercase()
     .required(),
   password: Joi.string()
-    .min(4)
-    .max(100)
+    .pattern(passwordRegex)
+    .messages({
+      'string.pattern.base': passwordMessage
+    })
     .required()
 });
 
@@ -30,9 +49,12 @@ exports.loginUserValidator = Joi.object().keys({
   username: Joi.string()
     .trim()
     .lowercase()
+    .pattern(usernameRegex)
+    .messages({
+      'string.pattern.base': usernameMessage
+    })
     .required(),
   password: Joi.string()
-    .min(4)
     .max(100)
     .required()
 });
@@ -40,14 +62,22 @@ exports.loginUserValidator = Joi.object().keys({
 exports.updateUserValidator = Joi.object().keys({
   username: Joi.string()
     .trim()
+    .pattern(usernameRegex)
+    .messages({
+      'string.pattern.base': usernameMessage
+    })
     .lowercase(),
   firstName: Joi.string()
-    .min(3)
-    .max(100)
+    .pattern(nameRegex)
+    .messages({
+      'string.pattern.base': nameMessage
+    })
     .trim(),
   lastName: Joi.string()
-    .min(3)
-    .max(100)
+    .pattern(nameRegex)
+    .messages({
+      'string.pattern.base': nameMessage
+    })
     .trim(),
   email: Joi.string()
     .trim()
@@ -58,12 +88,16 @@ exports.updateUserValidator = Joi.object().keys({
 
 exports.changePassword = Joi.object().keys({
   oldPassword: Joi.string()
-    .min(4)
-    .max(100)
+    .pattern(passwordRegex)
+    .messages({
+      'string.pattern.base': passwordMessage
+    })
     .required(),
   newPassword: Joi.string()
-    .min(4)
-    .max(100)
+    .pattern(passwordRegex)
+    .messages({
+      'string.pattern.base': passwordMessage
+    })
     .required()
 });
 
@@ -71,13 +105,20 @@ exports.sendResetPassword = Joi.object().keys({
   username: Joi.string()
     .trim()
     .lowercase()
+    .pattern(usernameRegex)
+    .messages({
+      'string.pattern.base': usernameMessage
+    })
     .required()
 });
 
 exports.resetPassword = Joi.object().keys({
   token: Joi.string().required(),
   password: Joi.string()
-    .min(1)
+    .pattern(usernameRegex)
+    .messages({
+      'string.pattern.base': usernameMessage
+    })
     .required()
 });
 
@@ -85,6 +126,10 @@ exports.getUserByUsernameValidator = Joi.object().keys({
   username: Joi.string()
     .trim()
     .lowercase()
+    .pattern(usernameRegex)
+    .messages({
+      'string.pattern.base': usernameMessage
+    })
     .required()
 });
 
