@@ -33,8 +33,9 @@ export default ({
   useEffect(() => {
     const wallp = document.querySelector(".banner").style;
     const body = document.querySelector("body");
-
-    console.log(imdbid, urlid, stateid);
+    
+    document.querySelector(".search-results").style.display = "none";
+    enableBodyScroll(body);
     setImdbid(urlid || stateid);
     axios
       .get(`/api/v1/movies/${imdbid}`)

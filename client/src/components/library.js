@@ -66,6 +66,8 @@ export default props => {
   };
 
   useEffect(() => {
+    document.querySelector(".search-results").style.display = "none";
+    enableBodyScroll(body);
     axios
       .get(
         `/api/v1/movies?page=${currentPage}&genre=${
