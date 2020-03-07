@@ -9,18 +9,13 @@ import "./player.css";
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
 export default props => {
-  // let [loading, updateLoadingState] = useState(true);
   const { imdbid, banner, subtitles, qualities } = props;
   const { user } = useContext(UserContext);
   const playerRef = useRef();
   let sent = 0;
 
   useEffect(() => {
-    // console.clear();
-    // console.log(qualities);
-    console.log(props);
-
-    playerRef.current.timeupdate = function() {
+    playerRef.current.ontimeupdate = function() {
       const coeff = parseInt((this.currentTime * 100) / this.duration / 5);
       const percentage = coeff * 5;
       if (percentage && percentage > sent) {
@@ -34,10 +29,6 @@ export default props => {
           });
         sent = percentage;
       }
-    };
-    playerRef.current.loadstart = function() {
-      // loading = false;
-      console.log("loadstart");
     };
 
     const player = videojs(
@@ -63,7 +54,7 @@ export default props => {
     return () => {
       player.dispose();
     };
-  }, [playerRef, imdbid, banner, qualities]);
+  }, [playerRef]);
 
   return (
     <>
