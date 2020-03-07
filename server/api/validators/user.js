@@ -115,9 +115,9 @@ exports.sendResetPassword = Joi.object().keys({
 exports.resetPassword = Joi.object().keys({
   token: Joi.string().required(),
   password: Joi.string()
-    .pattern(usernameRegex)
+    .pattern(passwordRegex)
     .messages({
-      'string.pattern.base': usernameMessage
+      'string.pattern.base': passwordMessage
     })
     .required()
 });

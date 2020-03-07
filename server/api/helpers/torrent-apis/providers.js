@@ -245,7 +245,7 @@ class TV {
 
     let order;
 
-    if (sort_by == 'rating') order = 1;
+    if (sort_by == 'rating') order = -1;
 
     let data = await this._sendRequest(`/movies/${options.page}`, {
       sort: sort_by,

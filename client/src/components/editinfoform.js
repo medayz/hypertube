@@ -22,9 +22,11 @@ const EditForm = ({ form }) => {
       .then(({ data }) => {
         // console.log(data);
         setUser(data);
+        alert("Profile updated");
       })
       .catch(err => {
         // console.log(err.message);
+        alert("Please, Verify your info and try again!");
       });
   };
 

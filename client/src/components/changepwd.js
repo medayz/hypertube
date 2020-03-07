@@ -17,9 +17,11 @@ const ChangePwdForm = ({ form }) => {
       .patch(`/api/v1/users/password`, newPwd)
       .then(({ data }) => {
         // console.log(data);
+        alert("Password updated");
       })
       .catch(({ response: { data } }) => {
         // console.log(data.error);
+        alert("Please, Verify your info and try again!");
       });
   };
 

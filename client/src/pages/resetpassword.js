@@ -20,6 +20,7 @@ const ResetPasswordComponent = ({ form, token }) => {
       .post(`/api/v1/users/resetpassword`, newPwd)
       .then(({ data }) => {
         // console.log(data);
+        alert('Reset password success');
       })
       .catch(({ response: { data } }) => {
         const fields = {

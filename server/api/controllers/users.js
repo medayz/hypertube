@@ -344,7 +344,7 @@ exports.changePassword = async (req, res, next) => {
     user.password = newPassword;
     user = await user.save();
 
-    res.send(user);
+    res.send({ message: 'password chnaged' });
   } catch (err) {
     next(err);
   }

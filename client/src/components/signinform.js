@@ -157,6 +157,7 @@ const SignInForm = ({ form }) => {
                 .get(`/api/v1/users/resetpassword/${username}`)
                 .then(({ data }) => {
                   // console.log(data);
+                  alert("Please, check your email to reset your password");
                 })
                 .catch(({ response: err }) => {
                   // console.log(err);
