@@ -181,8 +181,8 @@ exports.update = async (req, res, next) => {
         req.body.email,
         'Account activation',
         `
-        ${process.env.HOSTNAME}/api/v1/users/verification/${token}<br/>
-        <a href="${process.env.HOSTNAME}/api/v1/users/verification/${token}">Verify</a>
+        ${process.env.HOSTNAME}/confirmation/${token}<br/>
+        <a href="${process.env.HOSTNAME}/confirmation/${token}">Verify</a>
         `
       );
 
