@@ -15,7 +15,7 @@ export default ({ token }) => {
     axios
       .get(`/api/v1/users/verification/${token}`)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         alert(
           "Congratulations! you've just confirmed your e-mail address, enjoy some good movies :D"
         );

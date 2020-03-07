@@ -63,7 +63,9 @@ export default props => {
         updateMovies(list);
         updateLoading(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -80,12 +82,14 @@ export default props => {
       .then(async results => {
         const list = results.data.movies;
 
-        console.log(list);
+        // console.log(list);
         updateTotal(results.data.count);
         updateMovies(list);
         updateLoading(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   }, [currentPage, sort, genre]);
 
   return (

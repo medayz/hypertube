@@ -19,7 +19,7 @@ const ResetPasswordComponent = ({ form, token }) => {
     axios
       .post(`/api/v1/users/resetpassword`, newPwd)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
       })
       .catch(({ response: { data } }) => {
         const fields = {

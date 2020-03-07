@@ -120,7 +120,7 @@ class MovieStream {
         '-error-resilient 1'
       ])
       .on('error', err => {
-        console.log(err);
+        // console.log(err);
         converted && converted.destroy();
       })
       .stream();

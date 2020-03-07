@@ -20,10 +20,12 @@ const EditForm = ({ form }) => {
     axios
       .patch(`/api/v1/users`, edited)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         setUser(data);
       })
-      .catch(err => console.log(err.message));
+      .catch(err => {
+        // console.log(err.message);
+      });
   };
 
   useEffect(() => form.setFieldsValue(user), []);

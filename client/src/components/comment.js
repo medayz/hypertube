@@ -12,55 +12,51 @@ export default props => {
     if (action === "upvoted") {
       setVotes(votes - 1);
       axios
-        .post(
-          `/api/v1/movies/comments/${props.id}/vote`,
-          { value: "regret" }
-        )
+        .post(`/api/v1/movies/comments/${props.id}/vote`, { value: "regret" })
         .then(({ data: { votes } }) => {
           setVotes(votes);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          // console.log(err);
+        });
       setAction("regret");
       return;
     }
     setVotes(votes + 1);
     setAction("upvoted");
     axios
-      .post(
-        `/api/v1/movies/comments/${props.id}/vote`,
-        { value: "up" }
-      )
+      .post(`/api/v1/movies/comments/${props.id}/vote`, { value: "up" })
       .then(({ data: { votes } }) => {
         setVotes(votes);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   };
 
   const downvote = () => {
     if (action === "downvoted") {
       setVotes(votes - 1);
       axios
-        .post(
-          `/api/v1/movies/comments/${props.id}/vote`,
-          { value: "regret" }
-        )
+        .post(`/api/v1/movies/comments/${props.id}/vote`, { value: "regret" })
         .then(({ data: { votes } }) => {
           setVotes(votes);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          // console.log(err);
+        });
       setAction("regret");
       return;
     }
     setAction("downvoted");
     axios
-      .post(
-        `/api/v1/movies/comments/${props.id}/vote`,
-        { value: "down" }
-      )
+      .post(`/api/v1/movies/comments/${props.id}/vote`, { value: "down" })
       .then(({ data: { votes } }) => {
         setVotes(votes);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   };
 
   const actions = [

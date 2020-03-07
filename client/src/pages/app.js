@@ -18,12 +18,12 @@ const App = props => {
     axios
       .get(`/api/v1/users/me`)
       .then(({ data }) => {
-        console.log("data:", data);
+        // console.log("data:", data);
         setUser(data);
         setId(imdbid);
       })
       .catch(({ response: err }) => {
-        console.log("error:", err);
+        // console.log("error:", err);
         if (err.status === 403) {
           alert("You must verify your e-mail address before you can log in !");
         }

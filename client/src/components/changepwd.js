@@ -16,9 +16,11 @@ const ChangePwdForm = ({ form }) => {
     axios
       .patch(`/api/v1/users/password`, newPwd)
       .then(({ data }) => {
-        console.log("data");
+        // console.log(data);
       })
-      .catch(({ response: { data } }) => console.log(data.error));
+      .catch(({ response: { data } }) => {
+        // console.log(data.error);
+      });
   };
 
   return (

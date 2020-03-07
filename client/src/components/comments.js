@@ -59,7 +59,9 @@ export default props => {
       .then(({ data: user }) => {
         changeProfile(user);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
     changeVisibility(true);
   };
 
@@ -96,7 +98,9 @@ export default props => {
           },
         ]);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
     setTimeout(() => {}, 1000);
   };
 
@@ -131,10 +135,12 @@ export default props => {
             };
           }
         );
-        console.log("comments:", newComments);
+        // console.log("comments:", newComments);
         setComments(newComments);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   }, []);
 
   return (

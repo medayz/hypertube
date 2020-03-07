@@ -18,7 +18,7 @@ const SignUpForm = ({ form }) => {
     axios
       .post(`/api/v1/users`, newUser)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         resetFields();
       })
       .catch(({ response: { data } }) => {

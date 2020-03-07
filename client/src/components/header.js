@@ -33,7 +33,7 @@ const Header = ({ siteTitle }) => {
       enableBodyScroll(body);
     }
   };
-  
+
   const onSearch = value => {
     updateLoadingState(true);
     axios
@@ -42,7 +42,9 @@ const Header = ({ siteTitle }) => {
         updateMovies(data.movies);
         updateLoadingState(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   };
 
   return (

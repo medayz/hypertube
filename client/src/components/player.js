@@ -22,10 +22,10 @@ export default props => {
         axios
           .post(`/api/v1/users/watch/${imdbid}`, { progress: percentage })
           .then(({ data }) => {
-            console.log(data);
+            // console.log(data);
           })
           .catch(({ response: err }) => {
-            console.log(err);
+            // console.log(err);
           });
         sent = percentage;
       }
@@ -88,7 +88,7 @@ export default props => {
                 key={index + 21}
                 onClick={() => {
                   playerRef.current.src = `/api/v1/stream/${imdbid}/${quality}`;
-                  console.log(playerRef.current.src);
+                  // console.log(playerRef.current.src);
                 }}
               >
                 {quality}

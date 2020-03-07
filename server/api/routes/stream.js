@@ -65,7 +65,6 @@ router.get('/:imdbid/:quality', async (req, res, next) => {
     };
     next();
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });

@@ -24,10 +24,10 @@ const SignInForm = ({ form }) => {
       .then(({ data }) => {
         setType(true);
         setUsername(user.username);
-        console.log(data);
+        // console.log(data);
       })
       .catch(({ response: err }) => {
-        console.log(err);
+        // console.log(err);
         const message = !user.username
           ? "Please enter your Username!"
           : err.status === 404
@@ -47,11 +47,11 @@ const SignInForm = ({ form }) => {
       username: username,
       password: formData.password,
     };
-    console.log(user);
+    // console.log(user);
     axios
       .post(`/api/v1/users/login`, user)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         navigate(`/app/library`);
       })
       .catch(({ response: { data } }) => {
@@ -70,7 +70,7 @@ const SignInForm = ({ form }) => {
 
   const handleUsernameChange = e => {
     e.preventDefault();
-    console.log(username);
+    // console.log(username);
     setUsername(e.target.value);
   };
 
@@ -156,10 +156,10 @@ const SignInForm = ({ form }) => {
               axios
                 .get(`/api/v1/users/resetpassword/${username}`)
                 .then(({ data }) => {
-                  console.log(data);
+                  // console.log(data);
                 })
                 .catch(({ response: err }) => {
-                  console.log(err);
+                  // console.log(err);
                 });
             }}
           >

@@ -15,10 +15,7 @@ const { Title, Paragraph } = Typography;
 
 const spinIcon = <Icon type="loading" style={{ fontSize: 69 }} spin />;
 
-export default ({
-  imdbid: urlid,
-  location
-}) => {
+export default ({ imdbid: urlid, location }) => {
   let [loading, updateLoadingState] = useState(true);
   let [movie, updateMovie] = useState({});
   let [trailerModal, showTrailerModal] = useState(false);
@@ -33,7 +30,7 @@ export default ({
   useEffect(() => {
     const wallp = document.querySelector(".banner").style;
     const body = document.querySelector("body");
-    
+
     document.querySelector(".search-results").style.display = "none";
     enableBodyScroll(body);
     setImdbid(urlid || stateid);
@@ -53,7 +50,9 @@ export default ({
         // movie.torrents[0] && setQuality(movie.torrents[0].quality);
         updateLoadingState(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // console.log(err);
+      });
   }, [user, urlid, stateid]);
 
   return (
