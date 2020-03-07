@@ -8,8 +8,6 @@ import "./profile.css";
 
 const { Meta } = Card;
 const { Title, Text } = Typography;
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTUxOGY3ZTZkNGE0ZjAwODFlZmUyNmMiLCJpYXQiOjE1ODI0MDM0NjJ9.SB_f4GDR9v41ntSeVs9pizRXTIr5ku4LRpWgthALb9A";
 
 export default ({ visible, handleCancel, user }) => {
   let [loading, updateLoadingState] = useState(false);
@@ -32,7 +30,7 @@ export default ({ visible, handleCancel, user }) => {
       <Card
         style={{ width: "100%", border: 0 }}
         cover={
-          <img alt="example" src={`/api/v1/users/avatar/${user.avatar}`} />
+          user && user.avatar && <img alt="example" src={`/api/v1/users/avatar/${user.avatar}`} />
         }
       >
         <Title level={3}>{user.username}</Title>
