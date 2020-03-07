@@ -4,6 +4,7 @@ import axios from "axios";
 import "./library.css";
 import Movies from "./movies";
 import UserContext from "../context/user";
+import { enableBodyScroll } from "body-scroll-lock";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -66,6 +67,8 @@ export default props => {
   };
 
   useEffect(() => {
+    const body = document.querySelector("body");
+
     document.querySelector(".search-results").style.display = "none";
     enableBodyScroll(body);
     axios
